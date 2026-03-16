@@ -19,7 +19,8 @@
 - The intended v1 backend stack is `Authentication`, `Cloud Code`, `Cloud Save Game Data`, and `Remote Config`.
 - `Economy` is out of scope for v1.
 - The authoritative draw result, reservation lifecycle, daily cap behavior, and won-prize persistence belong in the cloud, not in kiosk-local game logic.
-- CSV import/export is part of the prize/admin workflow, but the detailed CSV contract is intentionally deferred to a later document.
+- CSV import/export is part of the prize/admin workflow, and the concrete CSV contract is documented in `docs/PRIZE_CSV_SPEC.md`.
+- CSV parsing is positional rather than header-based so spreadsheet-exported files remain usable across different languages.
 
 ## Documentation Rules
 - Keep `README.md`, this file, and the docs under `docs/` aligned whenever subsystem names or ownership boundaries change.
@@ -32,3 +33,4 @@
 - `docs/PROJECT_GUIDE.md`: subsystem map and ownership boundaries.
 - `docs/UGS_PRIZE_SYSTEM.md`: backend architecture and runtime/cloud responsibilities.
 - `docs/PRIZE_ADMIN_APP.md`: staff-only admin surface and operational workflow.
+- `docs/PRIZE_CSV_SPEC.md`: CSV contract for prize import, settings import, and won-prize export.

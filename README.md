@@ -54,7 +54,11 @@ The prize subsystem is planned under `Assets/_PrizeManager`. It is intended to h
 - staff-only admin tooling
 - CSV-backed import/export workflows
 
-The architecture and operational expectations for that subsystem are documented in `docs/UGS_PRIZE_SYSTEM.md` and `docs/PRIZE_ADMIN_APP.md`.
+The architecture, admin workflow, and CSV contracts for that subsystem are documented in:
+
+- `docs/UGS_PRIZE_SYSTEM.md`
+- `docs/PRIZE_ADMIN_APP.md`
+- `docs/PRIZE_CSV_SPEC.md`
 
 ## Current Notes
 - Some tracked project settings still reference the legacy `Assets/_Game` path.
