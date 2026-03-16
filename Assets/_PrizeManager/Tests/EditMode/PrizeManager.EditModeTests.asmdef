@@ -1,0 +1,21 @@
+{
+  "name": "GETravelGames.PrizeManager.EditModeTests",
+  "rootNamespace": "GETravelGames.PrizeManager.Tests",
+  "references": [
+    "GETravelGames.PrizeManager.Runtime"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}
