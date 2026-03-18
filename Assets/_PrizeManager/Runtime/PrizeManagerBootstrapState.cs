@@ -6,17 +6,59 @@ namespace GETravelGames.PrizeManager
     [Serializable]
     public sealed class PrizeManagerBootstrapState
     {
-        public string prizeCsvPath = string.Empty;
-        public string settingsCsvPath = string.Empty;
-        public string wonPrizesExportPath = string.Empty;
-        public string previewText = PrizeManagerConstants.InitialPreviewText;
+        // ── Import config ─────────────────────────────────────────────────────
+        public string importFolderPath = string.Empty;
+        public string prizesCsvFileName = "Prizes.csv";
+        public string settingsCsvFileName = "Settings.csv";
+
+        // ── Export config ─────────────────────────────────────────────────────
+        public string exportFolderPath = string.Empty;
+        public string wonPrizesExportFileName = "WonPrizes.csv";
+        public string prizePoolSubtractionExportFileName = "PrizePoolSubtraction.csv";
+
+        // ── Debug state ───────────────────────────────────────────────────────
+        public int debugKioskId = 1;
+        public string debugPrizeInstanceId = string.Empty;
+
+        // ── Display state ─────────────────────────────────────────────────────
         public string statusText = PrizeManagerConstants.InitialStatusText;
+        public string previewText = PrizeManagerConstants.InitialPreviewText;
+        public string settingsPreviewText = string.Empty;
+
+        // ── Computed paths ────────────────────────────────────────────────────
+
+        public string PrizesCsvPath =>
+            string.IsNullOrWhiteSpace(importFolderPath)
+                ? prizesCsvFileName
+                : Path.Combine(importFolderPath, prizesCsvFileName);
+
+        public string SettingsCsvPath =>
+            string.IsNullOrWhiteSpace(importFolderPath)
+                ? settingsCsvFileName
+                : Path.Combine(importFolderPath, settingsCsvFileName);
+
+        public string WonPrizesExportPath =>
+            string.IsNullOrWhiteSpace(exportFolderPath)
+                ? wonPrizesExportFileName
+                : Path.Combine(exportFolderPath, wonPrizesExportFileName);
+
+        public string SubtractionExportPath =>
+            string.IsNullOrWhiteSpace(exportFolderPath)
+                ? prizePoolSubtractionExportFileName
+                : Path.Combine(exportFolderPath, prizePoolSubtractionExportFileName);
+
+        // ── Defaults ──────────────────────────────────────────────────────────
 
         public void EnsureDefaults(string projectDataPath)
         {
-            if (string.IsNullOrWhiteSpace(wonPrizesExportPath))
+            if (string.IsNullOrWhiteSpace(importFolderPath))
             {
-                wonPrizesExportPath = Path.Combine(projectDataPath, PrizeManagerConstants.DefaultWonPrizesExportFileName);
+                importFolderPath = projectDataPath;
+            }
+
+            if (string.IsNullOrWhiteSpace(exportFolderPath))
+            {
+                exportFolderPath = projectDataPath;
             }
 
             if (string.IsNullOrWhiteSpace(previewText))

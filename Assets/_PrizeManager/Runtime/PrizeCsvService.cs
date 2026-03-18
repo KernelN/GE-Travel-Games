@@ -9,13 +9,11 @@ namespace GETravelGames.PrizeManager
 {
     public sealed class PrizeCsvService
     {
+        // ── Prize import ─────────────────────────────────────────────────────
+
         public PrizeCsvImportPreview PreviewPrizeImport(string filePath, PrizeImportMode importMode)
         {
-            var preview = new PrizeCsvImportPreview
-            {
-                ImportMode = importMode,
-            };
-
+            var preview = new PrizeCsvImportPreview { ImportMode = importMode };
             if (!TryReadText(filePath, out var csvContent, preview.Issues))
             {
                 return preview;
@@ -26,10 +24,7 @@ namespace GETravelGames.PrizeManager
 
         public PrizeCsvImportPreview PreviewPrizeImportContent(string csvContent, PrizeImportMode importMode)
         {
-            var preview = new PrizeCsvImportPreview
-            {
-                ImportMode = importMode,
-            };
+            var preview = new PrizeCsvImportPreview { ImportMode = importMode };
 
             if (string.IsNullOrWhiteSpace(csvContent))
             {
@@ -68,9 +63,7 @@ namespace GETravelGames.PrizeManager
                     if (!existing.Template.SemanticallyEquals(parsedRow.Template))
                     {
                         preview.Issues.Add(CreateIssue(
-                            rowNumber,
-                            1,
-                            "PrizeCategoryId",
+                            rowNumber, 1, "PrizeCategoryId",
                             $"Category {parsedRow.Template.PrizeCategoryId} reuses a prize id with different template values."));
                         continue;
                     }
@@ -79,25 +72,25 @@ namespace GETravelGames.PrizeManager
                 }
                 else
                 {
-                    aggregatedTemplates[parsedRow.Template.PrizeCategoryId] = new AggregatedPrizeTemplate(
-                        parsedRow.Template,
-                        parsedRow.Amount,
-                        rowNumber);
+                    aggregatedTemplates[parsedRow.Template.PrizeCategoryId] =
+                        new AggregatedPrizeTemplate(parsedRow.Template, parsedRow.Amount, rowNumber);
                     preview.SourceRowsByCategory[parsedRow.Template.PrizeCategoryId] = rowNumber;
                 }
             }
 
-            foreach (var pair in aggregatedTemplates.OrderBy(pair => pair.Key))
+            foreach (var pair in aggregatedTemplates.OrderBy(p => p.Key))
             {
                 preview.Templates.Add(pair.Value.Template.Clone());
-                for (var sequence = 1; sequence <= pair.Value.Amount; sequence++)
+                for (var seq = 1; seq <= pair.Value.Amount; seq++)
                 {
-                    preview.Instances.Add(CreatePreviewInstance(pair.Value.Template, sequence));
+                    preview.Instances.Add(CreatePreviewInstance(pair.Value.Template, seq));
                 }
             }
 
             return preview;
         }
+
+        // ── Settings import ──────────────────────────────────────────────────
 
         public SettingsCsvPreview PreviewSettingsImport(string filePath)
         {
@@ -113,6 +106,7 @@ namespace GETravelGames.PrizeManager
         public SettingsCsvPreview PreviewSettingsImportContent(string csvContent)
         {
             var preview = new SettingsCsvPreview();
+
             if (string.IsNullOrWhiteSpace(csvContent))
             {
                 preview.Issues.Add(CreateIssue(0, 0, "File", "CSV content is empty."));
@@ -157,16 +151,21 @@ namespace GETravelGames.PrizeManager
             ValidateDuplicateThresholds(settings.FalsePrizeThresholds, preview.Issues, "FalsePrizeThresholdPercent");
             ValidateDuplicateThresholds(settings.ForcedHourThresholds, preview.Issues, "ForcedHourThresholdPercent");
 
-            settings.FalsePrizeThresholds = settings.FalsePrizeThresholds.OrderBy(threshold => threshold.ThresholdPercent).ToList();
-            settings.ForcedHourThresholds = settings.ForcedHourThresholds.OrderBy(threshold => threshold.ThresholdPercent).ToList();
+            settings.FalsePrizeThresholds = settings.FalsePrizeThresholds.OrderBy(t => t.ThresholdPercent).ToList();
+            settings.ForcedHourThresholds = settings.ForcedHourThresholds.OrderBy(t => t.ThresholdPercent).ToList();
             preview.Settings = settings;
             return preview;
         }
 
+        // ── Exports ──────────────────────────────────────────────────────────
+
+        /// <summary>One row per claimed prize instance with kiosk attribution.</summary>
         public string ExportWonPrizesCsv(IEnumerable<WonPrizeRecord> wonPrizeRecords)
         {
             var builder = new StringBuilder();
-            builder.AppendLine("WonPrizeInstanceId,PrizeCategoryId,PrizeName,PrizeDescription,WinnerOffice,WinnerName,WinnerPhoneNumber");
+            builder.AppendLine(
+                "WonPrizeInstanceId,PrizeCategoryId,PrizeName,PrizeDescription," +
+                "WinnerOffice,WinnerName,WinnerPhoneNumber,KioskId");
 
             foreach (var record in wonPrizeRecords)
             {
@@ -183,11 +182,45 @@ namespace GETravelGames.PrizeManager
                 builder.Append(EscapeCsv(record.WinnerName));
                 builder.Append(',');
                 builder.Append(EscapeCsv(record.WinnerPhoneNumber));
+                builder.Append(',');
+                builder.Append(record.KioskId.ToString(CultureInfo.InvariantCulture));
                 builder.AppendLine();
             }
 
             return builder.ToString();
         }
+
+        /// <summary>
+        /// End-of-day subtraction export.  Aggregates won prizes by category so the
+        /// admin knows how many physical units to remove from each category's stock.
+        /// Rows are ordered by PrizeCategoryId.
+        /// </summary>
+        public string ExportPrizePoolSubtractionCsv(IEnumerable<WonPrizeRecord> wonPrizeRecords)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("PrizeCategoryId,AmountToSubtract,PrizeName,PrizeDescription");
+
+            var grouped = wonPrizeRecords
+                .GroupBy(r => r.PrizeCategoryId)
+                .OrderBy(g => g.Key);
+
+            foreach (var group in grouped)
+            {
+                var first = group.First();
+                builder.Append(group.Key.ToString(CultureInfo.InvariantCulture));
+                builder.Append(',');
+                builder.Append(group.Count().ToString(CultureInfo.InvariantCulture));
+                builder.Append(',');
+                builder.Append(EscapeCsv(first.PrizeName));
+                builder.Append(',');
+                builder.Append(EscapeCsv(first.PrizeDescription));
+                builder.AppendLine();
+            }
+
+            return builder.ToString();
+        }
+
+        // ── Row parsing helpers ───────────────────────────────────────────────
 
         private static PrizeInstance CreatePreviewInstance(PrizeTemplate template, int sequence)
         {
@@ -253,14 +286,14 @@ namespace GETravelGames.PrizeManager
 
             if (hasHourStart)
             {
-                isValid &= TryParseTimeOfDay(columns[5], rowNumber, 6, "PrizeHourStart", issues, out var parsedStartMinutes);
-                prizeStartMinutesOfDay = parsedStartMinutes;
+                isValid &= TryParseTimeOfDay(columns[5], rowNumber, 6, "PrizeHourStart", issues, out var startMin);
+                prizeStartMinutesOfDay = startMin;
             }
 
             if (hasHourEnd)
             {
-                isValid &= TryParseTimeOfDay(columns[6], rowNumber, 7, "PrizeHourEnd", issues, out var parsedEndMinutes);
-                prizeEndMinutesOfDay = parsedEndMinutes;
+                isValid &= TryParseTimeOfDay(columns[6], rowNumber, 7, "PrizeHourEnd", issues, out var endMin);
+                prizeEndMinutesOfDay = endMin;
             }
 
             var hasForcedHourValue = !string.IsNullOrWhiteSpace(columns[7]);
@@ -275,19 +308,23 @@ namespace GETravelGames.PrizeManager
             if (hasHourStart != hasHourEnd)
             {
                 isValid = false;
-                issues.Add(CreateIssue(rowNumber, 6, "PrizeHourStart", "PrizeHourStart and PrizeHourEnd must both be provided when a time window is used."));
+                issues.Add(CreateIssue(rowNumber, 6, "PrizeHourStart",
+                    "PrizeHourStart and PrizeHourEnd must both be provided when a time window is used."));
             }
 
-            if (prizeStartMinutesOfDay.HasValue && prizeEndMinutesOfDay.HasValue && prizeEndMinutesOfDay.Value <= prizeStartMinutesOfDay.Value)
+            if (prizeStartMinutesOfDay.HasValue && prizeEndMinutesOfDay.HasValue
+                && prizeEndMinutesOfDay.Value <= prizeStartMinutesOfDay.Value)
             {
                 isValid = false;
-                issues.Add(CreateIssue(rowNumber, 7, "PrizeHourEnd", "Overnight or zero-length time windows are out of scope for v1."));
+                issues.Add(CreateIssue(rowNumber, 7, "PrizeHourEnd",
+                    "Overnight or zero-length time windows are out of scope for v1."));
             }
 
             if (hasToComeOutDuringHour && (!prizeStartMinutesOfDay.HasValue || !prizeEndMinutesOfDay.HasValue))
             {
                 isValid = false;
-                issues.Add(CreateIssue(rowNumber, 8, "HasToComeOutDuringHour", "Forced-hour prizes require both PrizeHourStart and PrizeHourEnd."));
+                issues.Add(CreateIssue(rowNumber, 8, "HasToComeOutDuringHour",
+                    "Forced-hour prizes require both PrizeHourStart and PrizeHourEnd."));
             }
 
             if (!isValid)
@@ -337,17 +374,24 @@ namespace GETravelGames.PrizeManager
             isValid &= TryParsePercent(columns[3], rowNumber, 4, "FalsePrizeChancePercent", issues, out var falsePrizeChancePercent, true);
             isValid &= TryParsePercent(columns[5], rowNumber, 6, "ForcedHourChancePercent", issues, out var forcedHourChancePercent, true);
 
+            // Column 4 (FalsePrizeThresholdPercent) and column 6 (ForcedHourThresholdPercent)
+            // must be blank on the base row.
             if (!string.IsNullOrWhiteSpace(columns[4]))
             {
                 isValid = false;
-                issues.Add(CreateIssue(rowNumber, 5, "FalsePrizeThresholdPercent", "FalsePrizeThresholdPercent must be blank on the base row."));
+                issues.Add(CreateIssue(rowNumber, 5, "FalsePrizeThresholdPercent",
+                    "FalsePrizeThresholdPercent must be blank on the base row."));
             }
 
             if (!string.IsNullOrWhiteSpace(columns[6]))
             {
                 isValid = false;
-                issues.Add(CreateIssue(rowNumber, 7, "ForcedHourThresholdPercent", "ForcedHourThresholdPercent must be blank on the base row."));
+                issues.Add(CreateIssue(rowNumber, 7, "ForcedHourThresholdPercent",
+                    "ForcedHourThresholdPercent must be blank on the base row."));
             }
+
+            // Column 7 = KioskCount (new).
+            isValid &= TryParsePositiveInt(columns[7], rowNumber, 8, "KioskCount", issues, out var kioskCount);
 
             if (!isValid)
             {
@@ -359,6 +403,7 @@ namespace GETravelGames.PrizeManager
             settings.MaxPrizesPerDay = maxPrizesPerDay;
             settings.FalsePrizeChancePercent = falsePrizeChancePercent;
             settings.ForcedHourChancePercent = forcedHourChancePercent;
+            settings.KioskCount = kioskCount;
         }
 
         private static void TryParseThresholdRow(
@@ -367,6 +412,7 @@ namespace GETravelGames.PrizeManager
             PrizeRuntimeSettings settings,
             List<CsvValidationIssue> issues)
         {
+            // Column 7 (KioskCount) is only meaningful on the base row; ignore here.
             var hasFalseChanceValue = !string.IsNullOrWhiteSpace(columns[3]);
             var hasFalseThresholdValue = !string.IsNullOrWhiteSpace(columns[4]);
             var hasForcedChanceValue = !string.IsNullOrWhiteSpace(columns[5]);
@@ -392,7 +438,8 @@ namespace GETravelGames.PrizeManager
                 }
                 else
                 {
-                    issues.Add(CreateIssue(rowNumber, 4, "FalsePrizeChancePercent", "False-prize threshold rows must provide both chance and threshold values."));
+                    issues.Add(CreateIssue(rowNumber, 4, "FalsePrizeChancePercent",
+                        "False-prize threshold rows must provide both chance and threshold values."));
                 }
             }
 
@@ -415,13 +462,15 @@ namespace GETravelGames.PrizeManager
                 }
                 else
                 {
-                    issues.Add(CreateIssue(rowNumber, 6, "ForcedHourChancePercent", "Forced-hour threshold rows must provide both chance and threshold values."));
+                    issues.Add(CreateIssue(rowNumber, 6, "ForcedHourChancePercent",
+                        "Forced-hour threshold rows must provide both chance and threshold values."));
                 }
             }
 
-            if (!hasAnyThresholdPair && columns.Any(column => !string.IsNullOrWhiteSpace(column)))
+            if (!hasAnyThresholdPair && columns.Any(c => !string.IsNullOrWhiteSpace(c)))
             {
-                issues.Add(CreateIssue(rowNumber, 4, "ThresholdRow", "Threshold rows must define at least one complete chance/threshold pair."));
+                issues.Add(CreateIssue(rowNumber, 4, "ThresholdRow",
+                    "Threshold rows must define at least one complete chance/threshold pair."));
             }
         }
 
@@ -430,20 +479,18 @@ namespace GETravelGames.PrizeManager
             List<CsvValidationIssue> issues,
             string columnName)
         {
-            foreach (var duplicateThreshold in thresholds.GroupBy(threshold => threshold.ThresholdPercent).Where(group => group.Count() > 1))
+            foreach (var group in thresholds.GroupBy(t => t.ThresholdPercent).Where(g => g.Count() > 1))
             {
-                issues.Add(CreateIssue(0, 0, columnName, $"Duplicate threshold value {duplicateThreshold.Key} creates ambiguous chance selection."));
+                issues.Add(CreateIssue(0, 0, columnName,
+                    $"Duplicate threshold value {group.Key} creates ambiguous chance selection."));
             }
         }
 
+        // ── Primitive parsers ─────────────────────────────────────────────────
+
         private static bool TryParseUnsignedShort(
-            string value,
-            int rowNumber,
-            int columnIndex,
-            string columnName,
-            List<CsvValidationIssue> issues,
-            out ushort parsedValue,
-            bool mustBePositive)
+            string value, int rowNumber, int columnIndex, string columnName,
+            List<CsvValidationIssue> issues, out ushort parsedValue, bool mustBePositive)
         {
             parsedValue = 0;
             if (string.IsNullOrWhiteSpace(value))
@@ -468,12 +515,8 @@ namespace GETravelGames.PrizeManager
         }
 
         private static bool TryParsePositiveInt(
-            string value,
-            int rowNumber,
-            int columnIndex,
-            string columnName,
-            List<CsvValidationIssue> issues,
-            out int parsedValue)
+            string value, int rowNumber, int columnIndex, string columnName,
+            List<CsvValidationIssue> issues, out int parsedValue)
         {
             parsedValue = 0;
             if (string.IsNullOrWhiteSpace(value))
@@ -498,13 +541,8 @@ namespace GETravelGames.PrizeManager
         }
 
         private static bool TryParsePercent(
-            string value,
-            int rowNumber,
-            int columnIndex,
-            string columnName,
-            List<CsvValidationIssue> issues,
-            out int parsedValue,
-            bool required)
+            string value, int rowNumber, int columnIndex, string columnName,
+            List<CsvValidationIssue> issues, out int parsedValue, bool required)
         {
             parsedValue = 0;
             if (string.IsNullOrWhiteSpace(value))
@@ -533,30 +571,28 @@ namespace GETravelGames.PrizeManager
         }
 
         private static bool TryParseTimeOfDay(
-            string value,
-            int rowNumber,
-            int columnIndex,
-            string columnName,
-            List<CsvValidationIssue> issues,
-            out int parsedValue)
+            string value, int rowNumber, int columnIndex, string columnName,
+            List<CsvValidationIssue> issues, out int parsedValue)
         {
             parsedValue = 0;
             var normalized = value.Trim();
             if (string.IsNullOrWhiteSpace(normalized))
             {
-                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} must be an hour between 0 and 23 or a time in HH:mm format."));
+                issues.Add(CreateIssue(rowNumber, columnIndex, columnName,
+                    $"{columnName} must be an hour between 0 and 23 or a time in HH:mm format."));
                 return false;
             }
 
-            if (int.TryParse(normalized, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedHourOnly))
+            if (int.TryParse(normalized, NumberStyles.Integer, CultureInfo.InvariantCulture, out var hourOnly))
             {
-                if (parsedHourOnly < 0 || parsedHourOnly > 23)
+                if (hourOnly < 0 || hourOnly > 23)
                 {
-                    issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} must be an hour between 0 and 23 or a time in HH:mm format."));
+                    issues.Add(CreateIssue(rowNumber, columnIndex, columnName,
+                        $"{columnName} must be an hour between 0 and 23 or a time in HH:mm format."));
                     return false;
                 }
 
-                parsedValue = parsedHourOnly * 60;
+                parsedValue = hourOnly * 60;
                 return true;
             }
 
@@ -564,48 +600,31 @@ namespace GETravelGames.PrizeManager
             if (split.Length == 2
                 && int.TryParse(split[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out var hours)
                 && int.TryParse(split[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var minutes)
-                && hours >= 0
-                && hours <= 23
-                && minutes >= 0
-                && minutes <= 59)
+                && hours >= 0 && hours <= 23
+                && minutes >= 0 && minutes <= 59)
             {
                 parsedValue = (hours * 60) + minutes;
                 return true;
             }
 
-            issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} must be an hour between 0 and 23 or a time in HH:mm format."));
+            issues.Add(CreateIssue(rowNumber, columnIndex, columnName,
+                $"{columnName} must be an hour between 0 and 23 or a time in HH:mm format."));
             return false;
         }
 
         private static bool TryParseBoolean(
-            string value,
-            int rowNumber,
-            int columnIndex,
-            string columnName,
-            List<CsvValidationIssue> issues,
-            out bool parsedValue)
+            string value, int rowNumber, int columnIndex, string columnName,
+            List<CsvValidationIssue> issues, out bool parsedValue)
         {
             parsedValue = false;
-            var normalized = value.Trim().ToLowerInvariant();
-
-            switch (normalized)
+            switch (value.Trim().ToLowerInvariant())
             {
-                case "true":
-                case "1":
-                case "yes":
-                case "y":
-                case "si":
-                case "s":
-                case "verdadero":
-                case "v":
+                case "true": case "1": case "yes": case "y":
+                case "si": case "s": case "verdadero": case "v":
                     parsedValue = true;
                     return true;
-                case "false":
-                case "0":
-                case "no":
-                case "n":
-                case "falso":
-                case "f":
+                case "false": case "0": case "no": case "n":
+                case "falso": case "f":
                     parsedValue = false;
                     return true;
                 default:
@@ -615,11 +634,8 @@ namespace GETravelGames.PrizeManager
         }
 
         private static bool TryParsePrizeDays(
-            string value,
-            int rowNumber,
-            int columnIndex,
-            List<CsvValidationIssue> issues,
-            out List<int> parsedDays)
+            string value, int rowNumber, int columnIndex,
+            List<CsvValidationIssue> issues, out List<int> parsedDays)
         {
             parsedDays = new List<int>();
             if (string.IsNullOrWhiteSpace(value))
@@ -631,23 +647,25 @@ namespace GETravelGames.PrizeManager
             var isValid = true;
             foreach (var token in value.Split('|'))
             {
-                var trimmedToken = token.Trim();
-                if (string.IsNullOrWhiteSpace(trimmedToken))
+                var trimmed = token.Trim();
+                if (string.IsNullOrWhiteSpace(trimmed))
                 {
                     continue;
                 }
 
-                if (!int.TryParse(trimmedToken, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedDay) || parsedDay < 1 || parsedDay > 7)
+                if (!int.TryParse(trimmed, NumberStyles.Integer, CultureInfo.InvariantCulture, out var day)
+                    || day < 1 || day > 7)
                 {
                     isValid = false;
-                    issues.Add(CreateIssue(rowNumber, columnIndex, "PrizeDays", "PrizeDays must use values from 1 (Monday) through 7 (Sunday)."));
+                    issues.Add(CreateIssue(rowNumber, columnIndex, "PrizeDays",
+                        "PrizeDays must use values from 1 (Monday) through 7 (Sunday)."));
                     continue;
                 }
 
-                uniqueDays.Add(parsedDay);
+                uniqueDays.Add(day);
             }
 
-            parsedDays = uniqueDays.OrderBy(day => day).ToList();
+            parsedDays = uniqueDays.OrderBy(d => d).ToList();
             return isValid;
         }
 
@@ -663,6 +681,8 @@ namespace GETravelGames.PrizeManager
             };
         }
 
+        // ── CSV parsing ───────────────────────────────────────────────────────
+
         private static List<List<string>> ParseCsvRows(string csvContent, out char delimiter)
         {
             delimiter = DetectDelimiter(csvContent);
@@ -673,13 +693,13 @@ namespace GETravelGames.PrizeManager
 
             for (var index = 0; index < csvContent.Length; index++)
             {
-                var currentCharacter = csvContent[index];
+                var ch = csvContent[index];
                 if (insideQuotes)
                 {
-                    if (currentCharacter == '"')
+                    if (ch == '"')
                     {
-                        var hasEscapedQuote = index + 1 < csvContent.Length && csvContent[index + 1] == '"';
-                        if (hasEscapedQuote)
+                        var hasEscaped = index + 1 < csvContent.Length && csvContent[index + 1] == '"';
+                        if (hasEscaped)
                         {
                             currentField.Append('"');
                             index++;
@@ -691,26 +711,26 @@ namespace GETravelGames.PrizeManager
                     }
                     else
                     {
-                        currentField.Append(currentCharacter);
+                        currentField.Append(ch);
                     }
 
                     continue;
                 }
 
-                if (currentCharacter == '"')
+                if (ch == '"')
                 {
                     insideQuotes = true;
                     continue;
                 }
 
-                if (currentCharacter == delimiter)
+                if (ch == delimiter)
                 {
                     currentRow.Add(currentField.ToString());
                     currentField.Clear();
                     continue;
                 }
 
-                if (currentCharacter == '\r' || currentCharacter == '\n')
+                if (ch == '\r' || ch == '\n')
                 {
                     currentRow.Add(currentField.ToString());
                     currentField.Clear();
@@ -721,7 +741,8 @@ namespace GETravelGames.PrizeManager
                     }
 
                     currentRow = new List<string>();
-                    if (currentCharacter == '\r' && index + 1 < csvContent.Length && csvContent[index + 1] == '\n')
+
+                    if (ch == '\r' && index + 1 < csvContent.Length && csvContent[index + 1] == '\n')
                     {
                         index++;
                     }
@@ -729,7 +750,7 @@ namespace GETravelGames.PrizeManager
                     continue;
                 }
 
-                currentField.Append(currentCharacter);
+                currentField.Append(ch);
             }
 
             currentRow.Add(currentField.ToString());
@@ -745,12 +766,11 @@ namespace GETravelGames.PrizeManager
         {
             var lines = csvContent
                 .Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)
-                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Where(l => !string.IsNullOrWhiteSpace(l))
                 .Take(3);
 
             var commaScore = 0;
             var semicolonScore = 0;
-
             foreach (var line in lines)
             {
                 commaScore += CountUnquotedCharacters(line, ',');
@@ -764,14 +784,14 @@ namespace GETravelGames.PrizeManager
         {
             var count = 0;
             var insideQuotes = false;
-            for (var index = 0; index < line.Length; index++)
+            for (var i = 0; i < line.Length; i++)
             {
-                var currentCharacter = line[index];
-                if (currentCharacter == '"')
+                var ch = line[i];
+                if (ch == '"')
                 {
-                    if (insideQuotes && index + 1 < line.Length && line[index + 1] == '"')
+                    if (insideQuotes && i + 1 < line.Length && line[i + 1] == '"')
                     {
-                        index++;
+                        i++;
                         continue;
                     }
 
@@ -779,7 +799,7 @@ namespace GETravelGames.PrizeManager
                     continue;
                 }
 
-                if (!insideQuotes && currentCharacter == candidate)
+                if (!insideQuotes && ch == candidate)
                 {
                     count++;
                 }
@@ -790,7 +810,7 @@ namespace GETravelGames.PrizeManager
 
         private static List<string> NormalizeColumnCount(IReadOnlyList<string> columns, int requiredColumns)
         {
-            var normalized = columns.Select(column => column ?? string.Empty).ToList();
+            var normalized = columns.Select(c => c ?? string.Empty).ToList();
             while (normalized.Count < requiredColumns)
             {
                 normalized.Add(string.Empty);
@@ -801,7 +821,7 @@ namespace GETravelGames.PrizeManager
 
         private static bool IsBlankRow(IReadOnlyCollection<string> row)
         {
-            return row.All(column => string.IsNullOrWhiteSpace(column));
+            return row.All(c => string.IsNullOrWhiteSpace(c));
         }
 
         private static string EscapeCsv(string value)
@@ -811,7 +831,8 @@ namespace GETravelGames.PrizeManager
                 return string.Empty;
             }
 
-            if (!value.Contains(",") && !value.Contains("\"") && !value.Contains("\n") && !value.Contains("\r"))
+            if (!value.Contains(",") && !value.Contains("\"")
+                && !value.Contains("\n") && !value.Contains("\r"))
             {
                 return value;
             }
@@ -819,10 +840,11 @@ namespace GETravelGames.PrizeManager
             return "\"" + value.Replace("\"", "\"\"") + "\"";
         }
 
+        // ── Private helpers ───────────────────────────────────────────────────
+
         private struct ParsedPrizeRow
         {
             public PrizeTemplate Template;
-
             public ushort Amount;
         }
 
@@ -836,9 +858,7 @@ namespace GETravelGames.PrizeManager
             }
 
             public PrizeTemplate Template { get; }
-
             public ushort Amount { get; set; }
-
             public int FirstSourceRow { get; }
         }
     }

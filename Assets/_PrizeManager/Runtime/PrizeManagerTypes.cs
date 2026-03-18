@@ -145,6 +145,7 @@ namespace GETravelGames.PrizeManager
         public int MaxPrizesPerDay;
         public int FalsePrizeChancePercent;
         public int ForcedHourChancePercent;
+        public int KioskCount = 1;
         public List<PrizeChanceThreshold> FalsePrizeThresholds = new();
         public List<PrizeChanceThreshold> ForcedHourThresholds = new();
 
@@ -157,6 +158,7 @@ namespace GETravelGames.PrizeManager
                 MaxPrizesPerDay = MaxPrizesPerDay,
                 FalsePrizeChancePercent = FalsePrizeChancePercent,
                 ForcedHourChancePercent = ForcedHourChancePercent,
+                KioskCount = KioskCount,
                 FalsePrizeThresholds = FalsePrizeThresholds.Select(threshold => threshold.Clone()).ToList(),
                 ForcedHourThresholds = ForcedHourThresholds.Select(threshold => threshold.Clone()).ToList(),
             };
@@ -173,6 +175,7 @@ namespace GETravelGames.PrizeManager
         public string WinnerOffice = string.Empty;
         public string WinnerName = string.Empty;
         public string WinnerPhoneNumber = string.Empty;
+        public int KioskId = 1;
 
         public WonPrizeRecord Clone()
         {
@@ -185,6 +188,31 @@ namespace GETravelGames.PrizeManager
                 WinnerOffice = WinnerOffice,
                 WinnerName = WinnerName,
                 WinnerPhoneNumber = WinnerPhoneNumber,
+                KioskId = KioskId,
+            };
+        }
+    }
+
+    /// <summary>
+    /// One row in the end-of-day prize pool subtraction export.
+    /// Tells the admin how many physical units to remove from each category.
+    /// </summary>
+    [Serializable]
+    public sealed class PrizePoolSubtractionRecord
+    {
+        public ushort PrizeCategoryId;
+        public int AmountToSubtract;
+        public string PrizeName = string.Empty;
+        public string PrizeDescription = string.Empty;
+
+        public PrizePoolSubtractionRecord Clone()
+        {
+            return new PrizePoolSubtractionRecord
+            {
+                PrizeCategoryId = PrizeCategoryId,
+                AmountToSubtract = AmountToSubtract,
+                PrizeName = PrizeName,
+                PrizeDescription = PrizeDescription,
             };
         }
     }
@@ -196,6 +224,7 @@ namespace GETravelGames.PrizeManager
         public string WinnerOffice = string.Empty;
         public string WinnerName = string.Empty;
         public string WinnerPhoneNumber = string.Empty;
+        public int KioskId = 1;
 
         public PrizeClaimReservation Clone()
         {
@@ -205,6 +234,7 @@ namespace GETravelGames.PrizeManager
                 WinnerOffice = WinnerOffice,
                 WinnerName = WinnerName,
                 WinnerPhoneNumber = WinnerPhoneNumber,
+                KioskId = KioskId,
             };
         }
     }

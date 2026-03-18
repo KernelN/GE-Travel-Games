@@ -1,3 +1,12 @@
-﻿WonPrizeInstanceId,PrizeCategoryId,PrizeName,PrizeDescription,WinnerOffice,WinnerName,WinnerPhoneNumber
-0-0001,0,Test,This is a test,Admin Debug,Debug Winner,000-DEBUG
-0-0002,0,Test,This is a test,Admin Debug,Debug Winner,000-DEBUG
+﻿WonPrizeInstanceId,PrizeCategoryId,PrizeName,PrizeDescription,WinnerOffice,WinnerName,WinnerPhoneNumber,KioskId
+0-0001,0,Test,This is a test,Admin Debug,Debug Winner,000-DEBUG,1
+0-0003,0,Test,This is a test,Admin Debug,Debug Winner,000-DEBUG,1
+0-0005,0,Test,This is a test,Admin Debug,Debug Winner,000-DEBUG,1
+0-0007,0,Test,This is a test,Admin Debug,Debug Winner,000-DEBUG,1
+0-0009,0,Test,This is a test,Admin Debug,Debug Winner,000-DEBUG,1
+0-0002,0,Test,This is a test,Admin Debug,Debug Winner,000-DEBUG,1
+0-0006,0,Test,This is a test,Admin Debug,Debug Winner,000-DEBUG,1
+0-0004,0,Test,This is a test,Admin Debug,Debug Winner,000-DEBUG,1
+0-0010,0,Test,This is a test,Admin Debug,Debug Winner,000-DEBUG,1
+0-0012,0,Test,This is a test,Admin Debug,Debug Winner,000-DEBUG,1
+0-0014,0,Test,This is a test,Admin Debug,Debug Winner,000-DEBUG,1
