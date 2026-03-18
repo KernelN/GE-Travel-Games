@@ -19,6 +19,46 @@ namespace GETravelGames.PrizeManager
 
         public PrizeAdminStateStore StateStore => stateStore;
 
+        // ── Schedule eligibility ──────────────────────────────────────────────
+
+        /// <summary>
+        /// Returns true when the given schedule permits a prize to be issued right now,
+        /// using local system time.  A null or empty schedule is always eligible.
+        /// </summary>
+        public static bool IsScheduleEligible(PrizeSchedule schedule)
+        {
+            if (schedule == null)
+            {
+                return true;
+            }
+
+            var now = DateTime.Now;
+
+            // Day-of-week check (schedule uses Mon=1 … Sun=7).
+            if (schedule.PrizeDays != null && schedule.PrizeDays.Count > 0)
+            {
+                var dow = (int)now.DayOfWeek; // Sunday=0 … Saturday=6
+                var ourDay = dow == 0 ? 7 : dow; // convert to Mon=1 … Sun=7
+                if (!schedule.PrizeDays.Contains(ourDay))
+                {
+                    return false;
+                }
+            }
+
+            // Time-window check.
+            if (schedule.PrizeStartMinutesOfDay.HasValue && schedule.PrizeEndMinutesOfDay.HasValue)
+            {
+                var currentMinutes = now.Hour * 60 + now.Minute;
+                if (currentMinutes < schedule.PrizeStartMinutesOfDay.Value ||
+                    currentMinutes >= schedule.PrizeEndMinutesOfDay.Value)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         // ── Prize import ──────────────────────────────────────────────────────
 
         public PrizeCsvImportPreview PreviewPrizeImport(string filePath, PrizeImportMode importMode)
@@ -128,10 +168,6 @@ namespace GETravelGames.PrizeManager
                 $"Exported {stateStore.WonPrizeHistory.Count} won prize(s) to {filePath}.");
         }
 
-        /// <summary>
-        /// End-of-day export.  Aggregates won prizes by category and writes one row
-        /// per category containing the count to subtract from physical stock.
-        /// </summary>
         public PrizeAdminOperationResult ExportPrizePoolSubtraction(string filePath)
         {
             var wonCount = stateStore.WonPrizeHistory.Count;
@@ -141,62 +177,70 @@ namespace GETravelGames.PrizeManager
                 $"Exported prize pool subtraction for {wonCount} won prize(s) to {filePath}.");
         }
 
-        // ── Debug operations ──────────────────────────────────────────────────
+        // ── Debug claim operations ────────────────────────────────────────────
 
-        /// <summary>Reserves the first available prize from kiosk 1.</summary>
-        public PrizeAdminOperationResult DebugClaimPrize()
-        {
-            return DebugClaimPrizeForKiosk(1);
-        }
-
-        /// <summary>Reserves the first available prize from the specified kiosk.</summary>
-        public PrizeAdminOperationResult DebugClaimPrizeForKiosk(int kioskId)
-        {
-            if (stateStore.ActiveReservation != null)
-            {
-                return BuildStateResult(false, "A debug reservation is already active.");
-            }
-
-            if (!stateStore.TryReserveNextAvailablePrize("Admin Debug", "Debug Winner", "000-DEBUG", kioskId, out var reservation))
-            {
-                return BuildStateResult(false, $"No available prizes remain in kiosk {kioskId}.");
-            }
-
-            return BuildStateResult(true,
-                $"Reserved prize {reservation.ReservedPrize.PrizeInstanceId} " +
-                $"from kiosk {kioskId} for debug claim.");
-        }
-
-        /// <summary>Reserves a specific prize instance from the specified kiosk.</summary>
-        public PrizeAdminOperationResult DebugClaimSpecificPrize(int kioskId, string instanceId)
+        /// <summary>
+        /// Reserves the best available prize for the given kiosk.
+        /// - If <paramref name="preferredCategoryId"/> &gt; 0, restricts to that category.
+        /// - If <paramref name="ignoreSchedule"/> is false, only eligible prizes are considered.
+        /// - If <paramref name="ignoreSchedule"/> is true, the schedule is bypassed entirely.
+        /// </summary>
+        public PrizeAdminOperationResult DebugClaimFromKiosk(
+            int kioskId, ushort preferredCategoryId, bool ignoreSchedule)
         {
             if (stateStore.ActiveReservation != null)
             {
                 return BuildStateResult(false, "A debug reservation is already active.");
             }
 
+            var pool = stateStore.GetKioskPrizes(kioskId);
+
+            // Optional category filter.
+            var candidates = preferredCategoryId > 0
+                ? pool.Where(p => p.PrizeCategoryId == preferredCategoryId).ToList()
+                : pool.ToList();
+
+            // Schedule filter unless forced.
+            if (!ignoreSchedule)
+            {
+                candidates = candidates.Where(p => IsScheduleEligible(p.Schedule)).ToList();
+            }
+
+            if (candidates.Count == 0)
+            {
+                var who = preferredCategoryId > 0
+                    ? $"category {preferredCategoryId} in kiosk {kioskId}"
+                    : $"kiosk {kioskId}";
+                var hint = ignoreSchedule
+                    ? string.Empty
+                    : "  Use Force Claim to bypass schedule restrictions.";
+                return BuildStateResult(false, $"No eligible prizes available in {who}.{hint}");
+            }
+
+            var target = candidates[0];
             if (!stateStore.TryReserveSpecificPrize(
-                    instanceId, "Admin Debug", "Debug Winner", "000-DEBUG", kioskId, out var reservation))
+                    target.PrizeInstanceId, "Admin Debug", "Debug Winner", "000-DEBUG",
+                    kioskId, out var reservation))
             {
-                return BuildStateResult(false,
-                    $"Prize {instanceId} is not available in kiosk {kioskId}. " +
-                    $"It may have been claimed or assigned to a different kiosk.");
+                return BuildStateResult(false, $"Failed to reserve {target.PrizeInstanceId}.");
             }
 
+            var wasForced = ignoreSchedule && !IsScheduleEligible(target.Schedule);
+            var suffix = wasForced ? "  [schedule overridden]" : string.Empty;
             return BuildStateResult(true,
-                $"Reserved specific prize {reservation.ReservedPrize.PrizeInstanceId} " +
-                $"from kiosk {kioskId}.");
+                $"Reserved {reservation.ReservedPrize.PrizeInstanceId} " +
+                $"({reservation.ReservedPrize.PrizeName}) from kiosk {kioskId}.{suffix}");
         }
 
         public PrizeAdminOperationResult DebugCancelClaim()
         {
             if (!stateStore.CancelActiveReservation(out var cancelled))
             {
-                return BuildStateResult(false, "There is no active debug reservation to cancel.");
+                return BuildStateResult(false, "There is no active reservation to cancel.");
             }
 
             return BuildStateResult(true,
-                $"Cancelled debug claim for {cancelled.ReservedPrize.PrizeInstanceId} " +
+                $"Cancelled claim for {cancelled.ReservedPrize.PrizeInstanceId} " +
                 $"(kiosk {cancelled.KioskId}). Prize returned to pool.");
         }
 
@@ -204,11 +248,11 @@ namespace GETravelGames.PrizeManager
         {
             if (!stateStore.ConfirmActiveReservation(out var wonRecord))
             {
-                return BuildStateResult(false, "There is no active debug reservation to confirm.");
+                return BuildStateResult(false, "There is no active reservation to confirm.");
             }
 
             return BuildStateResult(true,
-                $"Confirmed debug claim for {wonRecord.WonPrizeInstanceId} (kiosk {wonRecord.KioskId}).");
+                $"Confirmed claim for {wonRecord.WonPrizeInstanceId} (kiosk {wonRecord.KioskId}).");
         }
 
         // ── Private helpers ───────────────────────────────────────────────────
@@ -228,8 +272,7 @@ namespace GETravelGames.PrizeManager
                 }
 
                 var rowNumber = preview.SourceRowsByCategory.TryGetValue(template.PrizeCategoryId, out var storedRow)
-                    ? storedRow
-                    : 0;
+                    ? storedRow : 0;
 
                 preview.Issues.Add(new CsvValidationIssue
                 {
@@ -272,9 +315,7 @@ namespace GETravelGames.PrizeManager
         }
 
         private PrizeAdminOperationResult ExportCsvFile(
-            string filePath,
-            Func<string> buildCsv,
-            string successMessage)
+            string filePath, Func<string> buildCsv, string successMessage)
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {

@@ -18,7 +18,8 @@ namespace GETravelGames.PrizeManager
 
         // ── Debug state ───────────────────────────────────────────────────────
         public int debugKioskId = 1;
-        public string debugPrizeInstanceId = string.Empty;
+        /// <summary>0 = no category selected (claim first eligible).</summary>
+        public ushort debugPrizeCategoryId = 0;
 
         // ── Display state ─────────────────────────────────────────────────────
         public string statusText = PrizeManagerConstants.InitialStatusText;
