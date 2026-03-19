@@ -101,7 +101,7 @@ namespace GETravelGames.PrizeManager
         private static readonly Color32 ColEligible       = new(90,  185, 100, 255);
         private static readonly Color32 ColIneligible     = new(185, 110, 55,  255);
 
-        private static readonly string[] DayAbbr = { "", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+        private static readonly string[] DayAbbr = { "", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom" };
 
         private const float ControlsWidth = 370f;
         private const float SummaryWidth  = 240f;
@@ -130,7 +130,7 @@ namespace GETravelGames.PrizeManager
 
             if (!isInitialized)
             {
-                Debug.LogError("[PrizeAdminApp] Not initialized. Ensure PrizeManagerBootstrap is present.", this);
+                Debug.LogError("[PrizeAdminApp] No inicializado. Asegúrese de que PrizeManagerBootstrap esté presente.", this);
                 return;
             }
 
@@ -167,7 +167,7 @@ namespace GETravelGames.PrizeManager
             if (!CheckReady()) return;
             var preview = adminService.PreviewPrizeImport(state.PrizesCsvPath, PrizeImportMode.Initialize);
             state.previewText = FormatPrizePreview(preview);
-            SetStatus(preview.IsValid ? "Initialize preview ready." : "Initialize preview has errors.");
+            SetStatus(preview.IsValid ? "Vista previa de inicialización lista." : "La vista previa de inicialización tiene errores.");
             RefreshAllPanels();
         }
 
@@ -185,7 +185,7 @@ namespace GETravelGames.PrizeManager
             if (!CheckReady()) return;
             var preview = adminService.PreviewPrizeImport(state.PrizesCsvPath, PrizeImportMode.Add);
             state.previewText = FormatPrizePreview(preview);
-            SetStatus(preview.IsValid ? "Add preview ready." : "Add preview has errors.");
+            SetStatus(preview.IsValid ? "Vista previa de adición lista." : "La vista previa de adición tiene errores.");
             RefreshAllPanels();
         }
 
@@ -205,8 +205,8 @@ namespace GETravelGames.PrizeManager
             state.settingsPreviewText = FormatSettingsPreview(preview);
             state.previewText = preview.Issues.Count > 0
                 ? FormatValidationIssueList(preview.Issues)
-                : "Settings preview — no validation issues.";
-            SetStatus(preview.IsValid ? "Settings preview ready." : "Settings preview has errors.");
+                : "Vista previa de configuración — sin problemas de validación.";
+            SetStatus(preview.IsValid ? "Vista previa de configuración lista." : "La vista previa de configuración tiene errores.");
             RefreshAllPanels();
         }
 
@@ -405,7 +405,7 @@ namespace GETravelGames.PrizeManager
 
             if (kioskPanelTitle != null)
                 kioskPanelTitle.text =
-                    $"Kiosk {kioskId}  ·  {categories.Count} categor{(categories.Count == 1 ? "y" : "ies")}";
+                    $"Kiosko {kioskId}  ·  {categories.Count} categoría{(categories.Count == 1 ? "" : "s")}";
 
             if (kioskSelectedLabel != null)
                 kioskSelectedLabel.text = BuildSelectedCategoryText(categories);
@@ -416,7 +416,7 @@ namespace GETravelGames.PrizeManager
             if (categories.Count == 0)
             {
                 var empty = MakeText(kioskCategoryContent, "Empty", 14f, FontStyles.Italic, TextAlignmentOptions.Center);
-                empty.text = "No prizes assigned to this kiosk.";
+                empty.text = "No hay premios asignados a este kiosko.";
                 empty.color = ColTextMuted;
                 empty.gameObject.AddComponent<LayoutElement>().preferredHeight = 44f;
                 return;
@@ -463,7 +463,7 @@ namespace GETravelGames.PrizeManager
         private bool CheckReady()
         {
             if (isInitialized && adminService != null) return true;
-            Debug.LogWarning("[PrizeAdminApp] Not yet initialized — button press ignored.", this);
+            Debug.LogWarning("[PrizeAdminApp] Aún no inicializado — se ignoró la pulsación del botón.", this);
             return false;
         }
 
@@ -546,7 +546,7 @@ namespace GETravelGames.PrizeManager
             hl.childForceExpandWidth = false; hl.childForceExpandHeight = true;
 
             var title = MakeText(row, "Title", 28f, FontStyles.Bold, TextAlignmentOptions.Left);
-            title.text = "Prize Manager Admin"; title.color = Color.white;
+            title.text = "Administrador de Premios"; title.color = Color.white;
             title.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
 
             statusLabel = MakeText(row, "StatusLabel", 16f, FontStyles.Normal, TextAlignmentOptions.Right);
@@ -557,7 +557,7 @@ namespace GETravelGames.PrizeManager
         private void BuildControlsPanel(Transform parent)
         {
             var panel = MakePanel(parent, "Controls", ControlsWidth, 0f);
-            MakePanelTitle(panel, "Controls");
+            MakePanelTitle(panel, "Controles");
             var scrollContent = MakeScrollView(panel, "ControlsScroll");
             scrollContent.parent.parent.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1f;
             BuildControlsContent(scrollContent);
@@ -565,36 +565,48 @@ namespace GETravelGames.PrizeManager
 
         private void BuildControlsContent(Transform p)
         {
-            MakeSectionTitle(p, "Import");
-            importFolderPathField    = MakeLabeledField(p, "Import Folder",  state.importFolderPath,                   "Path to folder",               "ImportFolderPathField");
-            prizesCsvFileNameField   = MakeLabeledField(p, "Prizes CSV",     state.prizesCsvFileName,                  "e.g. Prizes.csv",              "PrizesCsvFileNameField");
-            settingsCsvFileNameField = MakeLabeledField(p, "Settings CSV",   state.settingsCsvFileName,                "e.g. Settings.csv",            "SettingsCsvFileNameField");
+            MakeSectionTitle(p, "Importar");
+            importFolderPathField    = MakeLabeledField(p, "Carpeta de importación", state.importFolderPath, "Ruta a la carpeta",               "ImportFolderPathField");
+            prizesCsvFileNameField   = MakeLabeledField(p, "CSV de premios", state.prizesCsvFileName, "ej. Prizes.csv",              "PrizesCsvFileNameField");
+            settingsCsvFileNameField = MakeLabeledField(p, "CSV de configuración", state.settingsCsvFileName, "ej. Settings.csv",            "SettingsCsvFileNameField");
 
-            MakeSectionTitle(p, "Export");
-            exportFolderPathField    = MakeLabeledField(p, "Export Folder",  state.exportFolderPath,                   "Path to export folder",        "ExportFolderPathField");
-            wonPrizesFileNameField   = MakeLabeledField(p, "Won Prizes",     state.wonPrizesExportFileName,            "e.g. WonPrizes.csv",           "WonPrizesFileNameField");
-            subtractionFileNameField = MakeLabeledField(p, "Subtraction",    state.prizePoolSubtractionExportFileName, "e.g. PrizePoolSubtraction.csv","SubtractionFileNameField");
+            MakeSectionTitle(p, "Exportar");
+            exportFolderPathField    = MakeLabeledField(p, "Carpeta de exportación", state.exportFolderPath, "Ruta a la carpeta de exportación",        "ExportFolderPathField");
+            wonPrizesFileNameField   = MakeLabeledField(p, "Premios ganados", state.wonPrizesExportFileName, "ej. WonPrizes.csv",           "WonPrizesFileNameField");
+            subtractionFileNameField = MakeLabeledField(p, "Sustracción", state.prizePoolSubtractionExportFileName, "ej. PrizePoolSubtraction.csv","SubtractionFileNameField");
 
-            MakeSectionTitle(p, "Prize Pool");
-            (btnPreviewInitialize, btnApplyInitialize) = MakeButtonRow(p, "Preview Initialize", ColBtn,       "Apply Initialize", ColBtnSecondary);
-            (btnPreviewAdd,        btnApplyAdd)        = MakeButtonRow(p, "Preview Add",        ColBtn,       "Apply Add",        ColBtnSecondary);
+            MakeSectionTitle(p, "Pool de premios");
+            (btnPreviewInitialize, btnApplyInitialize) = MakeButtonRow(p,
+                "Preview Initialize", "Vista previa: inicializar", ColBtn,
+                "Apply Initialize",   "Aplicar inicialización",   ColBtnSecondary);
+            (btnPreviewAdd, btnApplyAdd) = MakeButtonRow(p,
+                "Preview Add", "Vista previa: agregar", ColBtn,
+                "Apply Add",   "Aplicar adición",       ColBtnSecondary);
 
-            MakeSectionTitle(p, "Settings");
-            (btnPreviewSettings, btnApplySettings) = MakeButtonRow(p, "Preview Settings", ColBtn, "Apply Settings", ColBtnSecondary);
+            MakeSectionTitle(p, "Configuración");
+            (btnPreviewSettings, btnApplySettings) = MakeButtonRow(p,
+                "Preview Settings", "Vista previa: configuración", ColBtn,
+                "Apply Settings",   "Aplicar configuración",       ColBtnSecondary);
 
-            MakeSectionTitle(p, "End-of-Day Exports");
-            (btnExportWonPrizes, btnExportSubtraction) = MakeButtonRow(p, "Export Won Prizes", ColBtn, "Export Subtraction", ColBtn);
+            MakeSectionTitle(p, "Exportaciones de cierre");
+            (btnExportWonPrizes, btnExportSubtraction) = MakeButtonRow(p,
+                "Export Won Prizes",   "Exportar premios ganados", ColBtn,
+                "Export Subtraction", "Exportar sustracción",     ColBtn);
 
-            MakeSectionTitle(p, "Debug");
+            MakeSectionTitle(p, "Depuración");
             BuildKioskSpinner(p);
-            (btnClaimPrize, btnForceClaim)    = MakeButtonRow(p, "Claim Prize",  ColBtn,       "Force Claim",   ColBtnForce);
-            (btnCancelClaim, btnConfirmClaim) = MakeButtonRow(p, "Cancel Claim", ColBtnDanger, "Confirm Claim", ColBtnConfirm);
+            (btnClaimPrize, btnForceClaim) = MakeButtonRow(p,
+                "Claim Prize", "Reclamar premio", ColBtn,
+                "Force Claim", "Forzar reclamo",  ColBtnForce);
+            (btnCancelClaim, btnConfirmClaim) = MakeButtonRow(p,
+                "Cancel Claim",  "Cancelar reclamo",  ColBtnDanger,
+                "Confirm Claim", "Confirmar reclamo", ColBtnConfirm);
         }
 
         private void BuildKioskSpinner(Transform parent)
         {
             var lbl = MakeText(parent, "KioskLabel", 13f, FontStyles.Normal, TextAlignmentOptions.Left);
-            lbl.text = "Kiosk"; lbl.color = ColTextSecondary;
+            lbl.text = "Kiosko"; lbl.color = ColTextSecondary;
             lbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 16f;
 
             var row = MakeRect("KioskSpinner", parent);
@@ -619,16 +631,16 @@ namespace GETravelGames.PrizeManager
         private void BuildStoreSummaryPanel(Transform parent)
         {
             var panel = MakePanel(parent, "StoreSummary", SummaryWidth, 0f);
-            MakePanelTitle(panel, "Store Summary");
-            storeSummaryField = MakeReadonlyTextField(panel, string.Empty, "Store state will appear here.", "StoreSummaryField");
+            MakePanelTitle(panel, "Resumen del Stock");
+            storeSummaryField = MakeReadonlyTextField(panel, string.Empty, "El estado del stock aparecerá aquí.", "StoreSummaryField");
             storeSummaryField.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1f;
         }
 
         private void BuildSettingsPreviewPanel(Transform parent)
         {
             var panel = MakePanel(parent, "SettingsPreview", SettingsWidth, 0f);
-            MakePanelTitle(panel, "Settings");
-            settingsPreviewField = MakeReadonlyTextField(panel, state.settingsPreviewText, "Preview or apply settings to see them here.", "SettingsPreviewField");
+            MakePanelTitle(panel, "Configuración");
+            settingsPreviewField = MakeReadonlyTextField(panel, state.settingsPreviewText, "Previsualice o aplique la configuración para verla aquí.", "SettingsPreviewField");
             settingsPreviewField.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1f;
         }
 
@@ -653,8 +665,8 @@ namespace GETravelGames.PrizeManager
         private void BuildPreviewOutputPanel(Transform parent)
         {
             var panel = MakePanel(parent, "PreviewOutput", 0f, 1f);
-            MakePanelTitle(panel, "Preview Output");
-            previewOutputField = MakeReadonlyTextField(panel, state.previewText, "Operation output will appear here.", "PreviewOutputField");
+            MakePanelTitle(panel, "Resultado");
+            previewOutputField = MakeReadonlyTextField(panel, state.previewText, "El resultado de las operaciones aparecerá aquí.", "PreviewOutputField");
             previewOutputField.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1f;
         }
 
@@ -726,7 +738,7 @@ namespace GETravelGames.PrizeManager
             selectBtn.onClick.AddListener(() => OnSelectCategory(capturedId));
             var selectLabel = MakeText(selectRoot, "SelectLabel", 14f, FontStyles.Bold, TextAlignmentOptions.Center);
             StretchFill(selectLabel.rectTransform, 3f, 3f, 3f, 3f);
-            selectLabel.text = cat.IsSelected ? "✓" : "Select"; selectLabel.color = Color.white;
+            selectLabel.text = cat.IsSelected ? "✓" : "Elegir"; selectLabel.color = Color.white;
 
             // Row 2: description
             var descText = MakeText(card, "Desc", 12f, FontStyles.Normal, TextAlignmentOptions.Left);
@@ -752,31 +764,31 @@ namespace GETravelGames.PrizeManager
             var settings = store.ActiveSettings;
             var sb       = new StringBuilder();
 
-            sb.AppendLine($"Templates:   {store.Templates.Count}");
-            sb.AppendLine($"Available:   {store.AvailablePrizeInstances.Count} total");
+            sb.AppendLine($"Plantillas:  {store.Templates.Count}");
+            sb.AppendLine($"Disponibles: {store.AvailablePrizeInstances.Count} en total");
             foreach (var kvp in new SortedDictionary<int, int>(store.KioskPrizeCounts))
-                sb.AppendLine($"  Kiosk {kvp.Key}: {kvp.Value}");
-            sb.AppendLine($"Won history: {store.WonPrizeHistory.Count}");
+                sb.AppendLine($"  Kiosko {kvp.Key}: {kvp.Value}");
+            sb.AppendLine($"Historial:   {store.WonPrizeHistory.Count}");
             sb.AppendLine();
 
             var res = store.ActiveReservation;
             if (res?.ReservedPrize != null && !string.IsNullOrWhiteSpace(res.ReservedPrize.PrizeInstanceId))
             {
-                sb.AppendLine("Reservation:");
+                sb.AppendLine("Reserva:");
                 sb.AppendLine($"  {res.ReservedPrize.PrizeInstanceId}");
                 sb.AppendLine($"  {res.ReservedPrize.PrizeName}");
-                sb.AppendLine($"  Kiosk {res.KioskId}");
+                sb.AppendLine($"  Kiosko {res.KioskId}");
             }
-            else { sb.AppendLine("Reservation: none"); }
+            else { sb.AppendLine("Reserva: ninguna"); }
             sb.AppendLine();
 
-            if (string.IsNullOrWhiteSpace(settings.Timezone)) { sb.Append("Settings: not imported"); }
+            if (string.IsNullOrWhiteSpace(settings.Timezone)) { sb.Append("Configuración: no importada"); }
             else
             {
-                sb.AppendLine($"Timezone: {settings.Timezone}");
-                sb.AppendLine($"Kiosks:   {settings.KioskCount}");
-                sb.AppendLine($"Max/day:  {settings.MaxPrizesPerDay}");
-                sb.Append(    $"Timeout:  {settings.PrizeReservationTimeoutMinutes} min");
+                sb.AppendLine($"Zona horaria: {settings.Timezone}");
+                sb.AppendLine($"Kioskos:     {settings.KioskCount}");
+                sb.AppendLine($"Máx./día:   {settings.MaxPrizesPerDay}");
+                sb.Append(    $"Tiempo esp: {settings.PrizeReservationTimeoutMinutes} min");
             }
             return sb.ToString();
         }
@@ -784,8 +796,8 @@ namespace GETravelGames.PrizeManager
         private static string FormatPrizePreview(PrizeCsvImportPreview preview)
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"Mode: {preview.ImportMode}  |  Delimiter: '{preview.Delimiter}'");
-            sb.AppendLine($"Templates: {preview.Templates.Count}  |  Instances: {preview.Instances.Count}");
+            sb.AppendLine($"Modo: {(preview.ImportMode == PrizeImportMode.Initialize ? "Inicialización" : "Adición")}  |  Separador: '{preview.Delimiter}'");
+            sb.AppendLine($"Plantillas: {preview.Templates.Count}  |  Instancias: {preview.Instances.Count}");
             sb.AppendLine();
             foreach (var t in preview.Templates)
             {
@@ -799,14 +811,14 @@ namespace GETravelGames.PrizeManager
         private static string FormatSettingsPreview(SettingsCsvPreview preview)
         {
             var s = preview.Settings; var sb = new StringBuilder();
-            sb.AppendLine($"Delimiter:   '{preview.Delimiter}'");
-            sb.AppendLine($"Timezone:    {s.Timezone}");
-            sb.AppendLine($"Kiosks:      {s.KioskCount}");
-            sb.AppendLine($"Timeout:     {s.PrizeReservationTimeoutMinutes} min");
-            sb.AppendLine($"Max/day:     {s.MaxPrizesPerDay}");
-            sb.AppendLine(); sb.AppendLine($"False:       {s.FalsePrizeChancePercent}% base");
+            sb.AppendLine($"Separador:   '{preview.Delimiter}'");
+            sb.AppendLine($"Zona horaria: {s.Timezone}");
+            sb.AppendLine($"Kioskos:      {s.KioskCount}");
+            sb.AppendLine($"Tiempo esp:  {s.PrizeReservationTimeoutMinutes} min");
+            sb.AppendLine($"Máx./día:    {s.MaxPrizesPerDay}");
+            sb.AppendLine(); sb.AppendLine($"Falso:       {s.FalsePrizeChancePercent}% base");
             foreach (var t in s.FalsePrizeThresholds) sb.AppendLine($"  ≥{t.ThresholdPercent}% → {t.ChancePercent}%");
-            sb.AppendLine($"Forced:      {s.ForcedHourChancePercent}% base");
+            sb.AppendLine($"Forzado:     {s.ForcedHourChancePercent}% base");
             foreach (var t in s.ForcedHourThresholds) sb.AppendLine($"  ≥{t.ThresholdPercent}% → {t.ChancePercent}%");
             AppendValidationIssues(sb, preview.Issues);
             return sb.ToString();
@@ -828,21 +840,21 @@ namespace GETravelGames.PrizeManager
         private static void AppendValidationIssues(StringBuilder sb, IReadOnlyList<CsvValidationIssue> issues)
         {
             if (issues == null || issues.Count == 0) return;
-            sb.AppendLine(); sb.AppendLine($"── {issues.Count} issue(s) ──────────────────────");
+            sb.AppendLine(); sb.AppendLine($"── {issues.Count} problema(s) ──────────────────");
             foreach (var issue in issues)
             {
-                var row = issue.RowNumber > 0 ? $"row {issue.RowNumber}" : "file";
+                var row = issue.RowNumber > 0 ? $"fila {issue.RowNumber}" : "archivo";
                 sb.AppendLine($"  {row}, {issue.ColumnName}: {issue.Message}");
             }
         }
 
         private string BuildSelectedCategoryText(IReadOnlyList<CategorySummary> categories)
         {
-            if (state.debugPrizeCategoryId == 0) return "Category: none — will claim first eligible";
+            if (state.debugPrizeCategoryId == 0) return "Categoría: ninguna — se reclamará el primero elegible";
             foreach (var cat in categories)
                 if (cat.CategoryId == state.debugPrizeCategoryId)
-                    return $"Category: {cat.CategoryId} — {cat.Name}";
-            return $"Category: {state.debugPrizeCategoryId} (not in this kiosk)";
+                    return $"Categoría: {cat.CategoryId} — {cat.Name}";
+            return $"Categoría: {state.debugPrizeCategoryId} (no está en este kiosko)";
         }
 
         private static string BuildEligibilityText(PrizeSchedule schedule, bool isEligible)
@@ -850,22 +862,22 @@ namespace GETravelGames.PrizeManager
             var hasTime   = schedule?.PrizeStartMinutesOfDay.HasValue == true;
             var hasDays   = schedule?.PrizeDays?.Count > 0 && schedule.PrizeDays.Count < 7;
             var hasForced = schedule?.HasToComeOutDuringHour == true;
-            if (!hasTime && !hasDays) return "✓  No restrictions";
+            if (!hasTime && !hasDays) return "✓  Sin restricciones";
             var sb = new StringBuilder(isEligible ? "✓  " : "⊘  ");
             if (hasTime)
             {
                 sb.Append($"{Mints(schedule.PrizeStartMinutesOfDay.Value)}–{Mints(schedule.PrizeEndMinutesOfDay.Value)}");
-                if (hasForced) sb.Append(" (forced)");
+                if (hasForced) sb.Append(" (forzado)");
             }
             if (hasDays) { if (hasTime) sb.Append("  "); sb.Append(string.Join(" ", schedule.PrizeDays.Select(d => DayAbbr[d]))); }
-            if (!isEligible) { var n = DateTime.Now; sb.Append($"  (now: {n:ddd} {n:HH:mm})"); }
+            if (!isEligible) { var n = DateTime.Now; sb.Append($"  (ahora: {n:ddd} {n:HH:mm})"); }
             return sb.ToString();
         }
 
         private static string FormatScheduleSummary(PrizeSchedule s)
         {
             if (s == null || (!s.PrizeStartMinutesOfDay.HasValue && (s.PrizeDays == null || s.PrizeDays.Count == 0)))
-                return "unrestricted";
+                return "sin restricciones";
             var parts = new List<string>();
             if (s.PrizeStartMinutesOfDay.HasValue)
                 parts.Add($"{Mints(s.PrizeStartMinutesOfDay.Value)}–{Mints(s.PrizeEndMinutesOfDay.Value)}");
@@ -878,16 +890,16 @@ namespace GETravelGames.PrizeManager
         {
             var sb = new StringBuilder();
             sb.AppendLine(state.previewText); sb.AppendLine();
-            sb.AppendLine("── Import Paths ──────────────────────────────────────");
-            sb.AppendLine($"Folder:    {state.importFolderPath}");
-            sb.AppendLine($"Prizes:    {state.prizesCsvFileName}");
-            sb.AppendLine($"Settings:  {state.settingsCsvFileName}");
+            sb.AppendLine("── Rutas de importación ─────────────────────────────");
+            sb.AppendLine($"Carpeta:   {state.importFolderPath}");
+            sb.AppendLine($"Premios:   {state.prizesCsvFileName}");
+            sb.AppendLine($"Config.:   {state.settingsCsvFileName}");
             sb.AppendLine($"→  {state.PrizesCsvPath}"); sb.AppendLine($"→  {state.SettingsCsvPath}");
             sb.AppendLine();
-            sb.AppendLine("── Export Paths ──────────────────────────────────────");
-            sb.AppendLine($"Folder:    {state.exportFolderPath}");
-            sb.AppendLine($"Won:       {state.wonPrizesExportFileName}");
-            sb.AppendLine($"Subtract:  {state.prizePoolSubtractionExportFileName}");
+            sb.AppendLine("── Rutas de exportación ─────────────────────────────");
+            sb.AppendLine($"Carpeta:   {state.exportFolderPath}");
+            sb.AppendLine($"Ganados:   {state.wonPrizesExportFileName}");
+            sb.AppendLine($"Sustracc.: {state.prizePoolSubtractionExportFileName}");
             sb.AppendLine($"→  {state.WonPrizesExportPath}"); sb.Append($"→  {state.SubtractionExportPath}");
             return sb.ToString();
         }
@@ -949,27 +961,33 @@ namespace GETravelGames.PrizeManager
             return MakeInputField(container, initialValue, placeholder, false, false, 32f, fieldGoName);
         }
 
-        private static Button MakeButton(Transform parent, string label, Color32 color)
+        /// <summary>
+        /// Creates a button whose GameObject is named <paramref name="goName"/> (used by
+        /// FindDescendant) but whose visible label is <paramref name="displayText"/>.
+        /// Keeping these separate lets GO names stay in English while labels are localised.
+        /// </summary>
+        private static Button MakeButton(Transform parent, string goName, string displayText, Color32 color)
         {
-            var root = MakeRect(label, parent);
+            var root = MakeRect(goName, parent);
             root.gameObject.AddComponent<LayoutElement>().preferredHeight = 36f;
             var img = root.gameObject.AddComponent<Image>(); img.color = color;
             var btn = root.gameObject.AddComponent<Button>(); btn.targetGraphic = img;
             var text = MakeText(root, "Label", 14f, FontStyles.Bold, TextAlignmentOptions.Center);
             StretchFill(text.rectTransform, 4f, 4f, 4f, 4f);
-            text.text = label; text.color = Color.white;
+            text.text = displayText; text.color = Color.white;
             return btn;
         }
 
         private static (Button, Button) MakeButtonRow(Transform parent,
-            string labelA, Color32 colorA, string labelB, Color32 colorB)
+            string goNameA, string displayA, Color32 colorA,
+            string goNameB, string displayB, Color32 colorB)
         {
-            var row = MakeRect($"{labelA}Row", parent);
+            var row = MakeRect($"{goNameA}Row", parent);
             row.gameObject.AddComponent<LayoutElement>().preferredHeight = 36f;
             var hl = row.gameObject.AddComponent<HorizontalLayoutGroup>();
             hl.spacing = 5f; hl.childControlWidth = hl.childControlHeight = true;
             hl.childForceExpandWidth = hl.childForceExpandHeight = true;
-            return (MakeButton(row, labelA, colorA), MakeButton(row, labelB, colorB));
+            return (MakeButton(row, goNameA, displayA, colorA), MakeButton(row, goNameB, displayB, colorB));
         }
 
         private static Button MakeSmallButton(Transform parent, string goName, string displayText, float width)
@@ -1102,8 +1120,8 @@ namespace GETravelGames.PrizeManager
             if (canvas == null)
             {
                 Debug.LogWarning(
-                    "[PrizeAdminApp] No child Canvas found.\n" +
-                    "Enter Play mode once so BuildUi() creates the canvas, exit, then run this menu again.", this);
+                    "[PrizeAdminApp] No se encontró un Canvas hijo.\n" +
+                    "Entrá al modo Play una vez para que BuildUi() lo cree, salí, y volvé a ejecutar este menú.", this);
                 return;
             }
 
@@ -1168,8 +1186,8 @@ namespace GETravelGames.PrizeManager
             ReportMissingRefs();
 
             Debug.Log(
-                "[PrizeAdminApp] Canvas references linked and persistent button listeners wired.\n" +
-                "Input field callbacks are wired at runtime (Start). The canvas will not be rebuilt at runtime.",
+                "[PrizeAdminApp] Referencias de canvas vinculadas y listeners persistentes configurados.\n" +
+                "Los callbacks de los campos de texto se vinculan en tiempo de ejecución (Start). El canvas no se reconstruirá.",
                 this);
         }
 
@@ -1193,7 +1211,7 @@ namespace GETravelGames.PrizeManager
             var method = typeof(PrizeAdminApp).GetMethod(methodName);
             if (method == null)
             {
-                Debug.LogWarning($"[PrizeAdminApp] Method '{methodName}' not found. Skipping.", this);
+                Debug.LogWarning($"[PrizeAdminApp] Método '{methodName}' no encontrado. Se omitirá.", this);
                 return;
             }
 
@@ -1240,9 +1258,9 @@ namespace GETravelGames.PrizeManager
 
             if (missing.Count > 0)
                 Debug.LogWarning(
-                    $"[PrizeAdminApp] {missing.Count} ref(s) not found — hierarchy may be stale.\n" +
-                    $"Missing: {string.Join(", ", missing)}\n" +
-                    "Enter Play mode to rebuild, then run 'Link Canvas References' again.", this);
+                    $"[PrizeAdminApp] {missing.Count} referencia(s) no encontrada(s) — la jerarquía puede estar desactualizada.\n" +
+                    $"Faltantes: {string.Join(", ", missing)}\n" +
+                    "Entrá al modo Play para reconstruirla, luego ejecutá 'Vincular referencias del canvas' nuevamente.", this);
         }
 #endif
     }

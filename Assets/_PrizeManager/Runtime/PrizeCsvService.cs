@@ -28,7 +28,7 @@ namespace GETravelGames.PrizeManager
 
             if (string.IsNullOrWhiteSpace(csvContent))
             {
-                preview.Issues.Add(CreateIssue(0, 0, "File", "CSV content is empty."));
+                preview.Issues.Add(CreateIssue(0, 0, "File", "El contenido del CSV está vacío."));
                 return preview;
             }
 
@@ -37,7 +37,7 @@ namespace GETravelGames.PrizeManager
 
             if (rows.Count < 2)
             {
-                preview.Issues.Add(CreateIssue(0, 0, "File", "CSV must contain a header row and at least one data row."));
+                preview.Issues.Add(CreateIssue(0, 0, "File", "El CSV debe tener una fila de encabezado y al menos una fila de datos."));
                 return preview;
             }
 
@@ -64,7 +64,7 @@ namespace GETravelGames.PrizeManager
                     {
                         preview.Issues.Add(CreateIssue(
                             rowNumber, 1, "PrizeCategoryId",
-                            $"Category {parsedRow.Template.PrizeCategoryId} reuses a prize id with different template values."));
+                            $"La categoría {parsedRow.Template.PrizeCategoryId} reutiliza un ID de premio con valores de plantilla diferentes."));
                         continue;
                     }
 
@@ -109,7 +109,7 @@ namespace GETravelGames.PrizeManager
 
             if (string.IsNullOrWhiteSpace(csvContent))
             {
-                preview.Issues.Add(CreateIssue(0, 0, "File", "CSV content is empty."));
+                preview.Issues.Add(CreateIssue(0, 0, "File", "El contenido del CSV está vacío."));
                 return preview;
             }
 
@@ -118,7 +118,7 @@ namespace GETravelGames.PrizeManager
 
             if (rows.Count < 2)
             {
-                preview.Issues.Add(CreateIssue(0, 0, "File", "CSV must contain a header row and at least one data row."));
+                preview.Issues.Add(CreateIssue(0, 0, "File", "El CSV debe tener una fila de encabezado y al menos una fila de datos."));
                 return preview;
             }
 
@@ -135,7 +135,7 @@ namespace GETravelGames.PrizeManager
 
             if (dataRows.Count == 0)
             {
-                preview.Issues.Add(CreateIssue(0, 0, "File", "Settings CSV does not contain any non-empty data rows."));
+                preview.Issues.Add(CreateIssue(0, 0, "File", "El CSV de configuración no contiene filas de datos."));
                 return preview;
             }
 
@@ -240,7 +240,7 @@ namespace GETravelGames.PrizeManager
             csvContent = string.Empty;
             if (string.IsNullOrWhiteSpace(filePath))
             {
-                issues.Add(CreateIssue(0, 0, "File", "A local file path is required."));
+                issues.Add(CreateIssue(0, 0, "File", "Se requiere una ruta de archivo local."));
                 return false;
             }
 
@@ -248,7 +248,7 @@ namespace GETravelGames.PrizeManager
             {
                 if (!File.Exists(filePath))
                 {
-                    issues.Add(CreateIssue(0, 0, "File", $"File not found: {filePath}"));
+                    issues.Add(CreateIssue(0, 0, "File", $"Archivo no encontrado: {filePath}"));
                     return false;
                 }
 
@@ -257,7 +257,7 @@ namespace GETravelGames.PrizeManager
             }
             catch (Exception exception)
             {
-                issues.Add(CreateIssue(0, 0, "File", $"Could not read file: {exception.Message}"));
+                issues.Add(CreateIssue(0, 0, "File", $"No se pudo leer el archivo: {exception.Message}"));
                 return false;
             }
         }
@@ -309,7 +309,7 @@ namespace GETravelGames.PrizeManager
             {
                 isValid = false;
                 issues.Add(CreateIssue(rowNumber, 6, "PrizeHourStart",
-                    "PrizeHourStart and PrizeHourEnd must both be provided when a time window is used."));
+                    "PrizeHourStart y PrizeHourEnd deben proporcionarse ambos al usar una ventana de tiempo."));
             }
 
             if (prizeStartMinutesOfDay.HasValue && prizeEndMinutesOfDay.HasValue
@@ -317,14 +317,14 @@ namespace GETravelGames.PrizeManager
             {
                 isValid = false;
                 issues.Add(CreateIssue(rowNumber, 7, "PrizeHourEnd",
-                    "Overnight or zero-length time windows are out of scope for v1."));
+                    "Las ventanas de tiempo nocturnas o de duración cero no están contempladas en v1."));
             }
 
             if (hasToComeOutDuringHour && (!prizeStartMinutesOfDay.HasValue || !prizeEndMinutesOfDay.HasValue))
             {
                 isValid = false;
                 issues.Add(CreateIssue(rowNumber, 8, "HasToComeOutDuringHour",
-                    "Forced-hour prizes require both PrizeHourStart and PrizeHourEnd."));
+                    "Los premios de hora forzada requieren PrizeHourStart y PrizeHourEnd."));
             }
 
             if (!isValid)
@@ -366,7 +366,7 @@ namespace GETravelGames.PrizeManager
             if (string.IsNullOrWhiteSpace(timezone))
             {
                 isValid = false;
-                issues.Add(CreateIssue(rowNumber, 1, "Timezone", "Timezone is required on the base row."));
+                issues.Add(CreateIssue(rowNumber, 1, "Timezone", "La zona horaria es obligatoria en la fila base."));
             }
 
             isValid &= TryParsePositiveInt(columns[1], rowNumber, 2, "PrizeReservationTimeoutMinutes", issues, out var reservationTimeoutMinutes);
@@ -380,14 +380,14 @@ namespace GETravelGames.PrizeManager
             {
                 isValid = false;
                 issues.Add(CreateIssue(rowNumber, 5, "FalsePrizeThresholdPercent",
-                    "FalsePrizeThresholdPercent must be blank on the base row."));
+                    "FalsePrizeThresholdPercent debe estar vacío en la fila base."));
             }
 
             if (!string.IsNullOrWhiteSpace(columns[6]))
             {
                 isValid = false;
                 issues.Add(CreateIssue(rowNumber, 7, "ForcedHourThresholdPercent",
-                    "ForcedHourThresholdPercent must be blank on the base row."));
+                    "ForcedHourThresholdPercent debe estar vacío en la fila base."));
             }
 
             // Column 7 = KioskCount (new).
@@ -439,7 +439,7 @@ namespace GETravelGames.PrizeManager
                 else
                 {
                     issues.Add(CreateIssue(rowNumber, 4, "FalsePrizeChancePercent",
-                        "False-prize threshold rows must provide both chance and threshold values."));
+                        "Las filas de umbral de premio falso deben incluir tanto el porcentaje como el umbral."));
                 }
             }
 
@@ -463,14 +463,14 @@ namespace GETravelGames.PrizeManager
                 else
                 {
                     issues.Add(CreateIssue(rowNumber, 6, "ForcedHourChancePercent",
-                        "Forced-hour threshold rows must provide both chance and threshold values."));
+                        "Las filas de umbral de hora forzada deben incluir tanto el porcentaje como el umbral."));
                 }
             }
 
             if (!hasAnyThresholdPair && columns.Any(c => !string.IsNullOrWhiteSpace(c)))
             {
                 issues.Add(CreateIssue(rowNumber, 4, "ThresholdRow",
-                    "Threshold rows must define at least one complete chance/threshold pair."));
+                    "Las filas de umbral deben definir al menos un par completo de porcentaje/umbral."));
             }
         }
 
@@ -482,7 +482,7 @@ namespace GETravelGames.PrizeManager
             foreach (var group in thresholds.GroupBy(t => t.ThresholdPercent).Where(g => g.Count() > 1))
             {
                 issues.Add(CreateIssue(0, 0, columnName,
-                    $"Duplicate threshold value {group.Key} creates ambiguous chance selection."));
+                    $"El umbral duplicado {group.Key} genera una selección de probabilidad ambigua."));
             }
         }
 
@@ -495,19 +495,19 @@ namespace GETravelGames.PrizeManager
             parsedValue = 0;
             if (string.IsNullOrWhiteSpace(value))
             {
-                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} is required."));
+                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} es obligatorio."));
                 return false;
             }
 
             if (!ushort.TryParse(value.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out parsedValue))
             {
-                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} must be an unsigned whole number."));
+                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} debe ser un número entero sin signo."));
                 return false;
             }
 
             if (mustBePositive && parsedValue == 0)
             {
-                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} must be greater than zero."));
+                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} debe ser mayor que cero."));
                 return false;
             }
 
@@ -521,19 +521,19 @@ namespace GETravelGames.PrizeManager
             parsedValue = 0;
             if (string.IsNullOrWhiteSpace(value))
             {
-                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} is required."));
+                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} es obligatorio."));
                 return false;
             }
 
             if (!int.TryParse(value.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out parsedValue))
             {
-                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} must be a whole number."));
+                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} debe ser un número entero."));
                 return false;
             }
 
             if (parsedValue <= 0)
             {
-                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} must be greater than zero."));
+                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} debe ser mayor que cero."));
                 return false;
             }
 
@@ -549,7 +549,7 @@ namespace GETravelGames.PrizeManager
             {
                 if (required)
                 {
-                    issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} is required."));
+                    issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} es obligatorio."));
                 }
 
                 return false;
@@ -557,13 +557,13 @@ namespace GETravelGames.PrizeManager
 
             if (!int.TryParse(value.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out parsedValue))
             {
-                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} must be a whole number percentage."));
+                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} debe ser un porcentaje entero."));
                 return false;
             }
 
             if (parsedValue < 0 || parsedValue > 100)
             {
-                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} must be between 0 and 100."));
+                issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} debe estar entre 0 y 100."));
                 return false;
             }
 
@@ -579,7 +579,7 @@ namespace GETravelGames.PrizeManager
             if (string.IsNullOrWhiteSpace(normalized))
             {
                 issues.Add(CreateIssue(rowNumber, columnIndex, columnName,
-                    $"{columnName} must be an hour between 0 and 23 or a time in HH:mm format."));
+                    $"{columnName} debe ser una hora entre 0 y 23, o un horario en formato HH:mm."));
                 return false;
             }
 
@@ -588,7 +588,7 @@ namespace GETravelGames.PrizeManager
                 if (hourOnly < 0 || hourOnly > 23)
                 {
                     issues.Add(CreateIssue(rowNumber, columnIndex, columnName,
-                        $"{columnName} must be an hour between 0 and 23 or a time in HH:mm format."));
+                        $"{columnName} debe ser una hora entre 0 y 23, o un horario en formato HH:mm."));
                     return false;
                 }
 
@@ -608,7 +608,7 @@ namespace GETravelGames.PrizeManager
             }
 
             issues.Add(CreateIssue(rowNumber, columnIndex, columnName,
-                $"{columnName} must be an hour between 0 and 23 or a time in HH:mm format."));
+                $"{columnName} debe ser una hora entre 0 y 23, o un horario en formato HH:mm."));
             return false;
         }
 
@@ -628,7 +628,7 @@ namespace GETravelGames.PrizeManager
                     parsedValue = false;
                     return true;
                 default:
-                    issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} must be a boolean value."));
+                    issues.Add(CreateIssue(rowNumber, columnIndex, columnName, $"{columnName} debe ser un valor booleano."));
                     return false;
             }
         }
@@ -658,7 +658,7 @@ namespace GETravelGames.PrizeManager
                 {
                     isValid = false;
                     issues.Add(CreateIssue(rowNumber, columnIndex, "PrizeDays",
-                        "PrizeDays must use values from 1 (Monday) through 7 (Sunday)."));
+                        "PrizeDays debe usar valores del 1 (lunes) al 7 (domingo)."));
                     continue;
                 }
 

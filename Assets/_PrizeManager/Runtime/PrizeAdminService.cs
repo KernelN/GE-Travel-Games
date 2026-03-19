@@ -80,7 +80,9 @@ namespace GETravelGames.PrizeManager
                 return new PrizeAdminOperationResult
                 {
                     Success = false,
-                    Summary = $"Prize {importMode.ToString().ToLowerInvariant()} import has validation errors.",
+                    Summary = importMode == PrizeImportMode.Initialize
+                    ? "La importación de inicialización de premios tiene errores de validación."
+                    : "La importación de adición de premios tiene errores de validación.",
                     Issues = CloneIssues(preview.Issues),
                     PrizePreview = preview,
                     TemplateCount = stateStore.Templates.Count,
@@ -105,9 +107,9 @@ namespace GETravelGames.PrizeManager
             return new PrizeAdminOperationResult
             {
                 Success = true,
-                Summary = $"Imported {sequencedInstances.Count} available prizes across " +
-                          $"{preview.Templates.Count} categories ({importMode.ToString().ToLowerInvariant()} mode), " +
-                          $"distributed across {kioskCount} kiosk(s).",
+                Summary = $"Se importaron {sequencedInstances.Count} premios disponibles en " +
+                $"{preview.Templates.Count} categorías (modo {(importMode == PrizeImportMode.Initialize ? "inicialización" : "adición")}), " +
+                $"distribuidos en {kioskCount} kiosko(s).",
                 TemplateCount = stateStore.Templates.Count,
                 AvailablePrizeCount = stateStore.AvailablePrizeInstances.Count,
                 WonPrizeCount = stateStore.WonPrizeHistory.Count,
@@ -132,7 +134,7 @@ namespace GETravelGames.PrizeManager
                 return new PrizeAdminOperationResult
                 {
                     Success = false,
-                    Summary = "Settings import has validation errors.",
+                    Summary = "La importación de configuración tiene errores de validación.",
                     Issues = CloneIssues(preview.Issues),
                     SettingsPreview = preview,
                     TemplateCount = stateStore.Templates.Count,
@@ -147,8 +149,8 @@ namespace GETravelGames.PrizeManager
             return new PrizeAdminOperationResult
             {
                 Success = true,
-                Summary = $"Imported runtime settings for timezone {preview.Settings.Timezone} " +
-                          $"with {preview.Settings.KioskCount} kiosk(s).",
+                Summary = $"Se importó la configuración para la zona horaria {preview.Settings.Timezone} " +
+                $"con {preview.Settings.KioskCount} kiosko(s).",
                 TemplateCount = stateStore.Templates.Count,
                 AvailablePrizeCount = stateStore.AvailablePrizeInstances.Count,
                 WonPrizeCount = stateStore.WonPrizeHistory.Count,
@@ -165,7 +167,7 @@ namespace GETravelGames.PrizeManager
             return ExportCsvFile(
                 filePath,
                 () => csvService.ExportWonPrizesCsv(stateStore.WonPrizeHistory),
-                $"Exported {stateStore.WonPrizeHistory.Count} won prize(s) to {filePath}.");
+                $"Se exportaron {stateStore.WonPrizeHistory.Count} premio(s) ganado(s) a {filePath}.");
         }
 
         public PrizeAdminOperationResult ExportPrizePoolSubtraction(string filePath)
@@ -174,7 +176,7 @@ namespace GETravelGames.PrizeManager
             return ExportCsvFile(
                 filePath,
                 () => csvService.ExportPrizePoolSubtractionCsv(stateStore.WonPrizeHistory),
-                $"Exported prize pool subtraction for {wonCount} won prize(s) to {filePath}.");
+                $"Se exportó la sustracción del pool para {wonCount} premio(s) ganado(s) a {filePath}.");
         }
 
         // ── Debug claim operations ────────────────────────────────────────────
@@ -190,7 +192,7 @@ namespace GETravelGames.PrizeManager
         {
             if (stateStore.ActiveReservation != null)
             {
-                return BuildStateResult(false, "A debug reservation is already active.");
+                return BuildStateResult(false, "Ya hay una reserva de depuración activa.");
             }
 
             var pool = stateStore.GetKioskPrizes(kioskId);
@@ -209,12 +211,12 @@ namespace GETravelGames.PrizeManager
             if (candidates.Count == 0)
             {
                 var who = preferredCategoryId > 0
-                    ? $"category {preferredCategoryId} in kiosk {kioskId}"
-                    : $"kiosk {kioskId}";
+                    ? $"categoría {preferredCategoryId} en el kiosko {kioskId}"
+                    : $"kiosko {kioskId}";
                 var hint = ignoreSchedule
                     ? string.Empty
-                    : "  Use Force Claim to bypass schedule restrictions.";
-                return BuildStateResult(false, $"No eligible prizes available in {who}.{hint}");
+                    : "  Use 'Forzar reclamo' para omitir las restricciones de horario.";
+                return BuildStateResult(false, $"No hay premios elegibles disponibles en {who}.{hint}");
             }
 
             var target = candidates[0];
@@ -222,37 +224,37 @@ namespace GETravelGames.PrizeManager
                     target.PrizeInstanceId, "Admin Debug", "Debug Winner", "000-DEBUG",
                     kioskId, out var reservation))
             {
-                return BuildStateResult(false, $"Failed to reserve {target.PrizeInstanceId}.");
+                return BuildStateResult(false, $"No se pudo reservar {target.PrizeInstanceId}.");
             }
 
             var wasForced = ignoreSchedule && !IsScheduleEligible(target.Schedule);
-            var suffix = wasForced ? "  [schedule overridden]" : string.Empty;
+            var suffix = wasForced ? "  [horario omitido]" : string.Empty;
             return BuildStateResult(true,
-                $"Reserved {reservation.ReservedPrize.PrizeInstanceId} " +
-                $"({reservation.ReservedPrize.PrizeName}) from kiosk {kioskId}.{suffix}");
+                $"Se reservó {reservation.ReservedPrize.PrizeInstanceId} " +
+                $"({reservation.ReservedPrize.PrizeName}) del kiosko {kioskId}.{suffix}");
         }
 
         public PrizeAdminOperationResult DebugCancelClaim()
         {
             if (!stateStore.CancelActiveReservation(out var cancelled))
             {
-                return BuildStateResult(false, "There is no active reservation to cancel.");
+                return BuildStateResult(false, "No hay una reserva activa para cancelar.");
             }
 
             return BuildStateResult(true,
-                $"Cancelled claim for {cancelled.ReservedPrize.PrizeInstanceId} " +
-                $"(kiosk {cancelled.KioskId}). Prize returned to pool.");
+                $"Se canceló el reclamo de {cancelled.ReservedPrize.PrizeInstanceId} " +
+                $"(kiosko {cancelled.KioskId}). Premio devuelto al pool.");
         }
 
         public PrizeAdminOperationResult DebugConfirmClaim()
         {
             if (!stateStore.ConfirmActiveReservation(out var wonRecord))
             {
-                return BuildStateResult(false, "There is no active reservation to confirm.");
+                return BuildStateResult(false, "No hay una reserva activa para confirmar.");
             }
 
             return BuildStateResult(true,
-                $"Confirmed claim for {wonRecord.WonPrizeInstanceId} (kiosk {wonRecord.KioskId}).");
+                $"Se confirmó el reclamo de {wonRecord.WonPrizeInstanceId} (kiosko {wonRecord.KioskId}).");
         }
 
         // ── Private helpers ───────────────────────────────────────────────────
@@ -280,7 +282,7 @@ namespace GETravelGames.PrizeManager
                     RowNumber = rowNumber,
                     ColumnIndex = 1,
                     ColumnName = "PrizeCategoryId",
-                    Message = $"Category {template.PrizeCategoryId} conflicts with the template already stored in Prize Manager.",
+                    Message = $"La categoría {template.PrizeCategoryId} entra en conflicto con la plantilla almacenada en Prize Manager.",
                 });
             }
         }
@@ -322,7 +324,7 @@ namespace GETravelGames.PrizeManager
                 return new PrizeAdminOperationResult
                 {
                     Success = false,
-                    Summary = "A local export file path is required.",
+                    Summary = "Se requiere una ruta de archivo de exportación local.",
                     TemplateCount = stateStore.Templates.Count,
                     AvailablePrizeCount = stateStore.AvailablePrizeInstances.Count,
                     WonPrizeCount = stateStore.WonPrizeHistory.Count,
@@ -357,7 +359,7 @@ namespace GETravelGames.PrizeManager
                 return new PrizeAdminOperationResult
                 {
                     Success = false,
-                    Summary = $"Export failed: {exception.Message}",
+                    Summary = $"Error al exportar: {exception.Message}",
                     TemplateCount = stateStore.Templates.Count,
                     AvailablePrizeCount = stateStore.AvailablePrizeInstances.Count,
                     WonPrizeCount = stateStore.WonPrizeHistory.Count,
