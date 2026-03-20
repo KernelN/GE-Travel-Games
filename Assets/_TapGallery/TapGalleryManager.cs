@@ -1,0 +1,236 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Pool;
+
+public class TapGalleryManager : MonoBehaviour
+{
+    [Serializable]
+    public class SpotWeightEntry
+    {
+        public Spot Spot;
+        public float Weight;
+    }
+
+    [Serializable]
+    public class TappablePoolEntry
+    {
+        public TappableConfig Config;
+        public Tappable Prefab;
+        public int PrewarmCount = 3;
+    }
+
+    [SerializeField] TapGalleryConfig config;
+    [SerializeField] List<SpotWeightEntry> spotWeights;
+    [SerializeField] List<TappablePoolEntry> tappablePools;
+    [SerializeField] TMP_Text scoreLabel;
+
+    int score;
+    int activeTappableCount;
+    float sessionTimer;
+    bool sessionActive;
+
+    Dictionary<TappableConfig, ObjectPool<Tappable>> pools;
+
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
+
+    void Awake()
+    {
+        pools = new Dictionary<TappableConfig, ObjectPool<Tappable>>();
+
+        foreach (TappablePoolEntry entry in tappablePools)
+        {
+            TappablePoolEntry captured = entry;
+            ObjectPool<Tappable> pool = new ObjectPool<Tappable>(
+                createFunc: () => Instantiate(captured.Prefab),
+                actionOnGet: t => t.gameObject.SetActive(true),
+                actionOnRelease: t => t.gameObject.SetActive(false),
+                actionOnDestroy: t => Destroy(t.gameObject)
+            );
+
+            // Pre-warm
+            List<Tappable> prewarm = new List<Tappable>(entry.PrewarmCount);
+            for (int i = 0; i < entry.PrewarmCount; i++)
+                prewarm.Add(pool.Get());
+            foreach (Tappable t in prewarm)
+                pool.Release(t);
+
+            pools[entry.Config] = pool;
+        }
+    }
+
+    void Start()
+    {
+        score = 0;
+        activeTappableCount = 0;
+        sessionTimer = config.SessionDuration;
+        sessionActive = true;
+        UpdateScoreLabel();
+        StartCoroutine(SpawnLoop());
+    }
+
+    void Update()
+    {
+        if (!sessionActive) return;
+        sessionTimer -= Time.deltaTime;
+        if (sessionTimer <= 0f)
+            EndSession();
+    }
+
+    // ── Spawn loop ────────────────────────────────────────────────────────────
+
+    IEnumerator SpawnLoop()
+    {
+        while (sessionActive)
+        {
+            yield return new WaitForSeconds(config.SpawnInterval);
+            if (sessionActive)
+                TrySpawn();
+        }
+    }
+
+    void TrySpawn()
+    {
+        if (activeTappableCount >= config.MaxTappablesOnScreen) return;
+
+        Spot spot = WeightedRandomSpot();
+        if (spot == null) return;
+
+        TappableConfig tappableConfig = WeightedRandomTappable(spot.Config.TappableWeights);
+        if (tappableConfig == null) return;
+
+        Direction validDirections = GetValidDirections(tappableConfig.Behavior, spot.Config);
+        if (validDirections == Direction.None)
+        {
+            Debug.LogWarning($"[TapGallery] No valid directions for {tappableConfig.Behavior} on spot {spot.name}. Skipping.");
+            return;
+        }
+
+        Direction direction = PickRandomDirection(validDirections);
+
+        // PeekJumpAndRun only valid for Left/Right
+        if (tappableConfig.Behavior == TappableBehavior.PeekJumpAndRun &&
+            direction != Direction.Left && direction != Direction.Right)
+        {
+            Debug.LogWarning($"[TapGallery] PeekJumpAndRun requires Left or Right, got {direction}. Skipping.");
+            return;
+        }
+
+        Spot runTarget = null;
+        if (IsRunBehavior(tappableConfig.Behavior) && spot.RunTargets.Count > 0)
+            runTarget = spot.RunTargets[UnityEngine.Random.Range(0, spot.RunTargets.Count)];
+
+        if (!pools.TryGetValue(tappableConfig, out ObjectPool<Tappable> pool))
+        {
+            Debug.LogWarning($"[TapGallery] No pool found for {tappableConfig.name}. Skipping.");
+            return;
+        }
+
+        Tappable tappable = pool.Get();
+        activeTappableCount++;
+
+        tappable.StartBehavior(direction, spot, runTarget, () =>
+        {
+            if (tappable.WasTapped)
+                AddScore(tappable.Config.Score);
+            pool.Release(tappable);
+            activeTappableCount--;
+        });
+    }
+
+    // ── Score ─────────────────────────────────────────────────────────────────
+
+    void AddScore(int amount)
+    {
+        score += amount;
+        UpdateScoreLabel();
+    }
+
+    void UpdateScoreLabel()
+    {
+        if (scoreLabel != null)
+            scoreLabel.text = score.ToString();
+    }
+
+    // ── Session ───────────────────────────────────────────────────────────────
+
+    void EndSession()
+    {
+        sessionActive = false;
+        Debug.Log($"[TapGallery] Session ended. Final score: {score}");
+    }
+
+    // ── Weighted random helpers ───────────────────────────────────────────────
+
+    Spot WeightedRandomSpot()
+    {
+        float total = 0f;
+        foreach (SpotWeightEntry entry in spotWeights)
+            total += entry.Weight;
+
+        if (total <= 0f) return null;
+
+        float roll = UnityEngine.Random.Range(0f, total);
+        float cumulative = 0f;
+        foreach (SpotWeightEntry entry in spotWeights)
+        {
+            cumulative += entry.Weight;
+            if (roll < cumulative)
+                return entry.Spot;
+        }
+        return spotWeights[spotWeights.Count - 1].Spot;
+    }
+
+    static TappableConfig WeightedRandomTappable(List<TappableWeightEntry> entries)
+    {
+        if (entries == null || entries.Count == 0) return null;
+
+        float total = 0f;
+        foreach (TappableWeightEntry entry in entries)
+            total += entry.Weight;
+
+        if (total <= 0f) return null;
+
+        float roll = UnityEngine.Random.Range(0f, total);
+        float cumulative = 0f;
+        foreach (TappableWeightEntry entry in entries)
+        {
+            cumulative += entry.Weight;
+            if (roll < cumulative)
+                return entry.Config;
+        }
+        return entries[entries.Count - 1].Config;
+    }
+
+    static Direction GetValidDirections(TappableBehavior behavior, SpotConfig spotConfig)
+    {
+        return behavior switch
+        {
+            TappableBehavior.Peek                          => spotConfig.PeekDirections,
+            TappableBehavior.PeekAndJump or TappableBehavior.Jump
+                                                           => spotConfig.JumpDirections,
+            TappableBehavior.PeekJumpAndRun or TappableBehavior.PeekAndRun or TappableBehavior.Run
+                                                           => spotConfig.RunDirections,
+            _                                              => Direction.None
+        };
+    }
+
+    static Direction PickRandomDirection(Direction flags)
+    {
+        List<Direction> valid = new List<Direction>(4);
+        if ((flags & Direction.Top)    != 0) valid.Add(Direction.Top);
+        if ((flags & Direction.Bottom) != 0) valid.Add(Direction.Bottom);
+        if ((flags & Direction.Left)   != 0) valid.Add(Direction.Left);
+        if ((flags & Direction.Right)  != 0) valid.Add(Direction.Right);
+        return valid.Count == 0 ? Direction.None : valid[UnityEngine.Random.Range(0, valid.Count)];
+    }
+
+    static bool IsRunBehavior(TappableBehavior behavior)
+    {
+        return behavior == TappableBehavior.PeekJumpAndRun ||
+               behavior == TappableBehavior.PeekAndRun    ||
+               behavior == TappableBehavior.Run;
+    }
+}
