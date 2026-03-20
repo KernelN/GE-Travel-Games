@@ -27,6 +27,7 @@ namespace GETravelGames.PrizeManager
         private PrizeAdminService adminService;
         private PrizeManagerBootstrapState state;
         private bool isInitialized;
+        private bool debugControlsActive = false;
 
         // ─────────────────────────────────────────────────────────────────────
         //  Serialised UI references
@@ -45,6 +46,7 @@ namespace GETravelGames.PrizeManager
         [SerializeField] private TMP_InputField exportFolderPathField;
         [SerializeField] private TMP_InputField wonPrizesFileNameField;
         [SerializeField] private TMP_InputField subtractionFileNameField;
+        [SerializeField] private TMP_InputField updatedPrizesFileNameField;
 
         [Header("Controls – Buttons")]
         [SerializeField] private Button btnPreviewInitialize;
@@ -53,6 +55,7 @@ namespace GETravelGames.PrizeManager
         [SerializeField] private Button btnApplyAdd;
         [SerializeField] private Button btnPreviewSettings;
         [SerializeField] private Button btnApplySettings;
+        [SerializeField] private Button btnUpdatePrizes;
         [SerializeField] private Button btnExportWonPrizes;
         [SerializeField] private Button btnExportSubtraction;
         [SerializeField] private Button btnClaimPrize;
@@ -64,6 +67,14 @@ namespace GETravelGames.PrizeManager
         [SerializeField] private Button kioskDecrBtn;
         [SerializeField] private TextMeshProUGUI kioskSpinnerLabel;
         [SerializeField] private Button kioskIncrBtn;
+
+        [Header("Controls – View Toggle")]
+        [SerializeField] private Button btnToggleDebug;
+        [SerializeField] private TextMeshProUGUI btnToggleDebugLabel;
+
+        [Header("Controls – View Roots")]
+        [SerializeField] private GameObject mainControlsRoot;
+        [SerializeField] private GameObject debugControlsRoot;
 
         [Header("Store Summary")]
         [SerializeField] private TMP_InputField storeSummaryField;
@@ -103,7 +114,7 @@ namespace GETravelGames.PrizeManager
 
         private static readonly string[] DayAbbr = { "", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom" };
 
-        private const float ControlsWidth = 370f;
+        private const float ControlsWidth = 400f;
         private const float SummaryWidth  = 240f;
         private const float SettingsWidth = 230f;
         private const float KioskWidth    = 310f;
@@ -141,6 +152,12 @@ namespace GETravelGames.PrizeManager
             // and safety-fallback runtime listeners for any buttons not yet wired.
             WireRuntimeListeners();
 
+            // Always start on the main control view.
+            debugControlsActive = false;
+            if (mainControlsRoot  != null) mainControlsRoot.SetActive(true);
+            if (debugControlsRoot != null) debugControlsRoot.SetActive(false);
+            if (btnToggleDebugLabel != null) btnToggleDebugLabel.text = "Debug";
+
             SyncInputFieldTextsFromState();
             RefreshAllPanels();
         }
@@ -150,12 +167,13 @@ namespace GETravelGames.PrizeManager
         //  (public so they appear in the Inspector and can be wired persistently)
         // ═════════════════════════════════════════════════════════════════════
 
-        public void OnImportFolderPathChanged(string value)  { state.importFolderPath                  = value; }
-        public void OnPrizesCsvFileNameChanged(string value) { state.prizesCsvFileName                 = value; }
-        public void OnSettingsCsvFileNameChanged(string value){ state.settingsCsvFileName              = value; }
-        public void OnExportFolderPathChanged(string value)  { state.exportFolderPath                  = value; }
-        public void OnWonPrizesFileNameChanged(string value) { state.wonPrizesExportFileName            = value; }
-        public void OnSubtractionFileNameChanged(string value){ state.prizePoolSubtractionExportFileName= value; }
+        public void OnImportFolderPathChanged(string value)       { state.importFolderPath                   = value; }
+        public void OnPrizesCsvFileNameChanged(string value)      { state.prizesCsvFileName                  = value; }
+        public void OnSettingsCsvFileNameChanged(string value)    { state.settingsCsvFileName                = value; }
+        public void OnExportFolderPathChanged(string value)       { state.exportFolderPath                   = value; }
+        public void OnWonPrizesFileNameChanged(string value)      { state.wonPrizesExportFileName             = value; }
+        public void OnSubtractionFileNameChanged(string value)    { state.prizePoolSubtractionExportFileName  = value; }
+        public void OnUpdatedPrizesFileNameChanged(string value)  { state.updatedPrizesExportFileName         = value; }
 
         // ═════════════════════════════════════════════════════════════════════
         //  Public button handlers
@@ -233,10 +251,34 @@ namespace GETravelGames.PrizeManager
         public void OnExportPrizePoolSubtraction()
         {
             if (!CheckReady()) return;
-            var result = adminService.ExportPrizePoolSubtraction(state.SubtractionExportPath);
+            var result = adminService.ExportPrizePoolSubtraction(
+                state.SubtractionExportPathForKiosk(state.debugKioskId),
+                state.debugKioskId);
             state.previewText = FormatIssues(result);
             SetStatus(result.Summary);
             RefreshAllPanels();
+        }
+
+        public void OnUpdatePrizes()
+        {
+            if (!CheckReady()) return;
+            var result = adminService.ExportUpdatedPrizes(
+                state.PrizesCsvPath,
+                state.importFolderPath,
+                state.SubtractionFileStem,
+                state.UpdatedPrizesExportPath);
+            state.previewText = FormatIssues(result);
+            SetStatus(result.Summary);
+            RefreshAllPanels();
+        }
+
+        public void OnToggleDebugView()
+        {
+            debugControlsActive = !debugControlsActive;
+            if (mainControlsRoot  != null) mainControlsRoot.SetActive(!debugControlsActive);
+            if (debugControlsRoot != null) debugControlsRoot.SetActive(debugControlsActive);
+            if (btnToggleDebugLabel != null)
+                btnToggleDebugLabel.text = debugControlsActive ? "Principal" : "Debug";
         }
 
         /// <summary>Claim Prize button — respects schedule restrictions.</summary>
@@ -316,12 +358,13 @@ namespace GETravelGames.PrizeManager
         {
             // Input field onValueChanged — always runtime (string events are
             // awkward to persist; the public methods are the authoritative target).
-            BindField(importFolderPathField,    OnImportFolderPathChanged);
-            BindField(prizesCsvFileNameField,   OnPrizesCsvFileNameChanged);
-            BindField(settingsCsvFileNameField, OnSettingsCsvFileNameChanged);
-            BindField(exportFolderPathField,    OnExportFolderPathChanged);
-            BindField(wonPrizesFileNameField,   OnWonPrizesFileNameChanged);
-            BindField(subtractionFileNameField, OnSubtractionFileNameChanged);
+            BindField(importFolderPathField,      OnImportFolderPathChanged);
+            BindField(prizesCsvFileNameField,     OnPrizesCsvFileNameChanged);
+            BindField(settingsCsvFileNameField,   OnSettingsCsvFileNameChanged);
+            BindField(exportFolderPathField,      OnExportFolderPathChanged);
+            BindField(wonPrizesFileNameField,     OnWonPrizesFileNameChanged);
+            BindField(subtractionFileNameField,   OnSubtractionFileNameChanged);
+            BindField(updatedPrizesFileNameField, OnUpdatedPrizesFileNameChanged);
 
             // Buttons: only add a runtime listener when the button has no
             // persistent listeners at all (i.e. not yet wired via the editor).
@@ -331,6 +374,8 @@ namespace GETravelGames.PrizeManager
             BindButton(btnApplyAdd,          OnApplyAdd);
             BindButton(btnPreviewSettings,   OnPreviewSettings);
             BindButton(btnApplySettings,     OnApplySettings);
+            BindButton(btnUpdatePrizes,      OnUpdatePrizes);
+            BindButton(btnToggleDebug,       OnToggleDebugView);
             BindButton(btnExportWonPrizes,   OnExportWonPrizes);
             BindButton(btnExportSubtraction, OnExportPrizePoolSubtraction);
             BindButton(btnClaimPrize,        OnDebugClaimNormal);
@@ -405,7 +450,7 @@ namespace GETravelGames.PrizeManager
 
             if (kioskPanelTitle != null)
                 kioskPanelTitle.text =
-                    $"Kiosko {kioskId}  ·  {categories.Count} categoría{(categories.Count == 1 ? "" : "s")}";
+                    $"Stand {kioskId}  ·  {categories.Count} categoría{(categories.Count == 1 ? "" : "s")}";
 
             if (kioskSelectedLabel != null)
                 kioskSelectedLabel.text = BuildSelectedCategoryText(categories);
@@ -469,12 +514,13 @@ namespace GETravelGames.PrizeManager
 
         private void SyncInputFieldTextsFromState()
         {
-            SetField(importFolderPathField,    state.importFolderPath);
-            SetField(prizesCsvFileNameField,   state.prizesCsvFileName);
-            SetField(settingsCsvFileNameField, state.settingsCsvFileName);
-            SetField(exportFolderPathField,    state.exportFolderPath);
-            SetField(wonPrizesFileNameField,   state.wonPrizesExportFileName);
-            SetField(subtractionFileNameField, state.prizePoolSubtractionExportFileName);
+            SetField(importFolderPathField,       state.importFolderPath);
+            SetField(prizesCsvFileNameField,      state.prizesCsvFileName);
+            SetField(settingsCsvFileNameField,    state.settingsCsvFileName);
+            SetField(exportFolderPathField,       state.exportFolderPath);
+            SetField(wonPrizesFileNameField,      state.wonPrizesExportFileName);
+            SetField(subtractionFileNameField,    state.prizePoolSubtractionExportFileName);
+            SetField(updatedPrizesFileNameField,  state.updatedPrizesExportFileName);
         }
 
         private static void SetField(TMP_InputField field, string value)
@@ -557,56 +603,104 @@ namespace GETravelGames.PrizeManager
         private void BuildControlsPanel(Transform parent)
         {
             var panel = MakePanel(parent, "Controls", ControlsWidth, 0f);
-            MakePanelTitle(panel, "Controles");
-            var scrollContent = MakeScrollView(panel, "ControlsScroll");
-            scrollContent.parent.parent.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1f;
-            BuildControlsContent(scrollContent);
+
+            // ── Header row: title + Debug toggle button ────────────────────
+            var header = MakeRect("ControlsHeader", panel);
+            header.gameObject.AddComponent<LayoutElement>().preferredHeight = 28f;
+            var hh = header.gameObject.AddComponent<HorizontalLayoutGroup>();
+            hh.spacing = 8f; hh.childControlWidth = hh.childControlHeight = true;
+            hh.childForceExpandWidth = false; hh.childForceExpandHeight = true;
+
+            var titleLbl = MakeText(header, "PanelTitle", 19f, FontStyles.Bold, TextAlignmentOptions.Left);
+            titleLbl.text = "Panel de Control"; titleLbl.color = Color.white;
+            titleLbl.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
+
+            var toggleRoot = MakeRect("ToggleDebug", header);
+            toggleRoot.gameObject.AddComponent<LayoutElement>().preferredWidth = 90f;
+            var toggleImg = toggleRoot.gameObject.AddComponent<Image>();
+            toggleImg.color = new Color32(55, 40, 40, 255);
+            btnToggleDebug = toggleRoot.gameObject.AddComponent<Button>();
+            btnToggleDebug.targetGraphic = toggleImg;
+            btnToggleDebugLabel = MakeText(toggleRoot, "ToggleDebugLabel", 12f, FontStyles.Bold, TextAlignmentOptions.Center);
+            StretchFill(btnToggleDebugLabel.rectTransform, 3f, 3f, 3f, 3f);
+            btnToggleDebugLabel.text = "Debug"; btnToggleDebugLabel.color = new Color32(200, 140, 140, 255);
+
+            // ── Content area (no ScrollView — two overlaid pages) ──────────
+            var contentArea = MakeRect("ControlsContent", panel);
+            contentArea.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1f;
+
+            var mainGo = new GameObject("MainControlsRoot", typeof(RectTransform));
+            mainGo.transform.SetParent(contentArea, false);
+            StretchFill(mainGo.GetComponent<RectTransform>());
+            var mainVl = mainGo.AddComponent<VerticalLayoutGroup>();
+            mainVl.padding = new RectOffset(0, 0, 4, 8); mainVl.spacing = 5f;
+            mainVl.childControlWidth = mainVl.childControlHeight = true;
+            mainVl.childForceExpandWidth = true; mainVl.childForceExpandHeight = false;
+            mainControlsRoot = mainGo;
+
+            var debugGo = new GameObject("DebugControlsRoot", typeof(RectTransform));
+            debugGo.transform.SetParent(contentArea, false);
+            StretchFill(debugGo.GetComponent<RectTransform>());
+            var debugVl = debugGo.AddComponent<VerticalLayoutGroup>();
+            debugVl.padding = new RectOffset(0, 0, 4, 8); debugVl.spacing = 5f;
+            debugVl.childControlWidth = debugVl.childControlHeight = true;
+            debugVl.childForceExpandWidth = true; debugVl.childForceExpandHeight = false;
+            debugControlsRoot = debugGo;
+            debugGo.SetActive(false);
+
+            BuildMainControlsContent(mainGo.transform);
+            BuildDebugControlsContent(debugGo.transform);
         }
 
-        private void BuildControlsContent(Transform p)
+        private void BuildMainControlsContent(Transform p)
         {
             MakeSectionTitle(p, "Importar");
-            importFolderPathField    = MakeLabeledField(p, "Carpeta de importación", state.importFolderPath, "Ruta a la carpeta",               "ImportFolderPathField");
-            prizesCsvFileNameField   = MakeLabeledField(p, "CSV de premios", state.prizesCsvFileName, "ej. Prizes.csv",              "PrizesCsvFileNameField");
-            settingsCsvFileNameField = MakeLabeledField(p, "CSV de configuración", state.settingsCsvFileName, "ej. Settings.csv",            "SettingsCsvFileNameField");
-
-            MakeSectionTitle(p, "Exportar");
-            exportFolderPathField    = MakeLabeledField(p, "Carpeta de exportación", state.exportFolderPath, "Ruta a la carpeta de exportación",        "ExportFolderPathField");
-            wonPrizesFileNameField   = MakeLabeledField(p, "Premios ganados", state.wonPrizesExportFileName, "ej. WonPrizes.csv",           "WonPrizesFileNameField");
-            subtractionFileNameField = MakeLabeledField(p, "Sustracción", state.prizePoolSubtractionExportFileName, "ej. PrizePoolSubtraction.csv","SubtractionFileNameField");
+            importFolderPathField    = MakeLabeledField(p, "Carpeta de importación", state.importFolderPath,           "Ruta a la carpeta",          "ImportFolderPathField");
+            prizesCsvFileNameField   = MakeLabeledField(p, "CSV de premios",         state.prizesCsvFileName,          "ej. Prizes.csv",             "PrizesCsvFileNameField");
+            settingsCsvFileNameField = MakeLabeledField(p, "CSV de configuración",   state.settingsCsvFileName,        "ej. Settings.csv",           "SettingsCsvFileNameField");
 
             MakeSectionTitle(p, "Pool de premios");
             (btnPreviewInitialize, btnApplyInitialize) = MakeButtonRow(p,
-                "Preview Initialize", "Vista previa: inicializar", ColBtn,
-                "Apply Initialize",   "Aplicar inicialización",   ColBtnSecondary);
+                "Preview Initialize", "Visualizar nuevo Pool", ColBtn,
+                "Apply Initialize",   "Inicializar Pool",      ColBtnSecondary);
             (btnPreviewAdd, btnApplyAdd) = MakeButtonRow(p,
-                "Preview Add", "Vista previa: agregar", ColBtn,
-                "Apply Add",   "Aplicar adición",       ColBtnSecondary);
+                "Preview Add", "Visualizar Adicion", ColBtn,
+                "Apply Add",   "Agregar al Pool",    ColBtnSecondary);
 
             MakeSectionTitle(p, "Configuración");
             (btnPreviewSettings, btnApplySettings) = MakeButtonRow(p,
                 "Preview Settings", "Vista previa: configuración", ColBtn,
                 "Apply Settings",   "Aplicar configuración",       ColBtnSecondary);
 
-            MakeSectionTitle(p, "Exportaciones de cierre");
-            (btnExportWonPrizes, btnExportSubtraction) = MakeButtonRow(p,
-                "Export Won Prizes",   "Exportar premios ganados", ColBtn,
-                "Export Subtraction", "Exportar sustracción",     ColBtn);
+            MakeSectionTitle(p, "Actualizar premios");
+            updatedPrizesFileNameField = MakeLabeledField(p, "Archivo de salida", state.updatedPrizesExportFileName, "ej. PremiosActualizados.csv", "UpdatedPrizesFileNameField");
+            btnUpdatePrizes = MakeButton(p, "Update Prizes", "Actualizar lista de premios", ColBtnConfirm);
+        }
 
-            MakeSectionTitle(p, "Depuración");
+        private void BuildDebugControlsContent(Transform p)
+        {
+            MakeSectionTitle(p, "Exportar resultados");
+            exportFolderPathField    = MakeLabeledField(p, "Carpeta de exportación", state.exportFolderPath,                   "Ruta a la carpeta de exportación", "ExportFolderPathField");
+            wonPrizesFileNameField   = MakeLabeledField(p, "Premios ganados",        state.wonPrizesExportFileName,            "ej. WonPrizes.csv",                "WonPrizesFileNameField");
+            subtractionFileNameField = MakeLabeledField(p, "Sustracción",            state.prizePoolSubtractionExportFileName, "ej. PrizePoolSubtraction.csv",     "SubtractionFileNameField");
+            (btnExportWonPrizes, btnExportSubtraction) = MakeButtonRow(p,
+                "Export Won Prizes",  "Exportar premios ganados",           ColBtn,
+                "Export Subtraction", "Exportar lista de premios a remover", ColBtn);
+
+            MakeSectionTitle(p, "Debug");
             BuildKioskSpinner(p);
             (btnClaimPrize, btnForceClaim) = MakeButtonRow(p,
-                "Claim Prize", "Reclamar premio", ColBtn,
-                "Force Claim", "Forzar reclamo",  ColBtnForce);
+                "Claim Prize", "Reservar premio", ColBtn,
+                "Force Claim", "Forzar reserva",  ColBtnForce);
             (btnCancelClaim, btnConfirmClaim) = MakeButtonRow(p,
-                "Cancel Claim",  "Cancelar reclamo",  ColBtnDanger,
-                "Confirm Claim", "Confirmar reclamo", ColBtnConfirm);
+                "Cancel Claim",  "Cancelar reserva", ColBtnDanger,
+                "Confirm Claim", "Reclamar premio",  ColBtnConfirm);
         }
 
         private void BuildKioskSpinner(Transform parent)
         {
             var lbl = MakeText(parent, "KioskLabel", 13f, FontStyles.Normal, TextAlignmentOptions.Left);
-            lbl.text = "Kiosko"; lbl.color = ColTextSecondary;
+            lbl.text = "Stand"; lbl.color = ColTextSecondary;
             lbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 16f;
 
             var row = MakeRect("KioskSpinner", parent);
@@ -1131,21 +1225,23 @@ namespace GETravelGames.PrizeManager
             canvasRoot = canvas.gameObject;
 
             // Text labels
-            statusLabel        = FindDescendant<TextMeshProUGUI>(root, "StatusLabel");
-            kioskPanelTitle    = FindDescendant<TextMeshProUGUI>(root, "KioskPanelTitle");
-            kioskSelectedLabel = FindDescendant<TextMeshProUGUI>(root, "KioskSelectedLabel");
-            kioskSpinnerLabel  = FindDescendant<TextMeshProUGUI>(root, "KioskSpinnerLabel");
+            statusLabel         = FindDescendant<TextMeshProUGUI>(root, "StatusLabel");
+            kioskPanelTitle     = FindDescendant<TextMeshProUGUI>(root, "KioskPanelTitle");
+            kioskSelectedLabel  = FindDescendant<TextMeshProUGUI>(root, "KioskSelectedLabel");
+            kioskSpinnerLabel   = FindDescendant<TextMeshProUGUI>(root, "KioskSpinnerLabel");
+            btnToggleDebugLabel = FindDescendant<TextMeshProUGUI>(root, "ToggleDebugLabel");
 
             // Input fields
-            importFolderPathField    = FindDescendant<TMP_InputField>(root, "ImportFolderPathField");
-            prizesCsvFileNameField   = FindDescendant<TMP_InputField>(root, "PrizesCsvFileNameField");
-            settingsCsvFileNameField = FindDescendant<TMP_InputField>(root, "SettingsCsvFileNameField");
-            exportFolderPathField    = FindDescendant<TMP_InputField>(root, "ExportFolderPathField");
-            wonPrizesFileNameField   = FindDescendant<TMP_InputField>(root, "WonPrizesFileNameField");
-            subtractionFileNameField = FindDescendant<TMP_InputField>(root, "SubtractionFileNameField");
-            storeSummaryField        = FindDescendant<TMP_InputField>(root, "StoreSummaryField");
-            settingsPreviewField     = FindDescendant<TMP_InputField>(root, "SettingsPreviewField");
-            previewOutputField       = FindDescendant<TMP_InputField>(root, "PreviewOutputField");
+            importFolderPathField      = FindDescendant<TMP_InputField>(root, "ImportFolderPathField");
+            prizesCsvFileNameField     = FindDescendant<TMP_InputField>(root, "PrizesCsvFileNameField");
+            settingsCsvFileNameField   = FindDescendant<TMP_InputField>(root, "SettingsCsvFileNameField");
+            exportFolderPathField      = FindDescendant<TMP_InputField>(root, "ExportFolderPathField");
+            wonPrizesFileNameField     = FindDescendant<TMP_InputField>(root, "WonPrizesFileNameField");
+            subtractionFileNameField   = FindDescendant<TMP_InputField>(root, "SubtractionFileNameField");
+            updatedPrizesFileNameField = FindDescendant<TMP_InputField>(root, "UpdatedPrizesFileNameField");
+            storeSummaryField          = FindDescendant<TMP_InputField>(root, "StoreSummaryField");
+            settingsPreviewField       = FindDescendant<TMP_InputField>(root, "SettingsPreviewField");
+            previewOutputField         = FindDescendant<TMP_InputField>(root, "PreviewOutputField");
 
             // Buttons
             btnPreviewInitialize = FindDescendant<Button>(root, "Preview Initialize");
@@ -1154,6 +1250,7 @@ namespace GETravelGames.PrizeManager
             btnApplyAdd          = FindDescendant<Button>(root, "Apply Add");
             btnPreviewSettings   = FindDescendant<Button>(root, "Preview Settings");
             btnApplySettings     = FindDescendant<Button>(root, "Apply Settings");
+            btnUpdatePrizes      = FindDescendant<Button>(root, "Update Prizes");
             btnExportWonPrizes   = FindDescendant<Button>(root, "Export Won Prizes");
             btnExportSubtraction = FindDescendant<Button>(root, "Export Subtraction");
             btnClaimPrize        = FindDescendant<Button>(root, "Claim Prize");
@@ -1162,9 +1259,14 @@ namespace GETravelGames.PrizeManager
             btnConfirmClaim      = FindDescendant<Button>(root, "Confirm Claim");
             kioskDecrBtn         = FindDescendant<Button>(root, "KioskDecrBtn");
             kioskIncrBtn         = FindDescendant<Button>(root, "KioskIncrBtn");
+            btnToggleDebug       = FindDescendant<Button>(root, "ToggleDebug");
 
             // Kiosk content rect
             kioskCategoryContent = FindDescendantRect(root, "KioskCategoryContent");
+
+            // Debug view roots
+            mainControlsRoot  = FindDescendantRect(root, "MainControlsRoot")?.gameObject;
+            debugControlsRoot = FindDescendantRect(root, "DebugControlsRoot")?.gameObject;
 
             // Wire persistent listeners on every button so they survive domain reloads.
             WirePersistentButton(btnPreviewInitialize, nameof(OnPreviewInitialize));
@@ -1173,6 +1275,8 @@ namespace GETravelGames.PrizeManager
             WirePersistentButton(btnApplyAdd,          nameof(OnApplyAdd));
             WirePersistentButton(btnPreviewSettings,   nameof(OnPreviewSettings));
             WirePersistentButton(btnApplySettings,     nameof(OnApplySettings));
+            WirePersistentButton(btnUpdatePrizes,      nameof(OnUpdatePrizes));
+            WirePersistentButton(btnToggleDebug,       nameof(OnToggleDebugView));
             WirePersistentButton(btnExportWonPrizes,   nameof(OnExportWonPrizes));
             WirePersistentButton(btnExportSubtraction, nameof(OnExportPrizePoolSubtraction));
             WirePersistentButton(btnClaimPrize,        nameof(OnDebugClaimNormal));
@@ -1226,35 +1330,40 @@ namespace GETravelGames.PrizeManager
         private void ReportMissingRefs()
         {
             var missing = new List<string>();
-            if (!canvasRoot)           missing.Add("canvasRoot");
-            if (!statusLabel)          missing.Add("statusLabel");
+            if (!canvasRoot)               missing.Add("canvasRoot");
+            if (!statusLabel)              missing.Add("statusLabel");
             if (!importFolderPathField)    missing.Add("importFolderPathField");
             if (!prizesCsvFileNameField)   missing.Add("prizesCsvFileNameField");
             if (!settingsCsvFileNameField) missing.Add("settingsCsvFileNameField");
             if (!exportFolderPathField)    missing.Add("exportFolderPathField");
             if (!wonPrizesFileNameField)   missing.Add("wonPrizesFileNameField");
             if (!subtractionFileNameField) missing.Add("subtractionFileNameField");
-            if (!storeSummaryField)    missing.Add("storeSummaryField");
-            if (!settingsPreviewField) missing.Add("settingsPreviewField");
-            if (!previewOutputField)   missing.Add("previewOutputField");
-            if (!btnPreviewInitialize) missing.Add("btnPreviewInitialize");
-            if (!btnApplyInitialize)   missing.Add("btnApplyInitialize");
-            if (!btnPreviewAdd)        missing.Add("btnPreviewAdd");
-            if (!btnApplyAdd)          missing.Add("btnApplyAdd");
-            if (!btnPreviewSettings)   missing.Add("btnPreviewSettings");
-            if (!btnApplySettings)     missing.Add("btnApplySettings");
-            if (!btnExportWonPrizes)   missing.Add("btnExportWonPrizes");
-            if (!btnExportSubtraction) missing.Add("btnExportSubtraction");
-            if (!btnClaimPrize)        missing.Add("btnClaimPrize");
-            if (!btnForceClaim)        missing.Add("btnForceClaim");
-            if (!btnCancelClaim)       missing.Add("btnCancelClaim");
-            if (!btnConfirmClaim)      missing.Add("btnConfirmClaim");
-            if (!kioskDecrBtn)         missing.Add("kioskDecrBtn");
-            if (!kioskSpinnerLabel)    missing.Add("kioskSpinnerLabel");
-            if (!kioskIncrBtn)         missing.Add("kioskIncrBtn");
-            if (!kioskPanelTitle)      missing.Add("kioskPanelTitle");
-            if (!kioskSelectedLabel)   missing.Add("kioskSelectedLabel");
-            if (!kioskCategoryContent) missing.Add("kioskCategoryContent");
+            if (!updatedPrizesFileNameField) missing.Add("updatedPrizesFileNameField");
+            if (!storeSummaryField)        missing.Add("storeSummaryField");
+            if (!settingsPreviewField)     missing.Add("settingsPreviewField");
+            if (!previewOutputField)       missing.Add("previewOutputField");
+            if (!btnPreviewInitialize)     missing.Add("btnPreviewInitialize");
+            if (!btnApplyInitialize)       missing.Add("btnApplyInitialize");
+            if (!btnPreviewAdd)            missing.Add("btnPreviewAdd");
+            if (!btnApplyAdd)              missing.Add("btnApplyAdd");
+            if (!btnPreviewSettings)       missing.Add("btnPreviewSettings");
+            if (!btnApplySettings)         missing.Add("btnApplySettings");
+            if (!btnUpdatePrizes)          missing.Add("btnUpdatePrizes");
+            if (!btnToggleDebug)           missing.Add("btnToggleDebug");
+            if (mainControlsRoot  == null) missing.Add("mainControlsRoot");
+            if (debugControlsRoot == null) missing.Add("debugControlsRoot");
+            if (!btnExportWonPrizes)       missing.Add("btnExportWonPrizes");
+            if (!btnExportSubtraction)     missing.Add("btnExportSubtraction");
+            if (!btnClaimPrize)            missing.Add("btnClaimPrize");
+            if (!btnForceClaim)            missing.Add("btnForceClaim");
+            if (!btnCancelClaim)           missing.Add("btnCancelClaim");
+            if (!btnConfirmClaim)          missing.Add("btnConfirmClaim");
+            if (!kioskDecrBtn)             missing.Add("kioskDecrBtn");
+            if (!kioskSpinnerLabel)        missing.Add("kioskSpinnerLabel");
+            if (!kioskIncrBtn)             missing.Add("kioskIncrBtn");
+            if (!kioskPanelTitle)          missing.Add("kioskPanelTitle");
+            if (!kioskSelectedLabel)       missing.Add("kioskSelectedLabel");
+            if (!kioskCategoryContent)     missing.Add("kioskCategoryContent");
 
             if (missing.Count > 0)
                 Debug.LogWarning(

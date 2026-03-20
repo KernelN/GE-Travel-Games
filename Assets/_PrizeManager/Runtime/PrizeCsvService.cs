@@ -191,6 +191,106 @@ namespace GETravelGames.PrizeManager
         }
 
         /// <summary>
+        /// Exports the current available prize pool as a standard prizes CSV so the
+        /// admin can use it as the new master file after applying subtractions.
+        /// Amounts reflect how many instances remain per category.
+        /// Rows are ordered by PrizeCategoryId.
+        /// </summary>
+        public string ExportUpdatedPrizesCsv(
+            IEnumerable<PrizeTemplate> templates,
+            IEnumerable<PrizeInstance> availableInstances)
+        {
+            var countByCategory = availableInstances
+                .GroupBy(i => i.PrizeCategoryId)
+                .ToDictionary(g => g.Key, g => g.Count());
+            return ExportUpdatedPrizesCsv(templates, countByCategory);
+        }
+
+        /// <summary>
+        /// Exports prizes CSV using a pre-computed count per category.
+        /// </summary>
+        public string ExportUpdatedPrizesCsv(
+            IEnumerable<PrizeTemplate> templates,
+            IReadOnlyDictionary<ushort, int> countByCategory)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine(
+                "PrizeCategoryId,PrizeAmount,PrizeName,PrizeDescription," +
+                "PrizePriority,PrizeHourStart,PrizeHourEnd,HasToComeOutDuringHour,PrizeDays");
+
+            foreach (var template in templates.OrderBy(t => t.PrizeCategoryId))
+            {
+                countByCategory.TryGetValue(template.PrizeCategoryId, out var remaining);
+                var s = template.Schedule;
+
+                builder.Append(template.PrizeCategoryId.ToString(CultureInfo.InvariantCulture));
+                builder.Append(',');
+                builder.Append(remaining.ToString(CultureInfo.InvariantCulture));
+                builder.Append(',');
+                builder.Append(EscapeCsv(template.PrizeName));
+                builder.Append(',');
+                builder.Append(EscapeCsv(template.PrizeDescription));
+                builder.Append(',');
+                builder.Append(template.PrizePriority.ToString(CultureInfo.InvariantCulture));
+                builder.Append(',');
+                builder.Append(s?.PrizeStartMinutesOfDay.HasValue == true
+                    ? $"{s.PrizeStartMinutesOfDay.Value / 60:D2}:{s.PrizeStartMinutesOfDay.Value % 60:D2}"
+                    : string.Empty);
+                builder.Append(',');
+                builder.Append(s?.PrizeEndMinutesOfDay.HasValue == true
+                    ? $"{s.PrizeEndMinutesOfDay.Value / 60:D2}:{s.PrizeEndMinutesOfDay.Value % 60:D2}"
+                    : string.Empty);
+                builder.Append(',');
+                builder.Append(s?.HasToComeOutDuringHour == true ? "true" : string.Empty);
+                builder.Append(',');
+                builder.Append(s?.PrizeDays != null && s.PrizeDays.Count > 0
+                    ? string.Join("|", s.PrizeDays)
+                    : string.Empty);
+                builder.AppendLine();
+            }
+
+            return builder.ToString();
+        }
+
+        /// <summary>
+        /// Parses a subtraction CSV (PrizeCategoryId,AmountToSubtract,PrizeName,PrizeDescription).
+        /// Header row is skipped. Invalid rows are silently skipped.
+        /// </summary>
+        public List<PrizePoolSubtractionRecord> ParseSubtractionCsv(string csvContent)
+        {
+            var result = new List<PrizePoolSubtractionRecord>();
+            if (string.IsNullOrWhiteSpace(csvContent))
+            {
+                return result;
+            }
+
+            var rows = ParseCsvRows(csvContent, out _);
+            for (var i = 1; i < rows.Count; i++)
+            {
+                var cols = NormalizeColumnCount(rows[i], PrizeManagerConstants.SubtractionExportColumnCount);
+                if (!ushort.TryParse(cols[0].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var catId))
+                {
+                    continue;
+                }
+
+                if (!int.TryParse(cols[1].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var amount))
+                {
+                    continue;
+                }
+
+                result.Add(new PrizePoolSubtractionRecord
+                {
+                    PrizeCategoryId  = catId,
+                    AmountToSubtract = amount,
+                    PrizeName        = cols[2].Trim(),
+                    PrizeDescription = cols[3].Trim(),
+                });
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// End-of-day subtraction export.  Aggregates won prizes by category so the
         /// admin knows how many physical units to remove from each category's stock.
         /// Rows are ordered by PrizeCategoryId.

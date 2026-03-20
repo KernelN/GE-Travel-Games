@@ -15,6 +15,7 @@ namespace GETravelGames.PrizeManager
         public string exportFolderPath = string.Empty;
         public string wonPrizesExportFileName = "WonPrizes.csv";
         public string prizePoolSubtractionExportFileName = "PrizePoolSubtraction.csv";
+        public string updatedPrizesExportFileName = "PremiosActualizados.csv";
 
         // ── Debug state ───────────────────────────────────────────────────────
         public int debugKioskId = 1;
@@ -47,6 +48,26 @@ namespace GETravelGames.PrizeManager
             string.IsNullOrWhiteSpace(exportFolderPath)
                 ? prizePoolSubtractionExportFileName
                 : Path.Combine(exportFolderPath, prizePoolSubtractionExportFileName);
+
+        /// <summary>Stem of the subtraction file name used for glob patterns.</summary>
+        public string SubtractionFileStem =>
+            Path.GetFileNameWithoutExtension(prizePoolSubtractionExportFileName);
+
+        /// <summary>Full path for the kiosk-specific subtraction file.</summary>
+        public string SubtractionExportPathForKiosk(int kioskId)
+        {
+            var stem = Path.GetFileNameWithoutExtension(prizePoolSubtractionExportFileName);
+            var ext  = Path.GetExtension(prizePoolSubtractionExportFileName);
+            var fileName = $"{stem}_{kioskId}{ext}";
+            return string.IsNullOrWhiteSpace(exportFolderPath)
+                ? fileName
+                : Path.Combine(exportFolderPath, fileName);
+        }
+
+        public string UpdatedPrizesExportPath =>
+            string.IsNullOrWhiteSpace(exportFolderPath)
+                ? updatedPrizesExportFileName
+                : Path.Combine(exportFolderPath, updatedPrizesExportFileName);
 
         // ── Defaults ──────────────────────────────────────────────────────────
 

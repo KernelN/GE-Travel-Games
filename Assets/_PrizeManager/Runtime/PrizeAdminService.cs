@@ -170,13 +170,72 @@ namespace GETravelGames.PrizeManager
                 $"Se exportaron {stateStore.WonPrizeHistory.Count} premio(s) ganado(s) a {filePath}.");
         }
 
-        public PrizeAdminOperationResult ExportPrizePoolSubtraction(string filePath)
+        public PrizeAdminOperationResult ExportPrizePoolSubtraction(string filePath, int kioskId)
         {
-            var wonCount = stateStore.WonPrizeHistory.Count;
+            var wonForKiosk = stateStore.WonPrizeHistory.Where(r => r.KioskId == kioskId).ToList();
+            var wonCount = wonForKiosk.Count;
             return ExportCsvFile(
                 filePath,
-                () => csvService.ExportPrizePoolSubtractionCsv(stateStore.WonPrizeHistory),
-                $"Se exportó la sustracción del pool para {wonCount} premio(s) ganado(s) a {filePath}.");
+                () => csvService.ExportPrizePoolSubtractionCsv(wonForKiosk),
+                $"Se exportó la sustracción del pool del Stand {kioskId} ({wonCount} premio(s)) a {filePath}.");
+        }
+
+        public PrizeAdminOperationResult ExportUpdatedPrizes(
+            string prizesCsvPath,
+            string importFolder,
+            string subtractionFileStem,
+            string outputPath)
+        {
+            var basePreview = csvService.PreviewPrizeImport(prizesCsvPath, PrizeImportMode.Initialize);
+            if (!basePreview.IsValid)
+            {
+                return new PrizeAdminOperationResult
+                {
+                    Success = false,
+                    Summary = $"Error al leer el archivo de premios base: {prizesCsvPath}",
+                    Issues  = CloneIssues(basePreview.Issues),
+                    TemplateCount        = stateStore.Templates.Count,
+                    AvailablePrizeCount  = stateStore.AvailablePrizeInstances.Count,
+                    WonPrizeCount        = stateStore.WonPrizeHistory.Count,
+                    SettingsSnapshot     = stateStore.ActiveSettings,
+                    ActiveReservation    = stateStore.ActiveReservation,
+                };
+            }
+
+            var totalSubtractions = new Dictionary<ushort, int>();
+            var filesFound = 0;
+            if (Directory.Exists(importFolder))
+            {
+                var pattern = $"{subtractionFileStem}_*.csv";
+                foreach (var file in Directory.GetFiles(importFolder, pattern))
+                {
+                    filesFound++;
+                    var content = File.ReadAllText(file, Encoding.UTF8);
+                    foreach (var r in csvService.ParseSubtractionCsv(content))
+                    {
+                        totalSubtractions.TryGetValue(r.PrizeCategoryId, out var prev);
+                        totalSubtractions[r.PrizeCategoryId] = prev + r.AmountToSubtract;
+                    }
+                }
+            }
+
+            var baseCounts = basePreview.Instances
+                .GroupBy(i => i.PrizeCategoryId)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            foreach (var kv in totalSubtractions)
+            {
+                if (baseCounts.TryGetValue(kv.Key, out var count))
+                {
+                    baseCounts[kv.Key] = Math.Max(0, count - kv.Value);
+                }
+            }
+
+            return ExportCsvFile(
+                outputPath,
+                () => csvService.ExportUpdatedPrizesCsv(basePreview.Templates, baseCounts),
+                $"Se exportó la lista actualizada ({basePreview.Templates.Count} categoría(s), " +
+                $"{filesFound} archivo(s) de sustracción) a {outputPath}.");
         }
 
         // ── Debug claim operations ────────────────────────────────────────────

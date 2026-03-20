@@ -9,6 +9,7 @@ namespace GETravelGames.PrizeManager
         public const string AdminSceneName = "Prize Admin Scene";
         public const string DefaultWonPrizesExportFileName = "WonPrizes.csv";
         public const string DefaultPrizePoolSubtractionExportFileName = "PrizePoolSubtraction.csv";
+        public const string DefaultUpdatedPrizesExportFileName = "PremiosActualizados.csv";
         public const string InitialPreviewText = "Ingrese las rutas de los archivos CSV, luego previsualice o aplique una importación.";
         public const string InitialStatusText = "Herramienta de administración de premios lista.";
     }
