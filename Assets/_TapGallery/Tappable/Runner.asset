@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b125c63e20d8d4cbfbc9aecd0a3aca, type: 3}
   m_Name: Runner
   m_EditorClassIdentifier: Assembly-CSharp::TappableConfig
-  sprite: {fileID: 0}
   behavior: 5
   score: 15
-  movementSpeed: 3
+  movementSpeed: 6
   peekDuration: 1
   jumpHeight: 1.5
   jumpCurve:
@@ -43,3 +42,4 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   runArrivalDistanceThreshold: 0.15
+  peekDistance: 0

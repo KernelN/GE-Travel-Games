@@ -58,7 +58,7 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
     IEnumerator PeekRoutine(Direction dir, Spot spot)
     {
         Vector2 hiddenPos = spot.Center;
-        Vector2 peekPos = GetPeekPosition(dir, spot);
+        Vector2 peekPos = GetPeekPosition(dir, spot, config.PeekDistance);
 
         transform.position = hiddenPos;
         yield return MoveTowards(peekPos);
@@ -70,7 +70,7 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
     IEnumerator PeekAndJumpRoutine(Direction dir, Spot spot)
     {
         Vector2 hiddenPos = spot.Center;
-        Vector2 peekPos = GetPeekPosition(dir, spot);
+        Vector2 peekPos = GetPeekPosition(dir, spot, config.PeekDistance);
 
         // Peek phase
         transform.position = hiddenPos;
@@ -97,7 +97,7 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
     IEnumerator JumpRoutine(Direction dir, Spot spot)
     {
         Vector2 hiddenPos = spot.Center;
-        Vector2 peekPos = GetPeekPosition(dir, spot);
+        Vector2 peekPos = GetPeekPosition(dir, spot, config.PeekDistance);
 
         // No peek — start at edge immediately
         transform.position = peekPos;
@@ -122,7 +122,7 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
     IEnumerator PeekJumpAndRunRoutine(Direction dir, Spot spot, Spot runTarget)
     {
         Vector2 hiddenPos = spot.Center;
-        Vector2 peekPos = GetPeekPosition(dir, spot);
+        Vector2 peekPos = GetPeekPosition(dir, spot, config.PeekDistance);
 
         // Peek phase
         transform.position = hiddenPos;
@@ -162,7 +162,7 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
     IEnumerator PeekAndRunRoutine(Direction dir, Spot spot, Spot runTarget)
     {
         Vector2 hiddenPos = spot.Center;
-        Vector2 peekPos = GetPeekPosition(dir, spot);
+        Vector2 peekPos = GetPeekPosition(dir, spot, config.PeekDistance);
 
         // Peek phase
         transform.position = hiddenPos;
@@ -180,7 +180,7 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
     IEnumerator RunRoutine(Direction dir, Spot spot, Spot runTarget)
     {
         // No peek — start at spot edge and immediately run
-        transform.position = GetPeekPosition(dir, spot);
+        transform.position = GetPeekPosition(dir, spot, config.PeekDistance);
 
         yield return RunPhase(dir, runTarget);
         Complete();
@@ -201,9 +201,11 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
 
     IEnumerator RunPhase(Direction dir, Spot runTarget)
     {
+        Vector2 startPos = transform.position;
+
         Vector2 destination = runTarget != null
             ? runTarget.Center
-            : GetScreenExitPosition(dir);
+            : GetScreenExitPosition(dir, startPos);
 
         float arrivalThreshold = runTarget != null
             ? config.RunArrivalDistanceThreshold
@@ -230,10 +232,10 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
 
     // ── Position helpers ──────────────────────────────────────────────────────
 
-    static Vector2 GetPeekPosition(Direction dir, Spot spot)
+    static Vector2 GetPeekPosition(Direction dir, Spot spot, float peekDistance)
     {
         Bounds b = spot.WorldBounds;
-        return dir switch
+        Vector2 edge = dir switch
         {
             Direction.Top    => new Vector2(spot.Center.x, b.max.y),
             Direction.Bottom => new Vector2(spot.Center.x, b.min.y),
@@ -241,6 +243,7 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
             Direction.Right  => new Vector2(b.max.x, spot.Center.y),
             _                => spot.Center
         };
+        return edge + GetOutwardDirection(dir) * peekDistance;
     }
 
     static Vector2 GetOutwardDirection(Direction dir)
@@ -255,7 +258,7 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
         };
     }
 
-    static Vector2 GetScreenExitPosition(Direction dir)
+    static Vector2 GetScreenExitPosition(Direction dir, Vector2 currentPos)
     {
         Camera cam = Camera.main;
         if (cam == null)
@@ -267,11 +270,11 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
 
         return dir switch
         {
-            Direction.Top    => new Vector2(camPos.x, camPos.y + h + 2f),
-            Direction.Bottom => new Vector2(camPos.x, camPos.y - h - 2f),
-            Direction.Left   => new Vector2(camPos.x - w - 2f, camPos.y),
-            Direction.Right  => new Vector2(camPos.x + w + 2f, camPos.y),
-            _                => new Vector2(camPos.x + w + 2f, camPos.y)
+            Direction.Top    => new Vector2(currentPos.x, camPos.y + h + 2f),
+            Direction.Bottom => new Vector2(currentPos.x, camPos.y - h - 2f),
+            Direction.Left   => new Vector2(camPos.x - w - 2f, currentPos.y),
+            Direction.Right  => new Vector2(camPos.x + w + 2f, currentPos.y),
+            _                => new Vector2(camPos.x + w + 2f, currentPos.y)
         };
     }
 
