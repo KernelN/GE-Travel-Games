@@ -4,7 +4,7 @@ Unity 6 project containing one implemented game, one placeholder subsystem, and 
 
 ## Project Structure
 - `Assets/_SnakeAirlines`: current implemented SnakeAirlines prototype.
-- `Assets/_CarryOn`: reserved for the future second game.
+- `Assets/_TapGallery`: second game, tap/shooting gallery, specified but not yet implemented.
 - `Assets/_PrizeManager`: shared prize-system foundation, internal admin tooling, and future UGS integration area.
 
 Agent-oriented documentation lives in `AGENTS.md` and the guides under `docs/`.
@@ -65,6 +65,7 @@ The architecture, admin workflow, and CSV contracts for that subsystem are docum
 - `docs/UGS_PRIZE_SYSTEM.md`
 - `docs/PRIZE_ADMIN_APP.md`
 - `docs/PRIZE_CSV_SPEC.md`
+- `docs/TAPGALLERY_GAME.md`
 
 ## Current Notes
 - `ProjectSettings/EditorBuildSettings.asset` points at the playable SnakeAirlines scene under `Assets/_SnakeAirlines`.
