@@ -26,6 +26,8 @@ public class TapGalleryManager : MonoBehaviour
     [SerializeField] List<SpotWeightEntry> spotWeights;
     [SerializeField] List<TappablePoolEntry> tappablePools;
     [SerializeField] TMP_Text scoreLabel;
+    [SerializeField] TappableParticleController[] burstEffectPool;
+    [SerializeField] TappableTrailController[] trailEffectPool;
 
     int score;
     int activeTappableCount;
@@ -33,6 +35,8 @@ public class TapGalleryManager : MonoBehaviour
     bool sessionActive;
 
     Dictionary<TappableConfig, ObjectPool<Tappable>> pools;
+    readonly Queue<TappableParticleController> availableBurstEffects = new();
+    readonly Queue<TappableTrailController> availableTrailEffects = new();
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
@@ -59,6 +63,14 @@ public class TapGalleryManager : MonoBehaviour
 
             pools[entry.Config] = pool;
         }
+
+        if (burstEffectPool != null)
+            foreach (TappableParticleController effect in burstEffectPool)
+                if (effect != null) { effect.Initialize(this); effect.Prepare(); availableBurstEffects.Enqueue(effect); }
+
+        if (trailEffectPool != null)
+            foreach (TappableTrailController effect in trailEffectPool)
+                if (effect != null) { effect.Initialize(this); effect.Prepare(); availableTrailEffects.Enqueue(effect); }
     }
 
     void Start()
@@ -131,13 +143,23 @@ public class TapGalleryManager : MonoBehaviour
         Tappable tappable = pool.Get();
         activeTappableCount++;
 
+        // Only runners (TappableBehavior.Run) get a continuous trail.
+        TappableTrailController trail = tappableConfig.Behavior == TappableBehavior.Run
+            ? GetTrailEffect()
+            : null;
+
         tappable.StartBehavior(direction, spot, runTarget, () =>
         {
             if (tappable.WasTapped)
                 AddScore(tappable.Config.Score);
+
+            // Burst plays at the tappable's last position; it lives on independently
+            // after the tappable is returned to the pool.
+            PlayBurstEffect(tappable.transform.position);
+
             pool.Release(tappable);
             activeTappableCount--;
-        });
+        }, trail);
     }
 
     // ── Score ─────────────────────────────────────────────────────────────────
@@ -232,5 +254,39 @@ public class TapGalleryManager : MonoBehaviour
         return behavior == TappableBehavior.PeekJumpAndRun ||
                behavior == TappableBehavior.PeekAndRun    ||
                behavior == TappableBehavior.Run;
+    }
+
+    // ── VFX helpers ───────────────────────────────────────────────────────────────
+
+    void PlayBurstEffect(Vector2 position)
+    {
+        if (availableBurstEffects.Count == 0) return;
+        availableBurstEffects.Dequeue().PlayAt(position);
+    }
+
+    TappableTrailController GetTrailEffect()
+    {
+        if (availableTrailEffects.Count == 0) return null;
+        return availableTrailEffects.Dequeue();
+    }
+
+    // Called by TappableParticleController.OnParticleSystemStopped once all burst
+    // particles have naturally died.
+    internal void ReturnBurstToPool(TappableParticleController effect)
+    {
+        if (effect == null) return;
+        effect.Initialize(this);
+        effect.Prepare();
+        availableBurstEffects.Enqueue(effect);
+    }
+
+    // Called by TappableTrailController.OnParticleSystemStopped once all trail
+    // particles have naturally died.
+    internal void ReturnTrailToPool(TappableTrailController effect)
+    {
+        if (effect == null) return;
+        effect.Initialize(this);
+        effect.Prepare();
+        availableTrailEffects.Enqueue(effect);
     }
 }

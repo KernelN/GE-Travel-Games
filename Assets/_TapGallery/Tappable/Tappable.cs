@@ -13,13 +13,16 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
     public bool WasTapped { get; private set; }
 
     Action onDone;
+    TappableTrailController activeTrail;
 
     // ── Public API ────────────────────────────────────────────────────────────
 
-    public void StartBehavior(Direction direction, Spot originSpot, Spot runTarget, Action callback)
+    public void StartBehavior(Direction direction, Spot originSpot, Spot runTarget, Action callback,
+        TappableTrailController trail = null)
     {
         WasTapped = false;
         onDone = callback;
+        activeTrail = trail;
         StopAllCoroutines();
 
         switch (config.Behavior)
@@ -50,6 +53,9 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
         if (WasTapped) return;
         WasTapped = true;
         StopAllCoroutines();
+        // Stop emitting trail particles; existing world-space particles die naturally.
+        activeTrail?.StopEmitting();
+        activeTrail = null;
         Complete();
     }
 
@@ -212,8 +218,23 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
             : 0.05f;
 
         float speed = config.MovementSpeed;
+
+        // Begin trail behind the runner (opposite to initial movement direction).
+        if (activeTrail != null)
+        {
+            Vector2 initialMoveDir = (destination - startPos).normalized;
+            activeTrail.BeginAt(transform.position, -initialMoveDir);
+        }
+
         while (Vector2.Distance(transform.position, destination) > arrivalThreshold)
         {
+            // Keep the trail spawner on the runner and pointed backward each frame.
+            if (activeTrail != null)
+            {
+                Vector2 moveDir = ((Vector2)destination - (Vector2)transform.position).normalized;
+                activeTrail.UpdatePositionAndDirection(transform.position, -moveDir);
+            }
+
             transform.position = Vector2.MoveTowards(transform.position, destination, speed * Time.deltaTime);
             yield return null;
 
@@ -221,6 +242,11 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
             if (runTarget != null)
                 destination = runTarget.Center;
         }
+
+        // Stop spawning new trail particles; existing world-space particles die naturally,
+        // then TappableTrailController.OnParticleSystemStopped returns it to the pool.
+        activeTrail?.StopEmitting();
+        activeTrail = null;
     }
 
     void Complete()
