@@ -227,7 +227,7 @@ MonoBehaviour:
   - Spot: {fileID: 347890956}
     Weight: 1
   - Spot: {fileID: 762547859}
-    Weight: 0.8
+    Weight: 2
   tappablePools:
   - Config: {fileID: 11400000, guid: 25982f990e924674ea1e10ecedf3a8c4, type: 2}
     Prefab: {fileID: 2843732954885653069, guid: 084d4bf14f8365b47b83f7e1b6da83b5, type: 3}
