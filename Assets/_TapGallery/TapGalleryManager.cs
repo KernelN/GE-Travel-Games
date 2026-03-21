@@ -151,11 +151,10 @@ public class TapGalleryManager : MonoBehaviour
         tappable.StartBehavior(direction, spot, runTarget, () =>
         {
             if (tappable.WasTapped)
+            {
                 AddScore(tappable.Config.Score);
-
-            // Burst plays at the tappable's last position; it lives on independently
-            // after the tappable is returned to the pool.
-            PlayBurstEffect(tappable.transform.position);
+                PlayBurstEffect(tappable.transform.position);
+            }
 
             pool.Release(tappable);
             activeTappableCount--;

@@ -8,12 +8,23 @@ using UnityEngine.EventSystems;
 public class Tappable : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] TappableConfig config;
+    [SerializeField] SpriteRenderer spriteRenderer;
 
     public TappableConfig Config => config;
     public bool WasTapped { get; private set; }
 
     Action onDone;
     TappableTrailController activeTrail;
+    float halfHeight;
+
+    void Awake()
+    {
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        halfHeight = spriteRenderer != null && spriteRenderer.sprite != null
+            ? spriteRenderer.sprite.bounds.extents.y
+            : 0f;
+    }
 
     // ── Public API ────────────────────────────────────────────────────────────
 
@@ -223,7 +234,7 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
         if (activeTrail != null)
         {
             Vector2 initialMoveDir = (destination - startPos).normalized;
-            activeTrail.BeginAt(transform.position, -initialMoveDir);
+            activeTrail.BeginAt(GetFootPosition(), -initialMoveDir);
         }
 
         while (Vector2.Distance(transform.position, destination) > arrivalThreshold)
@@ -232,7 +243,7 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
             if (activeTrail != null)
             {
                 Vector2 moveDir = ((Vector2)destination - (Vector2)transform.position).normalized;
-                activeTrail.UpdatePositionAndDirection(transform.position, -moveDir);
+                activeTrail.UpdatePositionAndDirection(GetFootPosition(), -moveDir);
             }
 
             transform.position = Vector2.MoveTowards(transform.position, destination, speed * Time.deltaTime);
@@ -255,6 +266,9 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
         onDone = null;
         callback?.Invoke();
     }
+
+    Vector2 GetFootPosition() =>
+        new Vector2(transform.position.x, transform.position.y - halfHeight);
 
     // ── Position helpers ──────────────────────────────────────────────────────
 

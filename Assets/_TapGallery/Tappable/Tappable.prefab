@@ -142,3 +142,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tappable
   config: {fileID: 0}
+  spriteRenderer: {fileID: 4934482569925784202}
