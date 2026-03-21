@@ -239,6 +239,18 @@ MonoBehaviour:
     Prefab: {fileID: 3657155482851674770, guid: c3bb7a19c5f6f5b43b1a0782b1a8e213, type: 3}
     PrewarmCount: 2
   scoreLabel: {fileID: 1453616778}
+  burstEffectPool:
+  - {fileID: 652395717}
+  - {fileID: 1372270871}
+  - {fileID: 1873642704}
+  - {fileID: 1776733633}
+  - {fileID: 1968198096}
+  - {fileID: 1256100048}
+  trailEffectPool:
+  - {fileID: 1057433926}
+  - {fileID: 1974280421}
+  - {fileID: 1560050100}
+  - {fileID: 800805626}
 --- !u!4 &494695807
 Transform:
   m_ObjectHideFlags: 0
@@ -265,6 +277,79 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ee924fe529916840a65047a314f2bd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Spot
+--- !u!1001 &652395715
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2033610390}
+    m_Modifications:
+    - target: {fileID: 1234884624901092128, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_Name
+      value: Tappable Burst Particles
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+--- !u!4 &652395716 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+  m_PrefabInstance: {fileID: 652395715}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &652395717 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3806615194741816622, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+  m_PrefabInstance: {fileID: 652395715}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e4d6d3b442c16f4c8c0dbd69afa469e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TappableParticleController
 --- !u!1 &751637960
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,6 +501,79 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ee924fe529916840a65047a314f2bd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Spot
+--- !u!1001 &800805624
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2033610390}
+    m_Modifications:
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8533651551306020721, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_Name
+      value: Tappable Trail Particles (3)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+--- !u!4 &800805625 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+  m_PrefabInstance: {fileID: 800805624}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &800805626 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6322911669234733414, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+  m_PrefabInstance: {fileID: 800805624}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e63acdac935ed2f46a85228de3effca9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TappableTrailController
 --- !u!1 &988359950
 GameObject:
   m_ObjectHideFlags: 0
@@ -679,6 +837,225 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5283332841465386002, guid: 83d72350c2122e248b97354ba55d940f, type: 3}
   m_PrefabInstance: {fileID: 1007062764}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1057433924
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2033610390}
+    m_Modifications:
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8533651551306020721, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_Name
+      value: Tappable Trail Particles
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+--- !u!4 &1057433925 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+  m_PrefabInstance: {fileID: 1057433924}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1057433926 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6322911669234733414, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+  m_PrefabInstance: {fileID: 1057433924}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e63acdac935ed2f46a85228de3effca9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TappableTrailController
+--- !u!1001 &1256100046
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2033610390}
+    m_Modifications:
+    - target: {fileID: 1234884624901092128, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_Name
+      value: Tappable Burst Particles (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+--- !u!4 &1256100047 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+  m_PrefabInstance: {fileID: 1256100046}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1256100048 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3806615194741816622, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+  m_PrefabInstance: {fileID: 1256100046}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e4d6d3b442c16f4c8c0dbd69afa469e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TappableParticleController
+--- !u!1001 &1372270869
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2033610390}
+    m_Modifications:
+    - target: {fileID: 1234884624901092128, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_Name
+      value: Tappable Burst Particles (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+--- !u!4 &1372270870 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+  m_PrefabInstance: {fileID: 1372270869}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1372270871 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3806615194741816622, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+  m_PrefabInstance: {fileID: 1372270869}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e4d6d3b442c16f4c8c0dbd69afa469e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TappableParticleController
 --- !u!1 &1453616776
 GameObject:
   m_ObjectHideFlags: 0
@@ -816,6 +1193,412 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1453616776}
   m_CullTransparentMesh: 1
+--- !u!1001 &1560050098
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2033610390}
+    m_Modifications:
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8533651551306020721, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_Name
+      value: Tappable Trail Particles (2)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+--- !u!4 &1560050099 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+  m_PrefabInstance: {fileID: 1560050098}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1560050100 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6322911669234733414, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+  m_PrefabInstance: {fileID: 1560050098}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e63acdac935ed2f46a85228de3effca9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TappableTrailController
+--- !u!1001 &1776733631
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2033610390}
+    m_Modifications:
+    - target: {fileID: 1234884624901092128, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_Name
+      value: Tappable Burst Particles (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+--- !u!4 &1776733632 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+  m_PrefabInstance: {fileID: 1776733631}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1776733633 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3806615194741816622, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+  m_PrefabInstance: {fileID: 1776733631}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e4d6d3b442c16f4c8c0dbd69afa469e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TappableParticleController
+--- !u!1001 &1873642702
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2033610390}
+    m_Modifications:
+    - target: {fileID: 1234884624901092128, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_Name
+      value: Tappable Burst Particles (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+--- !u!4 &1873642703 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+  m_PrefabInstance: {fileID: 1873642702}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1873642704 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3806615194741816622, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+  m_PrefabInstance: {fileID: 1873642702}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e4d6d3b442c16f4c8c0dbd69afa469e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TappableParticleController
+--- !u!1001 &1968198094
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2033610390}
+    m_Modifications:
+    - target: {fileID: 1234884624901092128, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_Name
+      value: Tappable Burst Particles (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+--- !u!4 &1968198095 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8698106873323282606, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+  m_PrefabInstance: {fileID: 1968198094}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1968198096 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3806615194741816622, guid: 00732fcdd8599de4d8f03e64c1034f79, type: 3}
+  m_PrefabInstance: {fileID: 1968198094}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e4d6d3b442c16f4c8c0dbd69afa469e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TappableParticleController
+--- !u!1001 &1974280419
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2033610390}
+    m_Modifications:
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8533651551306020721, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+      propertyPath: m_Name
+      value: Tappable Trail Particles (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+--- !u!4 &1974280420 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4788789998436892556, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+  m_PrefabInstance: {fileID: 1974280419}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1974280421 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6322911669234733414, guid: daa83531dc4eb40479c094b3a21f1173, type: 3}
+  m_PrefabInstance: {fileID: 1974280419}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e63acdac935ed2f46a85228de3effca9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TappableTrailController
+--- !u!1 &2033610389
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2033610390}
+  m_Layer: 0
+  m_Name: VFX Pool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2033610390
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033610389}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 652395716}
+  - {fileID: 1372270870}
+  - {fileID: 1873642703}
+  - {fileID: 1776733632}
+  - {fileID: 1968198095}
+  - {fileID: 1256100047}
+  - {fileID: 1057433925}
+  - {fileID: 1974280420}
+  - {fileID: 1560050099}
+  - {fileID: 800805625}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &3191603175242862611
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -888,3 +1671,4 @@ SceneRoots:
   - {fileID: 762547858}
   - {fileID: 494695807}
   - {fileID: 1007062764}
+  - {fileID: 2033610390}
