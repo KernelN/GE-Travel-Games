@@ -321,7 +321,7 @@ MonoBehaviour:
   - Spot: {fileID: 347890956}
     Weight: 1
   - Spot: {fileID: 762547859}
-    Weight: 2
+    Weight: 0.5
   tappablePools:
   - Config: {fileID: 11400000, guid: 25982f990e924674ea1e10ecedf3a8c4, type: 2}
     Prefab: {fileID: 2843732954885653069, guid: 084d4bf14f8365b47b83f7e1b6da83b5, type: 3}
@@ -329,8 +329,17 @@ MonoBehaviour:
   - Config: {fileID: 11400000, guid: 778a0cfc45f39c44e8c27fe01545c8db, type: 2}
     Prefab: {fileID: 1632228865664665901, guid: 9f755d672e29c9b459556937370cefb3, type: 3}
     PrewarmCount: 3
+  - Config: {fileID: 11400000, guid: 67ffeb9e82a9fad4bac935a18bb44b1b, type: 2}
+    Prefab: {fileID: 1632228865664665901, guid: 5b964da4520af9a48a4836023966d010, type: 3}
+    PrewarmCount: 1
   - Config: {fileID: 11400000, guid: 6d3b47309c9e3304e8166bc9f299e688, type: 2}
     Prefab: {fileID: 3657155482851674770, guid: c3bb7a19c5f6f5b43b1a0782b1a8e213, type: 3}
+    PrewarmCount: 2
+  - Config: {fileID: 11400000, guid: dc6c4b6ab2866fc4cbe1c67e9c2186ad, type: 2}
+    Prefab: {fileID: 3657155482851674770, guid: 91f5f4e10b116dc49a3f715a5b439553, type: 3}
+    PrewarmCount: 2
+  - Config: {fileID: 11400000, guid: b6aa92c1d1ba13e43ba06ca0ef4f95d6, type: 2}
+    Prefab: {fileID: 2843732954885653069, guid: d3479aae9a760c640bce84d7de48a246, type: 3}
     PrewarmCount: 2
   scoreLabel: {fileID: 1705243852}
   burstEffectPool:
@@ -2449,11 +2458,11 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 494695807}
   - {fileID: 988359953}
   - {fileID: 751637963}
   - {fileID: 3191603175242862611}
   - {fileID: 347890955}
   - {fileID: 762547858}
-  - {fileID: 494695807}
   - {fileID: 1007062764}
   - {fileID: 2033610390}

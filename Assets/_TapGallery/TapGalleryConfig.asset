@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TapGalleryConfig
   sessionDuration: 60
   maxTappablesOnScreen: 5
-  spawnInterval: 2
+  spawnInterval: 1.5

@@ -36,6 +36,7 @@ public class TapGalleryManager : MonoBehaviour
     bool sessionActive;
 
     Dictionary<TappableConfig, ObjectPool<Tappable>> pools;
+    Dictionary<TappableConfig, Sprite[]> tappableSprites;
     readonly Queue<TappableParticleController> availableBurstEffects = new();
     readonly Queue<TappableTrailController> availableTrailEffects = new();
 
@@ -44,13 +45,24 @@ public class TapGalleryManager : MonoBehaviour
     void Awake()
     {
         pools = new Dictionary<TappableConfig, ObjectPool<Tappable>>();
+        tappableSprites = new Dictionary<TappableConfig, Sprite[]>();
 
         foreach (TappablePoolEntry entry in tappablePools)
         {
+            string spritePath = $"TapGallery/Tappables/{entry.Config.name}";
+            Sprite[] sprites = Resources.LoadAll<Sprite>(spritePath);
+            if (sprites.Length > 0)
+                tappableSprites[entry.Config] = sprites;
+
             TappablePoolEntry captured = entry;
             ObjectPool<Tappable> pool = new ObjectPool<Tappable>(
                 createFunc: () => Instantiate(captured.Prefab),
-                actionOnGet: t => t.gameObject.SetActive(true),
+                actionOnGet: t =>
+                {
+                    t.gameObject.SetActive(true);
+                    if (tappableSprites.TryGetValue(captured.Config, out Sprite[] configSprites))
+                        t.SetSprite(configSprites[UnityEngine.Random.Range(0, configSprites.Length)]);
+                },
                 actionOnRelease: t => t.gameObject.SetActive(false),
                 actionOnDestroy: t => Destroy(t.gameObject)
             );

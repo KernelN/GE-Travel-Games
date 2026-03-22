@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Collider2D))]
 public class Tappable : MonoBehaviour, IPointerClickHandler
 {
@@ -27,6 +26,12 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
     }
 
     // ── Public API ────────────────────────────────────────────────────────────
+
+    public void SetSprite(Sprite sprite)
+    {
+        spriteRenderer.sprite = sprite;
+        halfHeight = sprite != null ? sprite.bounds.extents.y : 0f;
+    }
 
     public void StartBehavior(Direction direction, Spot originSpot, Spot runTarget, Action callback,
         TappableTrailController trail = null)

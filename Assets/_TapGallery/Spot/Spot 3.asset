@@ -16,9 +16,9 @@ MonoBehaviour:
   jumpDirections: 1
   runDirections: 4
   tappableWeights:
-  - Config: {fileID: 11400000, guid: 25982f990e924674ea1e10ecedf3a8c4, type: 2}
+  - Config: {fileID: 11400000, guid: dc6c4b6ab2866fc4cbe1c67e9c2186ad, type: 2}
     Weight: 5
-  - Config: {fileID: 11400000, guid: 778a0cfc45f39c44e8c27fe01545c8db, type: 2}
+  - Config: {fileID: 11400000, guid: b6aa92c1d1ba13e43ba06ca0ef4f95d6, type: 2}
     Weight: 3
   - Config: {fileID: 11400000, guid: 6d3b47309c9e3304e8166bc9f299e688, type: 2}
     Weight: 10
