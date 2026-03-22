@@ -8,13 +8,15 @@ public class TimerManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private string timerFormat = "Time: {0:0}";
     [SerializeField] private GameObject gameOverObject;
+    [SerializeField] private bool pauseOnEnd = true;
 
     public float TimeRemaining { get; private set; }
     public event Action<float> TimeChanged;
+    public event Action OnTimerEnd;
 
     private bool hasEnded;
 
-    private void Start()
+    private void Awake()
     {
         Time.timeScale = 1f;
         if (gameOverObject != null)
@@ -51,7 +53,11 @@ public class TimerManager : MonoBehaviour
     private void EndGame()
     {
         hasEnded = true;
-        Time.timeScale = 0f;
+        OnTimerEnd?.Invoke();
+        if (pauseOnEnd)
+        {
+            Time.timeScale = 0f;
+        }
         if (gameOverObject != null)
         {
             gameOverObject.SetActive(true);

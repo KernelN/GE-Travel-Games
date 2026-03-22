@@ -28,10 +28,11 @@ public class TapGalleryManager : MonoBehaviour
     [SerializeField] TMP_Text scoreLabel;
     [SerializeField] TappableParticleController[] burstEffectPool;
     [SerializeField] TappableTrailController[] trailEffectPool;
+    [SerializeField] TimerManager timerManager;
+    [SerializeField] SessionEndPanel sessionEndPanel;
 
     int score;
     int activeTappableCount;
-    float sessionTimer;
     bool sessionActive;
 
     Dictionary<TappableConfig, ObjectPool<Tappable>> pools;
@@ -77,18 +78,15 @@ public class TapGalleryManager : MonoBehaviour
     {
         score = 0;
         activeTappableCount = 0;
-        sessionTimer = config.SessionDuration;
         sessionActive = true;
+        timerManager.OnTimerEnd += EndSession;
         UpdateScoreLabel();
         StartCoroutine(SpawnLoop());
     }
 
-    void Update()
+    void OnDestroy()
     {
-        if (!sessionActive) return;
-        sessionTimer -= Time.deltaTime;
-        if (sessionTimer <= 0f)
-            EndSession();
+        if (timerManager != null) timerManager.OnTimerEnd -= EndSession;
     }
 
     // ── Spawn loop ────────────────────────────────────────────────────────────
@@ -180,6 +178,7 @@ public class TapGalleryManager : MonoBehaviour
     void EndSession()
     {
         sessionActive = false;
+        sessionEndPanel?.Show(score);
         Debug.Log($"[TapGallery] Session ended. Final score: {score}");
     }
 
