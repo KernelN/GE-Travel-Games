@@ -318,9 +318,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FoodManager
   foodPrefabs:
-  - {fileID: 1210522813552861783, guid: 1cdebd78f7d3f70469b05779f0fcd0cf, type: 3}
-  - {fileID: 7830163472896524938, guid: 6f56afc86f00bd64ca02473670252f1b, type: 3}
   - {fileID: 8090338449089997720, guid: 7dd0c6fe080507f4ab6822d0001fe640, type: 3}
+  - {fileID: 1210522813552861783, guid: c6363589535e9ab41943f8d49faee21c, type: 3}
+  - {fileID: 7830163472896524938, guid: 15c8ac8b7e24e8f43886e6cd22d4d5d2, type: 3}
+  - {fileID: 1210522813552861783, guid: 1cdebd78f7d3f70469b05779f0fcd0cf, type: 3}
+  - {fileID: 7830163472896524938, guid: 1cbb336326a8b3145914310395e16f7d, type: 3}
+  - {fileID: 7830163472896524938, guid: 6f56afc86f00bd64ca02473670252f1b, type: 3}
   snakeBody: {fileID: 42452469}
   snakeHead: {fileID: 1491652447}
   spawnAreaCenter: {x: 0, y: -0.5}

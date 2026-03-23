@@ -1,0 +1,2496 @@
+fileFormatVersion: 2
+guid: f96b37557f06ee44faf6613cf8f9c8ad
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5244464424581389498
+    second: ACT logo tansparente-02_0
+  - first:
+      213: -8641468993472596458
+    second: ACT logo tansparente-02_1
+  - first:
+      213: -1798895334806809469
+    second: ACT logo tansparente-02_2
+  - first:
+      213: 7394972609519482649
+    second: ACT logo tansparente-02_3
+  - first:
+      213: -7486005004869372851
+    second: ACT logo tansparente-02_4
+  - first:
+      213: -6079835730260948451
+    second: ACT logo tansparente-02_5
+  - first:
+      213: 90727848975594893
+    second: ACT logo tansparente-02_6
+  - first:
+      213: -8161477409832259646
+    second: ACT logo tansparente-02_7
+  - first:
+      213: -1217330670504396793
+    second: ACT logo tansparente-02_8
+  - first:
+      213: 9205514917705372905
+    second: ACT logo tansparente-02_9
+  - first:
+      213: 9000783127415146735
+    second: ACT logo tansparente-02_10
+  - first:
+      213: 375518935799879054
+    second: ACT logo tansparente-02_11
+  - first:
+      213: 2117077988460574594
+    second: ACT logo tansparente-02_12
+  - first:
+      213: 2716286683630403886
+    second: ACT logo tansparente-02_13
+  - first:
+      213: -9179575855807606024
+    second: ACT logo tansparente-02_14
+  - first:
+      213: -7403371083149926680
+    second: ACT logo tansparente-02_15
+  - first:
+      213: 1908130907463256103
+    second: ACT logo tansparente-02_16
+  - first:
+      213: 2135651041441158290
+    second: ACT logo tansparente-02_17
+  - first:
+      213: 7881762450220405834
+    second: ACT logo tansparente-02_18
+  - first:
+      213: -958973435854895821
+    second: ACT logo tansparente-02_19
+  - first:
+      213: -1990245921704520644
+    second: ACT logo tansparente-02_20
+  - first:
+      213: 2134440178729146345
+    second: ACT logo tansparente-02_21
+  - first:
+      213: -3390126714158085554
+    second: ACT logo tansparente-02_22
+  - first:
+      213: -4354097152187092579
+    second: ACT logo tansparente-02_23
+  - first:
+      213: 3391375651671264928
+    second: ACT logo tansparente-02_24
+  - first:
+      213: 6611232518412049068
+    second: ACT logo tansparente-02_25
+  - first:
+      213: -7596040711891311075
+    second: ACT logo tansparente-02_26
+  - first:
+      213: 1584439656938406174
+    second: ACT logo tansparente-02_27
+  - first:
+      213: 120615994280671623
+    second: ACT logo tansparente-02_28
+  - first:
+      213: 3059964540601502054
+    second: ACT logo tansparente-02_29
+  - first:
+      213: -291593961553289113
+    second: ACT logo tansparente-02_30
+  - first:
+      213: 6822588881405870653
+    second: ACT logo tansparente-02_31
+  - first:
+      213: -6431924856682798880
+    second: ACT logo tansparente-02_32
+  - first:
+      213: 5469464034012885224
+    second: ACT logo tansparente-02_33
+  - first:
+      213: 2603521375715589809
+    second: ACT logo tansparente-02_34
+  - first:
+      213: 1534686582208944650
+    second: ACT logo tansparente-02_35
+  - first:
+      213: -4460352747961213706
+    second: ACT logo tansparente-02_36
+  - first:
+      213: 8258829955580900339
+    second: ACT logo tansparente-02_37
+  - first:
+      213: 7503755024321749545
+    second: ACT logo tansparente-02_38
+  - first:
+      213: -5423377438329899220
+    second: ACT logo tansparente-02_39
+  - first:
+      213: 2894576981237757041
+    second: ACT logo tansparente-02_40
+  - first:
+      213: 6239470696456345438
+    second: ACT logo tansparente-02_41
+  - first:
+      213: -3209139826611097698
+    second: ACT logo tansparente-02_42
+  - first:
+      213: -3208115912617249189
+    second: ACT logo tansparente-02_43
+  - first:
+      213: -7113704869537955606
+    second: ACT logo tansparente-02_44
+  - first:
+      213: -2383868055883494588
+    second: ACT logo tansparente-02_45
+  - first:
+      213: -2384844147946645066
+    second: ACT logo tansparente-02_46
+  - first:
+      213: -7923677297973393818
+    second: ACT logo tansparente-02_47
+  - first:
+      213: -6667357317294371022
+    second: ACT logo tansparente-02_48
+  - first:
+      213: -6449950436351512387
+    second: ACT logo tansparente-02_49
+  - first:
+      213: 6857249972370412609
+    second: ACT logo tansparente-02_50
+  - first:
+      213: -1281437198725113520
+    second: ACT logo tansparente-02_51
+  - first:
+      213: 2735906089155993370
+    second: ACT logo tansparente-02_52
+  - first:
+      213: 1361827189923283079
+    second: ACT logo tansparente-02_53
+  - first:
+      213: -8450308207136918673
+    second: ACT logo tansparente-02_54
+  - first:
+      213: -9189089460382665267
+    second: ACT logo tansparente-02_55
+  - first:
+      213: 6178552979098360034
+    second: ACT logo tansparente-02_56
+  - first:
+      213: -6388131422964868494
+    second: ACT logo tansparente-02_57
+  - first:
+      213: -1403006307562083201
+    second: ACT logo tansparente-02_58
+  - first:
+      213: 7862129053080977130
+    second: ACT logo tansparente-02_59
+  - first:
+      213: -610010797757830661
+    second: ACT logo tansparente-02_60
+  - first:
+      213: -5177550523072001510
+    second: ACT logo tansparente-02_61
+  - first:
+      213: 4347449163379977329
+    second: ACT logo tansparente-02_62
+  - first:
+      213: 3303003573005569005
+    second: ACT logo tansparente-02_63
+  - first:
+      213: -5650973918132869238
+    second: ACT logo tansparente-02_64
+  - first:
+      213: 1193390961714872271
+    second: ACT logo tansparente-02_65
+  - first:
+      213: 8220012445557993855
+    second: ACT logo tansparente-02_66
+  - first:
+      213: -6668021514045091557
+    second: ACT logo tansparente-02_67
+  - first:
+      213: 2412289231331588842
+    second: ACT logo tansparente-02_68
+  - first:
+      213: -6460378444284873162
+    second: ACT logo tansparente-02_69
+  - first:
+      213: 3769855956531433534
+    second: ACT logo tansparente-02_70
+  - first:
+      213: -6410953447341826565
+    second: ACT logo tansparente-02_71
+  - first:
+      213: -1714244367307967243
+    second: ACT logo tansparente-02_72
+  - first:
+      213: -3503588694158212647
+    second: ACT logo tansparente-02_73
+  - first:
+      213: 7500808259770921502
+    second: ACT logo tansparente-02_74
+  - first:
+      213: -600795494879348939
+    second: ACT logo tansparente-02_75
+  - first:
+      213: -2889827159160364006
+    second: ACT logo tansparente-02_76
+  - first:
+      213: -8955563767398922261
+    second: ACT logo tansparente-02_77
+  - first:
+      213: -54671091872472443
+    second: ACT logo tansparente-02_78
+  - first:
+      213: -7764397014598945202
+    second: ACT logo tansparente-02_79
+  - first:
+      213: -8910384460821066738
+    second: ACT logo tansparente-02_80
+  - first:
+      213: 6174425176639098586
+    second: ACT logo tansparente-02_81
+  - first:
+      213: 5435164361367522846
+    second: ACT logo tansparente-02_82
+  - first:
+      213: -4355307882923166010
+    second: ACT logo tansparente-02_83
+  - first:
+      213: 7996609466730861542
+    second: ACT logo tansparente-02_84
+  - first:
+      213: 5482751477005923653
+    second: ACT logo tansparente-02_85
+  - first:
+      213: 3309577957122705306
+    second: ACT logo tansparente-02_86
+  - first:
+      213: 7475534817916523980
+    second: ACT logo tansparente-02_87
+  - first:
+      213: -5957301767117774910
+    second: ACT logo tansparente-02_88
+  - first:
+      213: 9185929858189306924
+    second: ACT logo tansparente-02_89
+  - first:
+      213: 2052494510815815817
+    second: ACT logo tansparente-02_90
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 1111, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_0
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 124
+        width: 496
+        height: 399
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64327a7646be737b0800000000000000
+      internalID: -5244464424581389498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_1
+      rect:
+        serializedVersion: 2
+        x: 550
+        y: 285
+        width: 236
+        height: 187
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61673822cb5531880800000000000000
+      internalID: -8641468993472596458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_2
+      rect:
+        serializedVersion: 2
+        x: 828
+        y: 362
+        width: 38
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3849bb4593a0907e0800000000000000
+      internalID: -1798895334806809469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_3
+      rect:
+        serializedVersion: 2
+        x: 967
+        y: 393
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 917f62a786830a660800000000000000
+      internalID: 7394972609519482649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_4
+      rect:
+        serializedVersion: 2
+        x: 1005
+        y: 361
+        width: 20
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d44f6f15c1e5c1890800000000000000
+      internalID: -7486005004869372851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_5
+      rect:
+        serializedVersion: 2
+        x: 1053
+        y: 361
+        width: 26
+        height: 42
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1a811d9d9510aba0800000000000000
+      internalID: -6079835730260948451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_6
+      rect:
+        serializedVersion: 2
+        x: 1093
+        y: 361
+        width: 34
+        height: 42
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d85fc697f74524100800000000000000
+      internalID: 90727848975594893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_7
+      rect:
+        serializedVersion: 2
+        x: 1242
+        y: 362
+        width: 7
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cfa290898b9cbe80800000000000000
+      internalID: -8161477409832259646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_8
+      rect:
+        serializedVersion: 2
+        x: 1252
+        y: 361
+        width: 20
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 708b562743c2b1fe0800000000000000
+      internalID: -1217330670504396793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_9
+      rect:
+        serializedVersion: 2
+        x: 1328
+        y: 361
+        width: 20
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e453647b0f80cf70800000000000000
+      internalID: 9205514917705372905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_10
+      rect:
+        serializedVersion: 2
+        x: 1409
+        y: 362
+        width: 20
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe8c8e1f09439ec70800000000000000
+      internalID: 9000783127415146735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_11
+      rect:
+        serializedVersion: 2
+        x: 1438
+        y: 362
+        width: 32
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e85d8c68b7c163500800000000000000
+      internalID: 375518935799879054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_12
+      rect:
+        serializedVersion: 2
+        x: 1551
+        y: 393
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 287bdf7b63f516d10800000000000000
+      internalID: 2117077988460574594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_13
+      rect:
+        serializedVersion: 2
+        x: 865
+        y: 361
+        width: 22
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e210ae5e85032b520800000000000000
+      internalID: 2716286683630403886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_14
+      rect:
+        serializedVersion: 2
+        x: 888
+        y: 361
+        width: 22
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f2d5d505689b9080800000000000000
+      internalID: -9179575855807606024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_15
+      rect:
+        serializedVersion: 2
+        x: 912
+        y: 361
+        width: 28
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ee13708931f14990800000000000000
+      internalID: -7403371083149926680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_16
+      rect:
+        serializedVersion: 2
+        x: 941
+        y: 361
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7288a4c53fa0b7a10800000000000000
+      internalID: 1908130907463256103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_17
+      rect:
+        serializedVersion: 2
+        x: 968
+        y: 362
+        width: 7
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2941b499e4b53ad10800000000000000
+      internalID: 2135651041441158290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_18
+      rect:
+        serializedVersion: 2
+        x: 979
+        y: 361
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4456696035a16d60800000000000000
+      internalID: 7881762450220405834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_19
+      rect:
+        serializedVersion: 2
+        x: 1025
+        y: 361
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33545deadba01b2f0800000000000000
+      internalID: -958973435854895821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_20
+      rect:
+        serializedVersion: 2
+        x: 1129
+        y: 361
+        width: 28
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c34d12501e93164e0800000000000000
+      internalID: -1990245921704520644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_21
+      rect:
+        serializedVersion: 2
+        x: 1160
+        y: 362
+        width: 25
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e7d877a80e0f9d10800000000000000
+      internalID: 2134440178729146345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_22
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 361
+        width: 22
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4a8b0317b9d3f0d0800000000000000
+      internalID: -3390126714158085554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_23
+      rect:
+        serializedVersion: 2
+        x: 1211
+        y: 361
+        width: 25
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d91395685b32393c0800000000000000
+      internalID: -4354097152187092579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_24
+      rect:
+        serializedVersion: 2
+        x: 1273
+        y: 361
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ae46c9df26901f20800000000000000
+      internalID: 3391375651671264928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_25
+      rect:
+        serializedVersion: 2
+        x: 1301
+        y: 362
+        width: 25
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: caa167b92f0dfbb50800000000000000
+      internalID: 6611232518412049068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_26
+      rect:
+        serializedVersion: 2
+        x: 1348
+        y: 361
+        width: 22
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d162054d731759690800000000000000
+      internalID: -7596040711891311075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_27
+      rect:
+        serializedVersion: 2
+        x: 1381
+        y: 361
+        width: 29
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e110bd7297f0df510800000000000000
+      internalID: 1584439656938406174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_28
+      rect:
+        serializedVersion: 2
+        x: 1470
+        y: 361
+        width: 28
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78974559b938ca100800000000000000
+      internalID: 120615994280671623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_29
+      rect:
+        serializedVersion: 2
+        x: 1500
+        y: 361
+        width: 25
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66908db898d277a20800000000000000
+      internalID: 3059964540601502054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_30
+      rect:
+        serializedVersion: 2
+        x: 1530
+        y: 362
+        width: 19
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 760a7fe36dc04fbf0800000000000000
+      internalID: -291593961553289113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_31
+      rect:
+        serializedVersion: 2
+        x: 1552
+        y: 362
+        width: 8
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d320ab4a074beae50800000000000000
+      internalID: 6822588881405870653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_32
+      rect:
+        serializedVersion: 2
+        x: 1563
+        y: 361
+        width: 22
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e0aa6fab663db6a0800000000000000
+      internalID: -6431924856682798880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_33
+      rect:
+        serializedVersion: 2
+        x: 1588
+        y: 362
+        width: 39
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e0fc1b7f8077eb40800000000000000
+      internalID: 5469464034012885224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_34
+      rect:
+        serializedVersion: 2
+        x: 828
+        y: 300
+        width: 32
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bef9aca5e0912420800000000000000
+      internalID: 2603521375715589809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_35
+      rect:
+        serializedVersion: 2
+        x: 859
+        y: 300
+        width: 29
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0a5f1eb05d4c4510800000000000000
+      internalID: 1534686582208944650
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_36
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 300
+        width: 27
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fc95d4cec4a912c0800000000000000
+      internalID: -4460352747961213706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_37
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 300
+        width: 16
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f331c266124d9270800000000000000
+      internalID: 8258829955580900339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_38
+      rect:
+        serializedVersion: 2
+        x: 940
+        y: 300
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92220422071b22860800000000000000
+      internalID: 7503755024321749545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_39
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 300
+        width: 24
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c277a7144fa4cb4b0800000000000000
+      internalID: -5423377438329899220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_40
+      rect:
+        serializedVersion: 2
+        x: 983
+        y: 300
+        width: 23
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 174f2b5ad6a9b2820800000000000000
+      internalID: 2894576981237757041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_41
+      rect:
+        serializedVersion: 2
+        x: 1008
+        y: 300
+        width: 7
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e575db05a8d079650800000000000000
+      internalID: 6239470696456345438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_42
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 292
+        width: 53
+        height: 42
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9f69489458d673d0800000000000000
+      internalID: -3209139826611097698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_43
+      rect:
+        serializedVersion: 2
+        x: 1077
+        y: 300
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b56bb26239b7a73d0800000000000000
+      internalID: -3208115912617249189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_44
+      rect:
+        serializedVersion: 2
+        x: 1101
+        y: 300
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae049367c1b074d90800000000000000
+      internalID: -7113704869537955606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_45
+      rect:
+        serializedVersion: 2
+        x: 1123
+        y: 300
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44bc9a922accaeed0800000000000000
+      internalID: -2383868055883494588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_46
+      rect:
+        serializedVersion: 2
+        x: 1142
+        y: 293
+        width: 24
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b998f402e457eed0800000000000000
+      internalID: -2384844147946645066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_47
+      rect:
+        serializedVersion: 2
+        x: 1174
+        y: 300
+        width: 22
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 666087b9a71790290800000000000000
+      internalID: -7923677297973393818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_48
+      rect:
+        serializedVersion: 2
+        x: 1199
+        y: 300
+        width: 26
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23f411858d9c873a0800000000000000
+      internalID: -6667357317294371022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_49
+      rect:
+        serializedVersion: 2
+        x: 1227
+        y: 300
+        width: 20
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db0746e504c2d76a0800000000000000
+      internalID: -6449950436351512387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_50
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 239
+        width: 20
+        height: 33
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1441233c488d92f50800000000000000
+      internalID: 6857249972370412609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_51
+      rect:
+        serializedVersion: 2
+        x: 852
+        y: 238
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 059940838ab673ee0800000000000000
+      internalID: -1281437198725113520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_52
+      rect:
+        serializedVersion: 2
+        x: 874
+        y: 231
+        width: 23
+        height: 33
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1f98f6b714e7f520800000000000000
+      internalID: 2735906089155993370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_53
+      rect:
+        serializedVersion: 2
+        x: 897
+        y: 238
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78088dc2d9e26e210800000000000000
+      internalID: 1361827189923283079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_54
+      rect:
+        serializedVersion: 2
+        x: 917
+        y: 239
+        width: 21
+        height: 33
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f63390f05797aba80800000000000000
+      internalID: -8450308207136918673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_55
+      rect:
+        serializedVersion: 2
+        x: 940
+        y: 238
+        width: 23
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc5fa9852dbc97080800000000000000
+      internalID: -9189089460382665267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_56
+      rect:
+        serializedVersion: 2
+        x: 965
+        y: 238
+        width: 23
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e8d619f231aeb550800000000000000
+      internalID: 6178552979098360034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_57
+      rect:
+        serializedVersion: 2
+        x: 989
+        y: 238
+        width: 25
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27a1bab015cc857a0800000000000000
+      internalID: -6388131422964868494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_58
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 238
+        width: 23
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7c212c5235878ce0800000000000000
+      internalID: -1403006307562083201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_59
+      rect:
+        serializedVersion: 2
+        x: 828
+        y: 167
+        width: 57
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aee7b2be7b4eb1d60800000000000000
+      internalID: 7862129053080977130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_60
+      rect:
+        serializedVersion: 2
+        x: 886
+        y: 167
+        width: 27
+        height: 42
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf9ed72596ec887f0800000000000000
+      internalID: -610010797757830661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_61
+      rect:
+        serializedVersion: 2
+        x: 914
+        y: 167
+        width: 30
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1ac7a92b35a528b0800000000000000
+      internalID: -5177550523072001510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_62
+      rect:
+        serializedVersion: 2
+        x: 947
+        y: 167
+        width: 9
+        height: 42
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17c2556fafd355c30800000000000000
+      internalID: 4347449163379977329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_63
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 167
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: debc7d4ef30a6dd20800000000000000
+      internalID: 3303003573005569005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_64
+      rect:
+        serializedVersion: 2
+        x: 986
+        y: 167
+        width: 23
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8761be5925b391b0800000000000000
+      internalID: -5650973918132869238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_65
+      rect:
+        serializedVersion: 2
+        x: 1010
+        y: 167
+        width: 26
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcf3d2fb1c6cf8010800000000000000
+      internalID: 1193390961714872271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_66
+      rect:
+        serializedVersion: 2
+        x: 1040
+        y: 167
+        width: 9
+        height: 42
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7136ca84c9531270800000000000000
+      internalID: 8220012445557993855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_67
+      rect:
+        serializedVersion: 2
+        x: 1052
+        y: 167
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b111eacf2cd6673a0800000000000000
+      internalID: -6668021514045091557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_68
+      rect:
+        serializedVersion: 2
+        x: 1082
+        y: 167
+        width: 20
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aeaf409664c2a7120800000000000000
+      internalID: 2412289231331588842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_69
+      rect:
+        serializedVersion: 2
+        x: 1112
+        y: 167
+        width: 39
+        height: 42
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6363fc198002856a0800000000000000
+      internalID: -6460378444284873162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_70
+      rect:
+        serializedVersion: 2
+        x: 1160
+        y: 167
+        width: 41
+        height: 42
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e305277d408315430800000000000000
+      internalID: 3769855956531433534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_71
+      rect:
+        serializedVersion: 2
+        x: 1231
+        y: 167
+        width: 21
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfddf9b6ec7b707a0800000000000000
+      internalID: -6410953447341826565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_72
+      rect:
+        serializedVersion: 2
+        x: 1251
+        y: 158
+        width: 29
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f4f46494d7c538e0800000000000000
+      internalID: -1714244367307967243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_73
+      rect:
+        serializedVersion: 2
+        x: 1279
+        y: 167
+        width: 30
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d100ad35a0c06fc0800000000000000
+      internalID: -3503588694158212647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_74
+      rect:
+        serializedVersion: 2
+        x: 1310
+        y: 198
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1236fb0f59381860800000000000000
+      internalID: 7500808259770921502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_75
+      rect:
+        serializedVersion: 2
+        x: 1325
+        y: 167
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 537bf093eab89a7f0800000000000000
+      internalID: -600795494879348939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_76
+      rect:
+        serializedVersion: 2
+        x: 1353
+        y: 158
+        width: 28
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1468fb728545e7d0800000000000000
+      internalID: -2889827159160364006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_77
+      rect:
+        serializedVersion: 2
+        x: 1390
+        y: 167
+        width: 33
+        height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be704d0c33277b380800000000000000
+      internalID: -8955563767398922261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_78
+      rect:
+        serializedVersion: 2
+        x: 1422
+        y: 167
+        width: 30
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 582657d7ee4cd3ff0800000000000000
+      internalID: -54671091872472443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_79
+      rect:
+        serializedVersion: 2
+        x: 1484
+        y: 167
+        width: 20
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e46f9b18d025f3490800000000000000
+      internalID: -7764397014598945202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_80
+      rect:
+        serializedVersion: 2
+        x: 1514
+        y: 167
+        width: 41
+        height: 42
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0c8998ca84f75480800000000000000
+      internalID: -8910384460821066738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_81
+      rect:
+        serializedVersion: 2
+        x: 1558
+        y: 159
+        width: 27
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ade4dc11cf6ffa550800000000000000
+      internalID: 6174425176639098586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_82
+      rect:
+        serializedVersion: 2
+        x: 1585
+        y: 167
+        width: 28
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1e8c2f90359d6b40800000000000000
+      internalID: 5435164361367522846
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_83
+      rect:
+        serializedVersion: 2
+        x: 1615
+        y: 167
+        width: 20
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c6f7ee4e86de83c0800000000000000
+      internalID: -4355307882923166010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_84
+      rect:
+        serializedVersion: 2
+        x: 1636
+        y: 167
+        width: 25
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e3d40031f9a9fe60800000000000000
+      internalID: 7996609466730861542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_85
+      rect:
+        serializedVersion: 2
+        x: 1662
+        y: 167
+        width: 21
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 545bfa26b65a61c40800000000000000
+      internalID: 5482751477005923653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_86
+      rect:
+        serializedVersion: 2
+        x: 1683
+        y: 167
+        width: 30
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9703cafd9bfded20800000000000000
+      internalID: 3309577957122705306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_87
+      rect:
+        serializedVersion: 2
+        x: 1715
+        y: 167
+        width: 20
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc59aff4f4f6eb760800000000000000
+      internalID: 7475534817916523980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_88
+      rect:
+        serializedVersion: 2
+        x: 1203
+        y: 167
+        width: 26
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cf532f1b99635da0800000000000000
+      internalID: -5957301767117774910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_89
+      rect:
+        serializedVersion: 2
+        x: 1311
+        y: 167
+        width: 10
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2c2701798afa7f70800000000000000
+      internalID: 9185929858189306924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ACT logo tansparente-02_90
+      rect:
+        serializedVersion: 2
+        x: 1453
+        y: 167
+        width: 27
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 988ad9c02eceb7c10800000000000000
+      internalID: 2052494510815815817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 1537655665
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      ACT logo tansparente-02_0: -5244464424581389498
+      ACT logo tansparente-02_1: -8641468993472596458
+      ACT logo tansparente-02_10: 9000783127415146735
+      ACT logo tansparente-02_11: 375518935799879054
+      ACT logo tansparente-02_12: 2117077988460574594
+      ACT logo tansparente-02_13: 2716286683630403886
+      ACT logo tansparente-02_14: -9179575855807606024
+      ACT logo tansparente-02_15: -7403371083149926680
+      ACT logo tansparente-02_16: 1908130907463256103
+      ACT logo tansparente-02_17: 2135651041441158290
+      ACT logo tansparente-02_18: 7881762450220405834
+      ACT logo tansparente-02_19: -958973435854895821
+      ACT logo tansparente-02_2: -1798895334806809469
+      ACT logo tansparente-02_20: -1990245921704520644
+      ACT logo tansparente-02_21: 2134440178729146345
+      ACT logo tansparente-02_22: -3390126714158085554
+      ACT logo tansparente-02_23: -4354097152187092579
+      ACT logo tansparente-02_24: 3391375651671264928
+      ACT logo tansparente-02_25: 6611232518412049068
+      ACT logo tansparente-02_26: -7596040711891311075
+      ACT logo tansparente-02_27: 1584439656938406174
+      ACT logo tansparente-02_28: 120615994280671623
+      ACT logo tansparente-02_29: 3059964540601502054
+      ACT logo tansparente-02_3: 7394972609519482649
+      ACT logo tansparente-02_30: -291593961553289113
+      ACT logo tansparente-02_31: 6822588881405870653
+      ACT logo tansparente-02_32: -6431924856682798880
+      ACT logo tansparente-02_33: 5469464034012885224
+      ACT logo tansparente-02_34: 2603521375715589809
+      ACT logo tansparente-02_35: 1534686582208944650
+      ACT logo tansparente-02_36: -4460352747961213706
+      ACT logo tansparente-02_37: 8258829955580900339
+      ACT logo tansparente-02_38: 7503755024321749545
+      ACT logo tansparente-02_39: -5423377438329899220
+      ACT logo tansparente-02_4: -7486005004869372851
+      ACT logo tansparente-02_40: 2894576981237757041
+      ACT logo tansparente-02_41: 6239470696456345438
+      ACT logo tansparente-02_42: -3209139826611097698
+      ACT logo tansparente-02_43: -3208115912617249189
+      ACT logo tansparente-02_44: -7113704869537955606
+      ACT logo tansparente-02_45: -2383868055883494588
+      ACT logo tansparente-02_46: -2384844147946645066
+      ACT logo tansparente-02_47: -7923677297973393818
+      ACT logo tansparente-02_48: -6667357317294371022
+      ACT logo tansparente-02_49: -6449950436351512387
+      ACT logo tansparente-02_5: -6079835730260948451
+      ACT logo tansparente-02_50: 6857249972370412609
+      ACT logo tansparente-02_51: -1281437198725113520
+      ACT logo tansparente-02_52: 2735906089155993370
+      ACT logo tansparente-02_53: 1361827189923283079
+      ACT logo tansparente-02_54: -8450308207136918673
+      ACT logo tansparente-02_55: -9189089460382665267
+      ACT logo tansparente-02_56: 6178552979098360034
+      ACT logo tansparente-02_57: -6388131422964868494
+      ACT logo tansparente-02_58: -1403006307562083201
+      ACT logo tansparente-02_59: 7862129053080977130
+      ACT logo tansparente-02_6: 90727848975594893
+      ACT logo tansparente-02_60: -610010797757830661
+      ACT logo tansparente-02_61: -5177550523072001510
+      ACT logo tansparente-02_62: 4347449163379977329
+      ACT logo tansparente-02_63: 3303003573005569005
+      ACT logo tansparente-02_64: -5650973918132869238
+      ACT logo tansparente-02_65: 1193390961714872271
+      ACT logo tansparente-02_66: 8220012445557993855
+      ACT logo tansparente-02_67: -6668021514045091557
+      ACT logo tansparente-02_68: 2412289231331588842
+      ACT logo tansparente-02_69: -6460378444284873162
+      ACT logo tansparente-02_7: -8161477409832259646
+      ACT logo tansparente-02_70: 3769855956531433534
+      ACT logo tansparente-02_71: -6410953447341826565
+      ACT logo tansparente-02_72: -1714244367307967243
+      ACT logo tansparente-02_73: -3503588694158212647
+      ACT logo tansparente-02_74: 7500808259770921502
+      ACT logo tansparente-02_75: -600795494879348939
+      ACT logo tansparente-02_76: -2889827159160364006
+      ACT logo tansparente-02_77: -8955563767398922261
+      ACT logo tansparente-02_78: -54671091872472443
+      ACT logo tansparente-02_79: -7764397014598945202
+      ACT logo tansparente-02_8: -1217330670504396793
+      ACT logo tansparente-02_80: -8910384460821066738
+      ACT logo tansparente-02_81: 6174425176639098586
+      ACT logo tansparente-02_82: 5435164361367522846
+      ACT logo tansparente-02_83: -4355307882923166010
+      ACT logo tansparente-02_84: 7996609466730861542
+      ACT logo tansparente-02_85: 5482751477005923653
+      ACT logo tansparente-02_86: 3309577957122705306
+      ACT logo tansparente-02_87: 7475534817916523980
+      ACT logo tansparente-02_88: -5957301767117774910
+      ACT logo tansparente-02_89: 9185929858189306924
+      ACT logo tansparente-02_9: 9205514917705372905
+      ACT logo tansparente-02_90: 2052494510815815817
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
