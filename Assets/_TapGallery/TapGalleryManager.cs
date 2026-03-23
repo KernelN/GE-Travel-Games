@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
 
 public class TapGalleryManager : MonoBehaviour
 {
@@ -178,8 +179,8 @@ public class TapGalleryManager : MonoBehaviour
     void EndSession()
     {
         sessionActive = false;
-        sessionEndPanel?.Show(score);
         Debug.Log($"[TapGallery] Session ended. Final score: {score}");
+        SceneManager.LoadScene("UserRegister");
     }
 
     // ── Weighted random helpers ───────────────────────────────────────────────
