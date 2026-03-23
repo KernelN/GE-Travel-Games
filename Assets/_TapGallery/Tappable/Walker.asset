@@ -15,7 +15,7 @@ MonoBehaviour:
   behavior: 5
   score: 15
   isPenalty: 1
-  movementSpeed: 3
+  movementSpeed: 2
   peekDistance: 0
   peekDuration: 1
   peekRotationAngle: 30

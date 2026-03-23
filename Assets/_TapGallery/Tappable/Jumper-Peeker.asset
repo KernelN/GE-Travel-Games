@@ -17,7 +17,7 @@ MonoBehaviour:
   isPenalty: 0
   movementSpeed: 3
   peekDistance: 0
-  peekDuration: 1
+  peekDuration: 0.5
   peekRotationAngle: 90
   jumpHeight: 1.5
   jumpCurve:
