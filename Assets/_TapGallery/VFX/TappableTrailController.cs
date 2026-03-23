@@ -55,8 +55,14 @@ public class TappableTrailController : MonoBehaviour
 
     // Stop spawning new particles. Existing world-space particles live until their
     // lifetime expires, then OnParticleSystemStopped fires and the trail returns to pool.
+    // If BeginAt was never called (GO still inactive), returns to pool immediately to avoid a leak.
     public void StopEmitting()
     {
+        if (!gameObject.activeSelf)
+        {
+            owner?.ReturnTrailToPool(this);
+            return;
+        }
         Resolve()?.Stop(false, ParticleSystemStopBehavior.StopEmitting);
     }
 
