@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &6558489668663297297
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 232297709398849678, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_Size.x
+      value: 5.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 232297709398849678, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_Size.y
+      value: 5.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 232297709398849678, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -2350280747062509907, guid: 50d082e224c0aeb4aa05984564b3e1d6, type: 3}
+    - target: {fileID: 232297709398849678, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3485276980000071118, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3485276980000071118, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_Color.g
+      value: 0.91554844
+      objectReference: {fileID: 0}
+    - target: {fileID: 3485276980000071118, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_Color.r
+      value: 0.20943397
+      objectReference: {fileID: 0}
+    - target: {fileID: 3982386643753405324, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4934482569925784202, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_Color.b
+      value: 0.5577861
+      objectReference: {fileID: 0}
+    - target: {fileID: 4934482569925784202, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_Color.g
+      value: 0.435849
+      objectReference: {fileID: 0}
+    - target: {fileID: 4934482569925784202, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7621423263234772867, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: config
+      value: 
+      objectReference: {fileID: 11400000, guid: 6d3b47309c9e3304e8166bc9f299e688, type: 2}
+    - target: {fileID: 8266655751824642972, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8266655751824642972, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8266655751824642972, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8266655751824642972, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8266655751824642972, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8266655751824642972, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8266655751824642972, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8266655751824642972, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8266655751824642972, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8266655751824642972, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8693773218214210398, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}
+      propertyPath: m_Name
+      value: Tap Runner Variant
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 408a9b710f59b6a468d05e5c8a14766c, type: 3}

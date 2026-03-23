@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c94e567a0bb7419489fdccf541267fc5, type: 3}
+  m_Name: Spot Suitcase
+  m_EditorClassIdentifier: Assembly-CSharp::SpotConfig
+  peekDirections: 4
+  jumpDirections: 0
+  runDirections: 4
+  tappableWeights:
+  - Config: {fileID: 11400000, guid: 25982f990e924674ea1e10ecedf3a8c4, type: 2}
+    Weight: 5
+  - Config: {fileID: 11400000, guid: dc6c4b6ab2866fc4cbe1c67e9c2186ad, type: 2}
+    Weight: 2

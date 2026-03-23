@@ -4,10 +4,10 @@
 This repository is organized around three product areas:
 
 - `Assets/_SnakeAirlinesGame`: current implemented Unity game content.
-- `Assets/_CarryOnGame`: reserved for a future second game.
+- `Assets/_TapGallery`: second game, tap/shooting gallery, specified but not yet implemented.
 - `Assets/_PrizeManager`: planned shared prize system, UGS integration layer, kiosk-facing runtime support, and staff admin app.
 
-At the moment, SnakeAirlines is the only area with described gameplay behavior. CarryOn and the prize system are planned but not yet implemented in this repo.
+SnakeAirlines is the only currently implemented game. TapGallery is specified and ready for implementation. The prize system is planned but not yet fully implemented.
 
 ## Subsystem Roles
 
@@ -16,10 +16,10 @@ At the moment, SnakeAirlines is the only area with described gameplay behavior. 
 - Owns its gameplay scripts, scene, art assets, and project-specific setup.
 - Should not become the default home for shared prize infrastructure.
 
-### CarryOn
-- Reserved for the second game.
-- Keep this area isolated until its requirements and gameplay loop are documented.
-- Avoid creating placeholder contracts here unless they are needed for a shared repo-level integration point.
+### TapGallery
+- The second game. Lives under `Assets/_TapGallery`.
+- Requirements and gameplay loop are fully documented in `docs/TAPGALLERY_GAME.md`.
+- Specified but not yet implemented — implementation may begin from that document.
 
 ### Prize Manager
 - Planned home for shared prize drawing logic used by one or more games.
@@ -52,4 +52,4 @@ At the moment, SnakeAirlines is the only area with described gameplay behavior. 
 
 ## Working Assumption for New Changes
 - Use the current folder layout for new docs and new code placement.
-- Keep subsystem responsibilities explicit so future work on CarryOn and the prize backend does not blur into SnakeAirlines-only code.
+- Keep subsystem responsibilities explicit so future work on TapGallery and the prize backend does not blur into SnakeAirlines-only code.
