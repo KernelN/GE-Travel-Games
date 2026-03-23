@@ -38,7 +38,8 @@ Reusable per-Tappable-type config asset. Each config maps to exactly one prefab 
 |-------|------|-------------|
 | Sprite | `Sprite` | Visual for the Tappable |
 | `Behavior` | `TappableBehavior` enum | Fixed behavior for this type (see Behavior Types) |
-| `Score` | `int` | Flat score awarded on a successful tap |
+| `Score` | `int` | Flat score awarded (or deducted if `IsPenalty`) on a successful tap |
+| `IsPenalty` | `bool` | If true, tapping this Tappable **subtracts** `Score` from the player's total (clamped at 0) |
 | `MovementSpeed` | `float` | Units/second for run/approach movement |
 | `PeekDuration` | `float` | Seconds the Tappable stays visible during the peek phase |
 | `JumpHeight` | `float` | Max displacement units for Jump/PeekAndJump/PeekJumpAndRun |
@@ -47,24 +48,17 @@ Reusable per-Tappable-type config asset. Each config maps to exactly one prefab 
 
 `TappableBehavior` enum values (in score order): `Peek`, `PeekAndJump`, `Jump`, `PeekJumpAndRun`, `PeekAndRun`, `Run`
 
-### `TapGalleryConfig`
-Global session config asset. One per scene setup.
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `SessionDuration` | `float` | Seconds until session ends |
-| `MaxTappablesOnScreen` | `int` | Hard cap on simultaneous live Tappables |
-| `SpawnInterval` | `float` | Seconds between spawn-loop ticks |
-
-### `StageConfig` *(V2 only)*
-Defines which Spots and Tappable types are active during a stage.
+### `StageConfig`
+`[Serializable]` class (not ScriptableObject) — serialized inline on `StageManager` because `ActiveSpots` holds scene references that ScriptableObjects cannot store. Defines which Spots, Tappable types, and spawn pacing are active during a stage.
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `ActiveSpots` | `List<Spot>` | Scene MonoBehaviour refs to enabled Spots for this stage |
 | `AllowedTappableConfigs` | `List<TappableConfig>` | Only these Tappable types can spawn |
-| `ScoreMilestone` | `int` | Score threshold to advance to next stage |
-| `TimeMilestone` | `float` | Elapsed session time (seconds) threshold to advance |
+| `SpawnInterval` | `float` | Seconds between spawn-loop ticks for this stage |
+| `MaxTappablesOnScreen` | `int` | Hard cap on simultaneous live Tappables for this stage |
+| `ScoreMilestone` | `int` | Score threshold to advance to next stage (0 = disabled) |
+| `TimeMilestone` | `float` | Elapsed session time (seconds) threshold to advance (0 = disabled) |
 
 ---
 
@@ -96,13 +90,16 @@ The entity the player taps. Managed by a per-config object pool; never calls `De
 - Requires `Collider2D` sized to sprite for tap detection via `IPointerClickHandler`.
 
 ### `TapGalleryManager`
-Drives the game loop (V1). One per scene.
+Drives the game loop. One per scene.
 
 ```
-[SerializeField] TapGalleryConfig Config
+[SerializeField] float SessionDuration          // total session time in seconds
+[SerializeField] float SpawnInterval            // fallback interval used when no StageManager present
+[SerializeField] int MaxTappablesOnScreen       // fallback cap used when no StageManager present
 [SerializeField] List<SpotWeightEntry> SpotWeights      // Spot + float weight
 [SerializeField] List<TappablePoolEntry> TappablePools  // TappableConfig + Tappable prefab + int prewarmCount
 [SerializeField] TMP_Text ScoreLabel
+[SerializeField] StageManager StageManager      // optional; null = V1 mode
 ```
 
 `SpotWeightEntry`: `Spot Spot`, `float Weight`
@@ -110,8 +107,8 @@ Drives the game loop (V1). One per scene.
 
 **Pool management:** One `UnityEngine.Pool.ObjectPool<Tappable>` per `TappablePoolEntry`, keyed by `TappableConfig`. Created in `Awake`, pre-warmed to `PrewarmCount`. On get: `gameObject.SetActive(true)`. On release: `gameObject.SetActive(false)`.
 
-**Spawn loop** (ticks every `Config.SpawnInterval`):
-1. If active Tappable count >= `Config.MaxTappablesOnScreen`, skip.
+**Spawn loop** (ticks every `StageManager.GetSpawnInterval(spawnInterval)` — or `spawnInterval` in V1 mode):
+1. If active Tappable count >= `StageManager.GetMaxTappablesOnScreen(maxTappablesOnScreen)`, skip.
 2. Weighted-random pick a `Spot` from `SpotWeights` (filter by `StageManager.GetActiveSpots()` if V2).
 3. Weighted-random pick a `TappableConfig` from that Spot's `Config.TappableWeights` (filter by `StageManager.GetAllowedTappables()` if V2).
 4. Validate that the Tappable's `Behavior` maps to a non-empty direction set on the Spot (see Behavior → Direction mapping below). If invalid, skip and `Debug.LogWarning`.
@@ -119,19 +116,20 @@ Drives the game loop (V1). One per scene.
 6. For run behaviors: pick a random `Spot` from `Spot.RunTargets` if non-empty, else `null` (target = screen edge).
 7. Look up the pool for the selected `TappableConfig`, get a `Tappable`, call `StartBehavior(direction, spot, runTarget, onDone)`, increment active count.
 
-**Tappable completion:** `onDone` fires → manager adds score if tapped → releases Tappable to its pool → decrements active count.
+**Tappable completion:** `onDone` fires → manager adds/subtracts score if tapped → releases Tappable to its pool → decrements active count.
 
-**Session:** Countdown from `Config.SessionDuration`. On expiry, stop spawn loop and present end state.
+**Session:** Countdown from `SessionDuration`. On expiry, stop spawn loop and present end state.
 
-### `StageManager` *(V2 only)*
-Optional component. If not present, `TapGalleryManager` treats all Spots and Tappables as active.
+### `StageManager`
+Optional component. If not present, `TapGalleryManager` treats all Spots and Tappables as active (V1 mode).
 
 ```
 [SerializeField] List<StageConfig> Stages   // ordered, index 0 = first stage
 int CurrentStageIndex = 0                   // only ever increases
+event Action<int> OnStageAdvanced           // fires with new stage index
 ```
 
-- On each score change or time tick: if current stage's `ScoreMilestone` or `TimeMilestone` is exceeded, advance `CurrentStageIndex` by 1. First condition to trigger wins; index never decreases.
+- `CheckAdvancement(int currentScore, float elapsedTime)` is called by `TapGalleryManager` on score changes and spawn-loop ticks. If current stage's `ScoreMilestone` or `TimeMilestone` is exceeded, advance `CurrentStageIndex` by 1. First condition to trigger wins; index never decreases.
 - `GetActiveSpots()` → returns `Stages[CurrentStageIndex].ActiveSpots`
 - `GetAllowedTappables()` → returns `Stages[CurrentStageIndex].AllowedTappableConfigs`
 
@@ -160,7 +158,7 @@ Ordered by intended score value, lowest to highest.
 
 ## Score Values
 
-Score on tap = `TappableConfig.Score` (flat int). No runtime multiplier. Behavior difficulty and point value are determined when configuring Tappable prefabs. Design guideline (not code-enforced):
+Score on tap = `TappableConfig.Score` (flat int). If `IsPenalty` is true, the score is subtracted instead of added (player total clamped at 0). No runtime multiplier. Behavior difficulty and point value are determined when configuring Tappable prefabs. Design guideline (not code-enforced):
 
 `Score(Peek) < Score(PeekAndJump) < Score(Jump) < Score(PeekJumpAndRun) < Score(PeekAndRun) < Score(Run)`
 

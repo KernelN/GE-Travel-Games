@@ -7,6 +7,7 @@ public class TappableConfig : ScriptableObject
 {
     [SerializeField] TappableBehavior behavior;
     [SerializeField] int score;
+    [SerializeField] bool isPenalty;
     [SerializeField] float movementSpeed = 3f;
     [SerializeField] float peekDistance = 0f;
     [SerializeField] float peekDuration = 1f;
@@ -19,6 +20,7 @@ public class TappableConfig : ScriptableObject
 
     public TappableBehavior Behavior => behavior;
     public int Score => score;
+    public bool IsPenalty => isPenalty;
     public float MovementSpeed => movementSpeed;
     public float PeekDistance => peekDistance;
     public float PeekDuration => peekDuration;

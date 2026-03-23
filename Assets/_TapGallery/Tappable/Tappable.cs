@@ -106,21 +106,18 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
 
     IEnumerator PeekAndJumpRoutine(Direction dir, Spot spot)
     {
-        Vector2 hiddenPos = spot.Center;
-        Vector2 peekPos   = GetPeekPosition(dir, spot, config.PeekDistance);
-        float   peekAngle = IsHorizontal(dir) ? GetPeekRotationZ(dir) : 0f;
+        Vector2 hiddenPos  = spot.Center;
+        Vector2 peekPos    = GetPeekPosition(dir, spot, config.PeekDistance);
+        float   jumpAngle  = GetJumpRotationZ(dir);
 
         transform.position = hiddenPos;
-        SetRotationZ(0f);
+        SetRotationZ(jumpAngle);            // start already pointing toward jump dir
 
-        // Head points toward jump direction from the very start of the peek
-        yield return IsHorizontal(dir)
-            ? MoveTowardsWithRotation(peekPos, 0f, peekAngle)
-            : MoveTowards(peekPos);
+        yield return MoveTowards(peekPos);  // move out, rotation unchanged
 
         yield return new WaitForSeconds(config.PeekDuration);
 
-        // Jump phase — rotation held at peekAngle throughout
+        // Jump phase — rotation held at jumpAngle throughout
         Vector2 outward      = GetOutwardDirection(dir);
         float   jumpDuration = config.JumpHeight / Mathf.Max(config.MovementSpeed, 0.01f);
         float   elapsed      = 0f;
@@ -133,10 +130,8 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
             yield return null;
         }
 
-        // Return — head rotates back to upright
-        yield return IsHorizontal(dir)
-            ? MoveTowardsWithRotation(hiddenPos, peekAngle, 0f)
-            : MoveTowards(hiddenPos);
+        // Return — hold jump orientation throughout; snap upright once hidden
+        yield return MoveTowards(hiddenPos);
 
         SetRotationZ(0f);
         Complete();
@@ -144,26 +139,30 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
 
     IEnumerator JumpRoutine(Direction dir, Spot spot)
     {
-        Vector2 hiddenPos = spot.Center;
-        Vector2 peekPos = GetPeekPosition(dir, spot, config.PeekDistance);
+        Vector2 hiddenPos  = spot.Center;
+        Vector2 peekPos    = GetPeekPosition(dir, spot, config.PeekDistance);
+        float   jumpAngle  = GetJumpRotationZ(dir);
 
-        // No peek — start at edge immediately
+        // No peek — start at edge, already pointing toward jump dir
         transform.position = peekPos;
+        SetRotationZ(jumpAngle);
 
         // Jump phase
-        Vector2 outward = GetOutwardDirection(dir);
-        float jumpDuration = config.JumpHeight / Mathf.Max(config.MovementSpeed, 0.01f);
-        float elapsed = 0f;
+        Vector2 outward      = GetOutwardDirection(dir);
+        float   jumpDuration = config.JumpHeight / Mathf.Max(config.MovementSpeed, 0.01f);
+        float   elapsed      = 0f;
         while (elapsed < jumpDuration)
         {
             elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / jumpDuration);
+            float t            = Mathf.Clamp01(elapsed / jumpDuration);
             float displacement = config.JumpCurve.Evaluate(t) * config.JumpHeight;
             transform.position = peekPos + outward * displacement;
             yield return null;
         }
 
+        // Hold jump orientation throughout; snap upright once hidden
         yield return MoveTowards(hiddenPos);
+        SetRotationZ(0f);
         Complete();
     }
 
@@ -362,11 +361,23 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
 
     // Returns the Z angle (degrees) that tilts the sprite's head toward the given direction.
     // Magnitude is set by config.PeekRotationAngle (0–90). Right tilts clockwise (negative Z).
+    // Only used by Peek and PeekJumpAndRun (horizontal-only lean).
     float GetPeekRotationZ(Direction dir) => dir switch
     {
         Direction.Right => -config.PeekRotationAngle,
         Direction.Left  =>  config.PeekRotationAngle,
         _               =>  0f
+    };
+
+    // Returns the Z angle that fully points the sprite toward the jump direction.
+    // Used by Jump and PeekAndJump to orient the character before they leave the spot.
+    // Left/Right use the same lean as peek; Bottom flips the sprite 180° (head-down).
+    float GetJumpRotationZ(Direction dir) => dir switch
+    {
+        Direction.Right  => -config.PeekRotationAngle,
+        Direction.Left   =>  config.PeekRotationAngle,
+        Direction.Bottom =>  180f,
+        _                =>  0f    // Top: upright already points up
     };
 
     static bool IsHorizontal(Direction dir) =>

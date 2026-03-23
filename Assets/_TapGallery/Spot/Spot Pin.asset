@@ -10,13 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c94e567a0bb7419489fdccf541267fc5, type: 3}
-  m_Name: Spot 1
+  m_Name: Spot Pin
   m_EditorClassIdentifier: Assembly-CSharp::SpotConfig
-  peekDirections: 8
-  jumpDirections: 1
+  peekDirections: 12
+  jumpDirections: 3
   runDirections: 0
   tappableWeights:
   - Config: {fileID: 11400000, guid: 25982f990e924674ea1e10ecedf3a8c4, type: 2}
     Weight: 5
-  - Config: {fileID: 11400000, guid: 778a0cfc45f39c44e8c27fe01545c8db, type: 2}
+  - Config: {fileID: 11400000, guid: 67ffeb9e82a9fad4bac935a18bb44b1b, type: 2}
+    Weight: 7
+  - Config: {fileID: 11400000, guid: 6d3b47309c9e3304e8166bc9f299e688, type: 2}
     Weight: 2.5

@@ -22,7 +22,9 @@ public class TapGalleryManager : MonoBehaviour
         public int PrewarmCount = 3;
     }
 
-    [SerializeField] TapGalleryConfig config;
+    [SerializeField] float sessionDuration = 60f;
+    [SerializeField] float spawnInterval = 1.5f;
+    [SerializeField] int maxTappablesOnScreen = 5;
     [SerializeField] List<SpotWeightEntry> spotWeights;
     [SerializeField] List<TappablePoolEntry> tappablePools;
     [SerializeField] TMP_Text scoreLabel;
@@ -30,6 +32,7 @@ public class TapGalleryManager : MonoBehaviour
     [SerializeField] TappableTrailController[] trailEffectPool;
     [SerializeField] TimerManager timerManager;
     [SerializeField] SessionEndPanel sessionEndPanel;
+    [SerializeField] StageManager stageManager;
 
     int score;
     int activeTappableCount;
@@ -107,7 +110,10 @@ public class TapGalleryManager : MonoBehaviour
     {
         while (sessionActive)
         {
-            yield return new WaitForSeconds(config.SpawnInterval);
+            float interval = stageManager != null
+                ? stageManager.GetSpawnInterval(spawnInterval)
+                : spawnInterval;
+            yield return new WaitForSeconds(interval);
             if (sessionActive)
                 TrySpawn();
         }
@@ -115,12 +121,20 @@ public class TapGalleryManager : MonoBehaviour
 
     void TrySpawn()
     {
-        if (activeTappableCount >= config.MaxTappablesOnScreen) return;
+        int maxOnScreen = stageManager != null
+            ? stageManager.GetMaxTappablesOnScreen(maxTappablesOnScreen)
+            : maxTappablesOnScreen;
+        if (activeTappableCount >= maxOnScreen) return;
 
-        Spot spot = WeightedRandomSpot();
+        CheckStageAdvancement();
+
+        List<Spot> activeSpots = stageManager != null ? stageManager.GetActiveSpots() : null;
+        List<TappableConfig> allowedTappables = stageManager != null ? stageManager.GetAllowedTappables() : null;
+
+        Spot spot = WeightedRandomSpot(activeSpots);
         if (spot == null) return;
 
-        TappableConfig tappableConfig = WeightedRandomTappable(spot.Config.TappableWeights);
+        TappableConfig tappableConfig = WeightedRandomTappable(spot.Config.TappableWeights, allowedTappables);
         if (tappableConfig == null) return;
 
         Direction validDirections = GetValidDirections(tappableConfig.Behavior, spot.Config);
@@ -162,7 +176,8 @@ public class TapGalleryManager : MonoBehaviour
         {
             if (tappable.WasTapped)
             {
-                AddScore(tappable.Config.Score);
+                int points = tappable.Config.IsPenalty ? -tappable.Config.Score : tappable.Config.Score;
+                AddScore(points);
                 PlayBurstEffect(tappable.transform.position);
             }
 
@@ -175,8 +190,9 @@ public class TapGalleryManager : MonoBehaviour
 
     void AddScore(int amount)
     {
-        score += amount;
+        score = Mathf.Max(0, score + amount);
         UpdateScoreLabel();
+        CheckStageAdvancement();
     }
 
     void UpdateScoreLabel()
@@ -187,6 +203,13 @@ public class TapGalleryManager : MonoBehaviour
 
     // ── Session ───────────────────────────────────────────────────────────────
 
+    void CheckStageAdvancement()
+    {
+        if (stageManager == null) return;
+        float elapsed = sessionDuration - timerManager.TimeRemaining;
+        stageManager.CheckAdvancement(score, elapsed);
+    }
+
     void EndSession()
     {
         sessionActive = false;
@@ -196,44 +219,57 @@ public class TapGalleryManager : MonoBehaviour
 
     // ── Weighted random helpers ───────────────────────────────────────────────
 
-    Spot WeightedRandomSpot()
+    Spot WeightedRandomSpot(List<Spot> activeFilter = null)
     {
         float total = 0f;
         foreach (SpotWeightEntry entry in spotWeights)
+        {
+            if (activeFilter != null && !activeFilter.Contains(entry.Spot)) continue;
             total += entry.Weight;
+        }
 
         if (total <= 0f) return null;
 
         float roll = UnityEngine.Random.Range(0f, total);
         float cumulative = 0f;
+        Spot lastValid = null;
         foreach (SpotWeightEntry entry in spotWeights)
         {
+            if (activeFilter != null && !activeFilter.Contains(entry.Spot)) continue;
+            lastValid = entry.Spot;
             cumulative += entry.Weight;
             if (roll < cumulative)
                 return entry.Spot;
         }
-        return spotWeights[spotWeights.Count - 1].Spot;
+        return lastValid;
     }
 
-    static TappableConfig WeightedRandomTappable(List<TappableWeightEntry> entries)
+    static TappableConfig WeightedRandomTappable(List<TappableWeightEntry> entries,
+        List<TappableConfig> allowedFilter = null)
     {
         if (entries == null || entries.Count == 0) return null;
 
         float total = 0f;
         foreach (TappableWeightEntry entry in entries)
+        {
+            if (allowedFilter != null && !allowedFilter.Contains(entry.Config)) continue;
             total += entry.Weight;
+        }
 
         if (total <= 0f) return null;
 
         float roll = UnityEngine.Random.Range(0f, total);
         float cumulative = 0f;
+        TappableConfig lastValid = null;
         foreach (TappableWeightEntry entry in entries)
         {
+            if (allowedFilter != null && !allowedFilter.Contains(entry.Config)) continue;
+            lastValid = entry.Config;
             cumulative += entry.Weight;
             if (roll < cumulative)
                 return entry.Config;
         }
-        return entries[entries.Count - 1].Config;
+        return lastValid;
     }
 
     static Direction GetValidDirections(TappableBehavior behavior, SpotConfig spotConfig)

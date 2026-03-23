@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b125c63e20d8d4cbfbc9aecd0a3aca, type: 3}
   m_Name: Jumper
   m_EditorClassIdentifier: Assembly-CSharp::TappableConfig
-  sprite: {fileID: 0}
   behavior: 2
   score: 10
+  isPenalty: 0
   movementSpeed: 3
+  peekDistance: 0
   peekDuration: 1
+  peekRotationAngle: 90
   jumpHeight: 1.5
   jumpCurve:
     serializedVersion: 2
@@ -43,3 +45,5 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   runArrivalDistanceThreshold: 0.15
+  runBumpAmplitude: 0.04
+  runBumpFrequency: 8

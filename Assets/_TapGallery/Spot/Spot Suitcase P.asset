@@ -10,15 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c94e567a0bb7419489fdccf541267fc5, type: 3}
-  m_Name: Spot 3
+  m_Name: Spot Suitcase P
   m_EditorClassIdentifier: Assembly-CSharp::SpotConfig
-  peekDirections: 3
-  jumpDirections: 1
+  peekDirections: 6
+  jumpDirections: 0
   runDirections: 4
   tappableWeights:
-  - Config: {fileID: 11400000, guid: dc6c4b6ab2866fc4cbe1c67e9c2186ad, type: 2}
-    Weight: 5
-  - Config: {fileID: 11400000, guid: b6aa92c1d1ba13e43ba06ca0ef4f95d6, type: 2}
-    Weight: 3
-  - Config: {fileID: 11400000, guid: 6d3b47309c9e3304e8166bc9f299e688, type: 2}
-    Weight: 10
+  - Config: {fileID: 11400000, guid: 1b9da247910c4b14caba0303b2b0e084, type: 2}
+    Weight: 1
