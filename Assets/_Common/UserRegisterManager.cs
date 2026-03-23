@@ -11,6 +11,7 @@ namespace GETravelGames.Common
         [SerializeField] GameObject registrationView;
         [SerializeField] GameObject consolationView;
         [SerializeField] GameObject successView;
+        [SerializeField] VirtualKeyboard keyboard;
 
         [Header("Registration Form")]
         [SerializeField] TMP_Text prizeHeaderLabel;
@@ -60,6 +61,13 @@ namespace GETravelGames.Common
             submitButton?.onClick.AddListener(OnSubmit);
             playAgainConsolation?.onClick.AddListener(PlayAgain);
             playAgainSuccess?.onClick.AddListener(PlayAgain);
+
+            if (keyboard != null)
+            {
+                nameInput?.onSelect.AddListener(_ => keyboard.SetActiveField(nameInput));
+                phoneInput?.onSelect.AddListener(_ => keyboard.SetActiveField(phoneInput));
+                officeInput?.onSelect.AddListener(_ => keyboard.SetActiveField(officeInput));
+            }
 
             HideAllViews();
 
@@ -118,10 +126,13 @@ namespace GETravelGames.Common
             if (nameInput != null) nameInput.text = "";
             if (phoneInput != null) phoneInput.text = "";
             if (officeInput != null) officeInput.text = "";
+
+            keyboard?.Show();
         }
 
         void ShowConsolation()
         {
+            keyboard?.Hide();
             consolationView?.SetActive(true);
             if (consolationLabel != null)
                 consolationLabel.text = consolationText;
@@ -133,6 +144,7 @@ namespace GETravelGames.Common
 
         void ShowSuccess()
         {
+            keyboard?.Hide();
             registrationView?.SetActive(false);
             successView?.SetActive(true);
 
@@ -227,7 +239,12 @@ namespace GETravelGames.Common
 
             // ── Registration view ──────────────────────────────────────────
             registrationView = UIBuilderHelper.MakeView(canvas.transform, "RegistrationView");
-            UIBuilderHelper.AddVerticalLayout(registrationView, spacing: 12f);
+            // Restrict to top portion — bottom 220px reserved for the keyboard
+            UIBuilderHelper.SetAnchored(registrationView.GetComponent<RectTransform>(),
+                new Vector2(0, 0), new Vector2(1, 1),
+                new Vector2(0, 220), new Vector2(0, 0));
+            UIBuilderHelper.AddVerticalLayout(registrationView, spacing: 8f,
+                padding: new RectOffset(20, 20, 10, 10));
 
             prizeHeaderLabel = UIBuilderHelper.MakeText(registrationView.transform, "PrizeHeader",
                 36, FontStyles.Bold, UIBuilderHelper.ColTextPrimary);
@@ -236,23 +253,20 @@ namespace GETravelGames.Common
             prizeDescriptionLabel = UIBuilderHelper.MakeText(registrationView.transform,
                 "PrizeDescription", 22, FontStyles.Normal, UIBuilderHelper.ColTextSecondary);
             UIBuilderHelper.AddLayout(prizeDescriptionLabel.gameObject, 36);
-
-            var spacer = new GameObject("Spacer", typeof(RectTransform));
-            spacer.transform.SetParent(registrationView.transform, false);
-            UIBuilderHelper.AddLayout(spacer, 12);
+            prizeDescriptionLabel.gameObject.SetActive(false);
 
             nameInput = UIBuilderHelper.MakeInputField(registrationView.transform,
                 "NameInput", namePlaceholder);
-            UIBuilderHelper.AddLayout(nameInput.gameObject, 48);
+            UIBuilderHelper.AddLayout(nameInput.gameObject, 40);
 
             phoneInput = UIBuilderHelper.MakeInputField(registrationView.transform,
                 "PhoneInput", phonePlaceholder);
             phoneInput.contentType = TMP_InputField.ContentType.IntegerNumber;
-            UIBuilderHelper.AddLayout(phoneInput.gameObject, 48);
+            UIBuilderHelper.AddLayout(phoneInput.gameObject, 40);
 
             officeInput = UIBuilderHelper.MakeInputField(registrationView.transform,
                 "OfficeInput", officePlaceholder);
-            UIBuilderHelper.AddLayout(officeInput.gameObject, 48);
+            UIBuilderHelper.AddLayout(officeInput.gameObject, 40);
 
             errorLabel = UIBuilderHelper.MakeText(registrationView.transform, "ErrorLabel",
                 18, FontStyles.Normal, UIBuilderHelper.ColError);
@@ -261,7 +275,7 @@ namespace GETravelGames.Common
 
             submitButton = UIBuilderHelper.MakeButton(registrationView.transform, "SubmitButton",
                 submitButtonText, UIBuilderHelper.ColBtn, UIBuilderHelper.ColTextPrimary);
-            UIBuilderHelper.AddLayout(submitButton.gameObject, 52);
+            UIBuilderHelper.AddLayout(submitButton.gameObject, 46);
 
             // ── Consolation view ───────────────────────────────────────────
             consolationView = UIBuilderHelper.MakeView(canvas.transform, "ConsolationView");
@@ -296,6 +310,13 @@ namespace GETravelGames.Common
                 "PlayAgainButton", playAgainText, UIBuilderHelper.ColBtn,
                 UIBuilderHelper.ColTextPrimary);
             UIBuilderHelper.AddLayout(playAgainSuccess.gameObject, 52);
+
+            // ── Virtual keyboard ───────────────────────────────────────────
+            var kbGo = new GameObject("KeyboardPanel", typeof(RectTransform));
+            kbGo.transform.SetParent(canvas.transform, false);
+            keyboard = kbGo.AddComponent<VirtualKeyboard>();
+            keyboard.Build();
+            keyboard.Hide();
 
             UnityEditor.EditorUtility.SetDirty(this);
             Debug.Log("[UserRegisterManager] UI construida. Guard\u00e1 la escena.");

@@ -81,12 +81,13 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
 
     IEnumerator PeekRoutine(Direction dir, Spot spot)
     {
-        Vector2 hiddenPos = spot.Center;
-        Vector2 peekPos   = GetPeekPosition(dir, spot, config.PeekDistance);
-        float   peekAngle = IsHorizontal(dir) ? GetPeekRotationZ(dir) : 0f;
+        Vector2 hiddenPos  = spot.Center;
+        Vector2 peekPos    = GetPeekPosition(dir, spot, config.PeekDistance);
+        float   peekAngle  = dir == Direction.Bottom ? 180f : (IsHorizontal(dir) ? GetPeekRotationZ(dir) : 0f);
+        float   startAngle = IsHorizontal(dir) ? 0f : peekAngle; // horizontal starts upright and leans; vertical starts at final orientation
 
         transform.position = hiddenPos;
-        SetRotationZ(0f);
+        SetRotationZ(startAngle);
 
         // Head rotates toward peek direction as it emerges
         yield return IsHorizontal(dir)

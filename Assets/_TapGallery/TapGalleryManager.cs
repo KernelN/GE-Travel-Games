@@ -139,13 +139,16 @@ public class TapGalleryManager : MonoBehaviour
         if (tappableConfig == null) return;
 
         Direction validDirections = GetValidDirections(tappableConfig.Behavior, spot.Config);
-        if (validDirections == Direction.None)
+        bool canUseRunTarget = (tappableConfig.Behavior == TappableBehavior.Run ||
+                                tappableConfig.Behavior == TappableBehavior.PeekAndRun) &&
+                               spot.RunTargets.Count > 0;
+        if (validDirections == Direction.None && !canUseRunTarget)
         {
             Debug.LogWarning($"[TapGallery] No valid directions for {tappableConfig.Behavior} on spot {spot.name}. Skipping.");
             return;
         }
 
-        Direction direction = PickRandomDirection(validDirections);
+        Direction direction = PickRandomDirection(validDirections); // returns Direction.None if no flags — safe when runTarget is used
 
         // PeekJumpAndRun only valid for Left/Right
         if (tappableConfig.Behavior == TappableBehavior.PeekJumpAndRun &&
