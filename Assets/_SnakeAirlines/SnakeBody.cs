@@ -68,21 +68,9 @@ public class SnakeBody : MonoBehaviour
         }
 
         // 1. Record Path
-        if (pathHistory.Count == 0)
+        if (pathHistory.Count == 0 || Vector2.Distance(pathHistory[0], headPosition) >= pathResolution)
         {
             pathHistory.Insert(0, headPosition);
-        }
-        else
-        {
-            float dist = Vector2.Distance(pathHistory[0], headPosition);
-            if (dist >= pathResolution)
-            {
-                pathHistory.Insert(0, headPosition);
-            }
-            else
-            {
-                pathHistory[0] = headPosition;
-            }
         }
 
         // 2. Reconstruct Body Points

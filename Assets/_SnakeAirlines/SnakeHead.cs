@@ -16,6 +16,9 @@ public class SnakeHead : MonoBehaviour
     [SerializeField] float rotationSpeed = 180;
     [SerializeField] float foodCollisionRadius = 0.4f;
     [SerializeField] float selfCollisionRadius = 0.3f;
+    [SerializeField] bool dieOnCollision = false;
+
+    public event System.Action OnSnakeDied;
 
     Vector2 headPosition;
     Vector2 currentDirection = Vector2.right;
@@ -179,31 +182,41 @@ public class SnakeHead : MonoBehaviour
         transform.position = new Vector2(headPosition.x, headPosition.y);
         snakeBody.Advance(headPosition, dir, shouldGrow);
 
-        if (isStuck && snakeBody != null && snakeBody.SegmentSpacing > 0f)
+        if (isStuck)
         {
-            float progressInSegments = stuckDistanceAccumulator / snakeBody.SegmentSpacing;
-            int totalPointsToRemove = Mathf.FloorToInt(progressInSegments * snakeBody.PointsPerSegment);
-            int pointsToRemove = totalPointsToRemove - stuckPointsRemoved;
-            if (pointsToRemove > 0)
+            if (dieOnCollision)
             {
-                int removedSegments;
-                int removedPoints = snakeBody.RemoveTailPoints(pointsToRemove, headPosition, out removedSegments);
-                if (removedPoints > 0)
-                {
-                    stuckPointsRemoved += removedPoints;
-                }
-
-                if (removedSegments > 0)
-                {
-                    scoreManager.RemoveBodyPoints(removedSegments);
-                }
+                OnSnakeDied?.Invoke();
+                enabled = false;
+                return;
             }
 
-            int segmentsToRemove = Mathf.FloorToInt(stuckDistanceAccumulator / snakeBody.SegmentSpacing);
-            if (segmentsToRemove > 0)
+            if (snakeBody != null && snakeBody.SegmentSpacing > 0f)
             {
-                stuckDistanceAccumulator -= segmentsToRemove * snakeBody.SegmentSpacing;
-                stuckPointsRemoved = Mathf.Max(0, stuckPointsRemoved - segmentsToRemove * snakeBody.PointsPerSegment);
+                float progressInSegments = stuckDistanceAccumulator / snakeBody.SegmentSpacing;
+                int totalPointsToRemove = Mathf.FloorToInt(progressInSegments * snakeBody.PointsPerSegment);
+                int pointsToRemove = totalPointsToRemove - stuckPointsRemoved;
+                if (pointsToRemove > 0)
+                {
+                    int removedSegments;
+                    int removedPoints = snakeBody.RemoveTailPoints(pointsToRemove, headPosition, out removedSegments);
+                    if (removedPoints > 0)
+                    {
+                        stuckPointsRemoved += removedPoints;
+                    }
+
+                    if (removedSegments > 0)
+                    {
+                        scoreManager.RemoveBodyPoints(removedSegments);
+                    }
+                }
+
+                int segmentsToRemove = Mathf.FloorToInt(stuckDistanceAccumulator / snakeBody.SegmentSpacing);
+                if (segmentsToRemove > 0)
+                {
+                    stuckDistanceAccumulator -= segmentsToRemove * snakeBody.SegmentSpacing;
+                    stuckPointsRemoved = Mathf.Max(0, stuckPointsRemoved - segmentsToRemove * snakeBody.PointsPerSegment);
+                }
             }
         }
 
@@ -254,6 +267,13 @@ public class SnakeHead : MonoBehaviour
         int hitIndex = snakeBody.FindCollisionIndex(headPosition, selfCollisionRadius);
         if (hitIndex < 0)
         {
+            return;
+        }
+
+        if (dieOnCollision)
+        {
+            OnSnakeDied?.Invoke();
+            enabled = false;
             return;
         }
 

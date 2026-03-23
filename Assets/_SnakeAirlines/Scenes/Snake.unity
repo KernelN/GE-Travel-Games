@@ -542,7 +542,7 @@ MonoBehaviour:
   pointsPerFood: 10
   pointsPerRemovedSegment: 10
   scoreText: {fileID: 1912697192}
-  scoreFormat: 'Points: {0:00}'
+  scoreFormat: 'Puntos: {0:00}'
 --- !u!4 &550213485
 Transform:
   m_ObjectHideFlags: 0
@@ -1228,13 +1228,14 @@ MonoBehaviour:
   foodManager: {fileID: 283925997}
   scoreManager: {fileID: 550213484}
   snakeBody: {fileID: 42452469}
-  board: {fileID: 0}
+  board: {fileID: 778170510}
   dragPositionActionReference: {fileID: 395499635}
   dragPressActionReference: {fileID: 438395629}
   moveSpeed: 6
   rotationSpeed: 200
   foodCollisionRadius: 1
   selfCollisionRadius: 0.3
+  dieOnCollision: 1
 --- !u!58 &1491652449
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1544,7 +1545,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1759064065
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2152,7 +2153,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1919106177}
-  - component: {fileID: 1919106176}
+  - component: {fileID: 1919106178}
+  - component: {fileID: 1919106179}
   m_Layer: 0
   m_Name: Timer
   m_TagString: Untagged
@@ -2160,22 +2162,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1919106176
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1919106175}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70498f2dfe252144a8d0b56f1afcd641, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TimerManager
-  startSeconds: 45
-  timerText: {fileID: 626091723}
-  timerFormat: '{0:00}'
-  gameOverObject: {fileID: 1759064064}
 --- !u!4 &1919106177
 Transform:
   m_ObjectHideFlags: 0
@@ -2191,6 +2177,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1919106178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1919106175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8f279856709ab14e8b991f0bda155ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TimerManager
+  startSeconds: 60
+  timerText: {fileID: 626091723}
+  timerFormat: '{0:0}'
+  gameOverObject: {fileID: 1759064064}
+  pauseOnEnd: 1
+--- !u!114 &1919106179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1919106175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2feefadce40c9ca47bf4506f052b29b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SnakeSessionManager
+  timerManager: {fileID: 1919106178}
+  snakeHead: {fileID: 1491652448}
 --- !u!224 &1990360365 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5283332841465386002, guid: 83d72350c2122e248b97354ba55d940f, type: 3}
