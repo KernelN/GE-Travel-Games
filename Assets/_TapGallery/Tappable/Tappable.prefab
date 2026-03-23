@@ -278,6 +278,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Tappable
   config: {fileID: 0}
   spriteRenderer: {fileID: 232297709398849678}
+  bodySpriteRenderer: {fileID: 3485276980000071118}
 --- !u!1 &8790512091808824067
 GameObject:
   m_ObjectHideFlags: 0

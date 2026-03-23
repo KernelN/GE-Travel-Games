@@ -153,8 +153,8 @@ public class TapGalleryManager : MonoBehaviour
         Tappable tappable = pool.Get();
         activeTappableCount++;
 
-        // Only runners (TappableBehavior.Run) get a continuous trail.
-        TappableTrailController trail = tappableConfig.Behavior == TappableBehavior.Run
+        // All run behaviors get a continuous trail; timing is controlled inside Tappable via RunPhase.
+        TappableTrailController trail = IsRunBehavior(tappableConfig.Behavior)
             ? GetTrailEffect()
             : null;
 
