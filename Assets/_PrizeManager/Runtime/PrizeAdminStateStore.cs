@@ -236,6 +236,20 @@ namespace GETravelGames.PrizeManager
             return true;
         }
 
+        public bool UpdateActiveReservationWinnerData(
+            string winnerName, string winnerPhoneNumber, string winnerOffice)
+        {
+            if (activeReservation == null)
+            {
+                return false;
+            }
+
+            activeReservation.WinnerName = winnerName ?? string.Empty;
+            activeReservation.WinnerPhoneNumber = winnerPhoneNumber ?? string.Empty;
+            activeReservation.WinnerOffice = winnerOffice ?? string.Empty;
+            return true;
+        }
+
         public bool ConfirmActiveReservation(out WonPrizeRecord wonPrizeRecord)
         {
             wonPrizeRecord = null;
