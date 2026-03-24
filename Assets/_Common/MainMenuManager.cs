@@ -9,12 +9,24 @@ namespace GETravelGames.Common
         [Header("Buttons")]
         [SerializeField] Button configButton;
         [SerializeField] Button readyButton;
+        [SerializeField] Button exitButton;
 
         void Start()
         {
             Time.timeScale = 1f;
             configButton?.onClick.AddListener(() => SceneManager.LoadScene("Config"));
             readyButton?.onClick.AddListener(() => SceneManager.LoadScene("ReadyKiosk"));
+            exitButton?.onClick.AddListener(() => Exit());
+        }
+
+        void Exit()
+        {
+            PrizeService.Instance?.ExportAll();
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
 
 #if UNITY_EDITOR
@@ -59,6 +71,11 @@ namespace GETravelGames.Common
                 "Preparar Juego", UIBuilderHelper.ColBtn, UIBuilderHelper.ColTextPrimary,
                 28, TMPro.FontStyles.Bold);
             UIBuilderHelper.AddLayout(readyButton.gameObject, 60);
+
+            // Exit button
+            exitButton = UIBuilderHelper.MakeButton(panel.transform, "ExitButton",
+                "Salir", UIBuilderHelper.ColBtnSecondary, UIBuilderHelper.ColTextPrimary);
+            UIBuilderHelper.AddLayout(exitButton.gameObject, 52);
 
             UnityEditor.EditorUtility.SetDirty(this);
             Debug.Log("[MainMenuManager] UI construida. Guard\u00e1 la escena.");

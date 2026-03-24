@@ -215,6 +215,12 @@ namespace GETravelGames.Common
             return chance;
         }
 
+        public void ExportAll()
+        {
+            ExportPlayers();
+            ExportWonPrizes();
+        }
+
         void ExportWonPrizes()
         {
             try
