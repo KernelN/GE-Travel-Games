@@ -190,6 +190,30 @@ namespace GETravelGames.PrizeManager
             return builder.ToString();
         }
 
+        /// <summary>One row per unique player; prizes serialised as semicolon-delimited lists.</summary>
+        public string ExportPlayersCsv(IEnumerable<PlayerRecord> players)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("Nombre,Apellido,Telefono,Oficina,VecesJugado,CategoriasPremios,IdsPremios");
+
+            foreach (var p in players)
+            {
+                var cats = string.Join(";", p.WonPrizes.Select(w => w.CategoryId.ToString(CultureInfo.InvariantCulture)));
+                var ids  = string.Join(";", p.WonPrizes.Select(w => w.InstanceId));
+
+                builder.Append(EscapeCsv(p.FirstName));  builder.Append(',');
+                builder.Append(EscapeCsv(p.LastName));   builder.Append(',');
+                builder.Append(EscapeCsv(p.Phone));      builder.Append(',');
+                builder.Append(EscapeCsv(p.Office));     builder.Append(',');
+                builder.Append(p.TimesPlayed.ToString(CultureInfo.InvariantCulture)); builder.Append(',');
+                builder.Append(EscapeCsv(cats));         builder.Append(',');
+                builder.Append(EscapeCsv(ids));
+                builder.AppendLine();
+            }
+
+            return builder.ToString();
+        }
+
         /// <summary>
         /// Exports the current available prize pool as a standard prizes CSV so the
         /// admin can use it as the new master file after applying subtractions.

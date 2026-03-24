@@ -218,7 +218,7 @@ public class TapGalleryManager : MonoBehaviour
     {
         sessionActive = false;
         Debug.Log($"[TapGallery] Session ended. Final score: {score}");
-        SceneManager.LoadScene("UserRegister");
+        SceneManager.LoadScene("PrizeGiving");
     }
 
     // ── Weighted random helpers ───────────────────────────────────────────────

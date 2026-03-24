@@ -24,6 +24,6 @@ public class SnakeSessionManager : MonoBehaviour
 
     void OnSessionEnd()
     {
-        SceneManager.LoadScene("UserRegister");
+        SceneManager.LoadScene("PrizeGiving");
     }
 }

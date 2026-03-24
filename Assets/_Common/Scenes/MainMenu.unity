@@ -1241,7 +1241,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1703045058}
   m_Layer: 0
-  m_Name: vecteezy_simple-airplane-travel-opens-the-background-behind-itself_24317887_0
+  m_Name: bg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

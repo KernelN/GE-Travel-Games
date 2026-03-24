@@ -287,6 +287,18 @@ namespace GETravelGames.PrizeManager
     }
 
     [Serializable]
+    public sealed class PlayerRecord
+    {
+        public string FirstName   = string.Empty;
+        public string LastName    = string.Empty;
+        public string Phone       = string.Empty;
+        public string Office      = string.Empty;
+        public int    TimesPlayed;
+        /// <summary>Each entry: category id + prize instance id. Empty = no prizes won.</summary>
+        public List<(ushort CategoryId, string InstanceId)> WonPrizes = new();
+    }
+
+    [Serializable]
     public sealed class PrizeAdminOperationResult
     {
         public bool Success;

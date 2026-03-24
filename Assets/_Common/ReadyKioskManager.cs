@@ -24,7 +24,7 @@ namespace GETravelGames.Common
             if (!PrizeService.Instance.IsInitialized)
                 PrizeService.Instance.Initialize();
 
-            playButton?.onClick.AddListener(() => SceneManager.LoadScene(1));
+            playButton?.onClick.AddListener(() => SceneManager.LoadScene("RegisterUser"));
             backButton?.onClick.AddListener(() => SceneManager.LoadScene("MainMenu"));
         }
 

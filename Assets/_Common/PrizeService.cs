@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using GETravelGames.PrizeManager;
 using UnityEngine;
 
@@ -24,6 +26,8 @@ namespace GETravelGames.Common
         int activeKioskId;
         string activeExportFolderPath;
         string activeWonPrizesExportFileName;
+        string activePlayersExportFileName;
+        readonly List<PlayerRecord> playerRegistry = new();
 
         public static PrizeService Instance { get; private set; }
         public bool IsInitialized => initialized;
@@ -71,6 +75,10 @@ namespace GETravelGames.Common
             activeWonPrizesExportFileName = KioskConfig.GetWonPrizesExportFileName();
             if (string.IsNullOrWhiteSpace(activeWonPrizesExportFileName))
                 activeWonPrizesExportFileName = wonPrizesExportFileName;
+
+            activePlayersExportFileName = KioskConfig.GetPlayersExportFileName();
+            if (string.IsNullOrWhiteSpace(activePlayersExportFileName))
+                activePlayersExportFileName = "Jugadores.csv";
 
             // Import settings then prizes.
             var settingsPath = Path.Combine(importPath, settingsFile);
@@ -149,8 +157,42 @@ namespace GETravelGames.Common
             if (!stateStore.ConfirmActiveReservation(out _))
                 return false;
 
-            ExportWonPrizes();
             return true;
+        }
+
+        /// <summary>
+        /// Records a completed play session: finds or creates the player by phone number,
+        /// increments their play count, attaches prize info if one was won, then exports
+        /// both Jugadores.csv (full rewrite) and WonPrizes.csv (append).
+        /// Call this once at the end of every PrizeGiving flow.
+        /// </summary>
+        public void RecordPlay(string firstName, string lastName, string phone, string office,
+                               PrizePullResult pull)
+        {
+            var key = (phone ?? "").Trim();
+            var player = playerRegistry.Find(p => p.Phone == key);
+            if (player == null)
+            {
+                player = new PlayerRecord
+                {
+                    FirstName = (firstName ?? "").Trim(),
+                    LastName  = (lastName  ?? "").Trim(),
+                    Phone     = key,
+                    Office    = (office    ?? "").Trim(),
+                };
+                playerRegistry.Add(player);
+            }
+
+            player.TimesPlayed++;
+
+            if (pull != null && pull.IsRealPrize && pull.Reservation?.ReservedPrize != null)
+            {
+                var prize = pull.Reservation.ReservedPrize;
+                player.WonPrizes.Add((prize.PrizeCategoryId, prize.PrizeInstanceId));
+            }
+
+            ExportPlayers();
+            ExportWonPrizes();
         }
 
         int ComputeEffectiveFalsePrizeChance(PrizeRuntimeSettings settings, int eligibleCount)
@@ -183,6 +225,20 @@ namespace GETravelGames.Common
             catch (Exception e)
             {
                 Debug.LogWarning($"[PrizeService] Won prizes export failed: {e.Message}");
+            }
+        }
+
+        void ExportPlayers()
+        {
+            try
+            {
+                var path = Path.Combine(activeExportFolderPath, activePlayersExportFileName);
+                var csv  = csvService.ExportPlayersCsv(playerRegistry);
+                File.WriteAllText(path, csv, Encoding.UTF8);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[PrizeService] Players export failed: {e.Message}");
             }
         }
     }
