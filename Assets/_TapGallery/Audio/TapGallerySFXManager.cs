@@ -46,9 +46,11 @@ public class TapGallerySFXManager : MonoBehaviour
         }
     }
 
-    public void PlayTapHit(bool isPenalty)
+    public void PlayTapHit(bool isPenalty, AudioClip overrideClip = null)
     {
-        AudioClip clip = isPenalty ? tapPenaltyClip : tapRewardClip;
+        AudioClip clip = overrideClip;
+        if (!clip) clip = isPenalty ? tapPenaltyClip : tapRewardClip;
+
         if (sfxSource && clip)
             sfxSource.PlayOneShot(clip);
     }

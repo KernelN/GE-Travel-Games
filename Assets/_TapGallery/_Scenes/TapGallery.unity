@@ -2949,7 +2949,7 @@ MonoBehaviour:
   countdownBeepClip: {fileID: 8300000, guid: 749797d5ef2edd7459decde5f973b1cf, type: 3}
   timeUpClip: {fileID: 8300000, guid: 0e8c873074063eb41bb7a7bbc51319cd, type: 3}
   urgencyTimeThreshold: 10
-  urgencyPitch: 1.025
+  urgencyPitch: 1.01
   urgentPitchFadeDuration: 5
   outPitchFadeDuration: 2
 --- !u!1001 &1968198094

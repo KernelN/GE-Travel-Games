@@ -17,6 +17,7 @@ public class TappableConfig : ScriptableObject
     [SerializeField] float runArrivalDistanceThreshold = 0.15f;
     [SerializeField] float runBumpAmplitude = 0.04f;
     [SerializeField] float runBumpFrequency = 8f;
+    [SerializeField] AudioClip tapSfx;
 
     public TappableBehavior Behavior => behavior;
     public int Score => score;
@@ -30,4 +31,5 @@ public class TappableConfig : ScriptableObject
     public float RunArrivalDistanceThreshold => runArrivalDistanceThreshold;
     public float RunBumpAmplitude => runBumpAmplitude;
     public float RunBumpFrequency => runBumpFrequency;
+    public AudioClip TapSfx => tapSfx;
 }

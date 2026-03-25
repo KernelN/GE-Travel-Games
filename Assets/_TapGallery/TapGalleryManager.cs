@@ -207,7 +207,7 @@ public class TapGalleryManager : MonoBehaviour
             {
                 int points = tappable.Config.IsPenalty ? -tappable.Config.Score : tappable.Config.Score;
                 AddScore(points);
-                sfxManager?.PlayTapHit(tappable.Config.IsPenalty);
+                sfxManager?.PlayTapHit(tappable.Config.IsPenalty, tappable.Config.TapSfx);
                 PlayBurstEffect(tappable.transform.position);
             }
 

@@ -47,3 +47,4 @@ MonoBehaviour:
   runArrivalDistanceThreshold: 0.15
   runBumpAmplitude: 0.04
   runBumpFrequency: 8
+  tapSfx: {fileID: 8300000, guid: 18c38e8bf14e53540b4c1d4b1fddf9b5, type: 3}
