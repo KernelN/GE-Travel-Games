@@ -34,6 +34,7 @@ public class TapGalleryManager : MonoBehaviour
     [SerializeField] TimerManager timerManager;
     [SerializeField] SessionEndPanel sessionEndPanel;
     [SerializeField] StageManager stageManager;
+    [SerializeField] TapGallerySFXManager sfxManager;
 
     int score;
     int activeTappableCount;
@@ -97,6 +98,7 @@ public class TapGalleryManager : MonoBehaviour
         sessionActive = true;
         timerManager.OnTimerEnd += EndSession;
         UpdateScoreLabel();
+        sfxManager?.PlaySessionStart();
         StartCoroutine(SpawnLoop());
     }
 
@@ -182,6 +184,7 @@ public class TapGalleryManager : MonoBehaviour
             {
                 int points = tappable.Config.IsPenalty ? -tappable.Config.Score : tappable.Config.Score;
                 AddScore(points);
+                sfxManager?.PlayTapHit(tappable.Config.IsPenalty);
                 PlayBurstEffect(tappable.transform.position);
             }
 
