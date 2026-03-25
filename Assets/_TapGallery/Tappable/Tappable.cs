@@ -14,6 +14,7 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
     public bool WasTapped { get; private set; }
 
     Action onDone;
+    Action onPeekComplete;
     TappableTrailController activeTrail;
     float halfHeight;
 
@@ -35,10 +36,11 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
     }
 
     public void StartBehavior(Direction direction, Spot originSpot, Spot runTarget, Action callback,
-        TappableTrailController trail = null)
+        TappableTrailController trail = null, Action peekCallback = null)
     {
         WasTapped = false;
         onDone = callback;
+        onPeekComplete = peekCallback;
         activeTrail = trail;
         StopAllCoroutines();
         SetRotationZ(0f); // defensive reset — prevent leftover rotation from pooled instances
@@ -182,6 +184,8 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
             : MoveTowards(peekPos);
 
         yield return new WaitForSeconds(config.PeekDuration);
+        onPeekComplete?.Invoke();
+        onPeekComplete = null;
 
         // Parabolic arc (horizontal movement + fake downward gravity)
         float horizontalSpeed = config.MovementSpeed;
@@ -231,6 +235,8 @@ public class Tappable : MonoBehaviour, IPointerClickHandler
         transform.position = hiddenPos;
         yield return MoveTowards(peekPos);
         yield return new WaitForSeconds(config.PeekDuration);
+        onPeekComplete?.Invoke();
+        onPeekComplete = null;
 
         // Retract quickly back into spot
         yield return MoveTowards(hiddenPos);
