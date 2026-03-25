@@ -3,7 +3,7 @@ using UnityEngine.Serialization;
 
 public class TapGallerySFXManager : MonoBehaviour
 {
-    [SerializeField] MusicManager musicManager;
+    MusicManager musicManager;
     [SerializeField] TimerManager timerManager;
     [SerializeField] AudioSource sfxSource;
 

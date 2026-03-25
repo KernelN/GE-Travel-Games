@@ -8,9 +8,15 @@ public class Spot : MonoBehaviour
 
     SpriteRenderer spriteRenderer;
 
+    Direction occupiedDirections;
+
     public SpotConfig Config => config;
     public List<Spot> RunTargets => runTargets;
     public Vector2 Center => transform.position;
+    public Direction OccupiedDirections => occupiedDirections;
+
+    public void OccupyDirection(Direction dir) => occupiedDirections |= dir;
+    public void FreeDirection(Direction dir)   => occupiedDirections &= ~dir;
 
     public Bounds WorldBounds
     {

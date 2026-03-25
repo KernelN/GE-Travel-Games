@@ -548,19 +548,19 @@ MonoBehaviour:
   - Spot: {fileID: 347890956}
     Weight: 1
   - Spot: {fileID: 762547859}
-    Weight: 0.5
+    Weight: 1
   - Spot: {fileID: 687910137}
-    Weight: 0.5
+    Weight: 1
   - Spot: {fileID: 215787334}
-    Weight: 0.5
+    Weight: 1
   - Spot: {fileID: 2085584420}
     Weight: 0.5
   - Spot: {fileID: 153403165}
     Weight: 0.5
   - Spot: {fileID: 1177301886}
-    Weight: 0.5
+    Weight: 0.25
   - Spot: {fileID: 1837404482}
-    Weight: 0.5
+    Weight: 0.25
   tappablePools:
   - Config: {fileID: 11400000, guid: 25982f990e924674ea1e10ecedf3a8c4, type: 2}
     Prefab: {fileID: 2843732954885653069, guid: 084d4bf14f8365b47b83f7e1b6da83b5, type: 3}
@@ -657,7 +657,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 67ffeb9e82a9fad4bac935a18bb44b1b, type: 2}
     spawnInterval: 1.5
     maxTappablesOnScreen: 4
-    scoreMilestone: 60
+    scoreMilestone: 70
     timeMilestone: 22
   - activeSpots:
     - {fileID: 618347947}
@@ -675,7 +675,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 6d3b47309c9e3304e8166bc9f299e688, type: 2}
     spawnInterval: 1.5
     maxTappablesOnScreen: 6
-    scoreMilestone: 100
+    scoreMilestone: 120
     timeMilestone: 30
   - activeSpots:
     - {fileID: 618347947}
@@ -691,9 +691,10 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 778a0cfc45f39c44e8c27fe01545c8db, type: 2}
     - {fileID: 11400000, guid: dc6c4b6ab2866fc4cbe1c67e9c2186ad, type: 2}
     - {fileID: 11400000, guid: 6d3b47309c9e3304e8166bc9f299e688, type: 2}
+    - {fileID: 11400000, guid: b6aa92c1d1ba13e43ba06ca0ef4f95d6, type: 2}
     spawnInterval: 1
     maxTappablesOnScreen: 6
-    scoreMilestone: 150
+    scoreMilestone: 200
     timeMilestone: 45
   - activeSpots:
     - {fileID: 618347947}
@@ -713,7 +714,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 6d3b47309c9e3304e8166bc9f299e688, type: 2}
     - {fileID: 11400000, guid: b6aa92c1d1ba13e43ba06ca0ef4f95d6, type: 2}
     - {fileID: 11400000, guid: 1b9da247910c4b14caba0303b2b0e084, type: 2}
-    spawnInterval: 1
+    spawnInterval: 0.75
     maxTappablesOnScreen: 8
     scoreMilestone: 0
     timeMilestone: 0
@@ -2268,17 +2269,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e4d6d3b442c16f4c8c0dbd69afa469e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TappableParticleController
---- !u!114 &1532997515 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2029891066175246589, guid: d381660120b13ab49a08177aed3a867e, type: 3}
-  m_PrefabInstance: {fileID: 2822992330012407156}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8cdd85d3be4eac4b95c7c04e1cded06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TapGalleryMusicManager
 --- !u!1001 &1560050098
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2951,7 +2941,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee78904510b47e541848306b125a4493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TapGallerySFXManager
-  musicManager: {fileID: 1532997515}
   timerManager: {fileID: 494695808}
   sfxSource: {fileID: 2006026048}
   tapRewardClip: {fileID: 8300000, guid: 6645344f3b7f721409ef16f247a2b948, type: 3}

@@ -28,6 +28,7 @@ public class TapGalleryManager : MonoBehaviour
     [SerializeField] int maxTappablesOnScreen = 5;
     [SerializeField] List<SpotWeightEntry> spotWeights;
     [SerializeField] List<TappablePoolEntry> tappablePools;
+    [SerializeField] string scoreTextFormat = "Score: {0}";
     [SerializeField] TMP_Text scoreLabel;
     [SerializeField] TappableParticleController[] burstEffectPool;
     [SerializeField] TappableTrailController[] trailEffectPool;
@@ -141,6 +142,9 @@ public class TapGalleryManager : MonoBehaviour
         if (tappableConfig == null) return;
 
         Direction validDirections = GetValidDirections(tappableConfig.Behavior, spot.Config);
+        bool isRun = IsRunBehavior(tappableConfig.Behavior);
+        if (!isRun)
+            validDirections &= ~spot.OccupiedDirections;
         bool canUseRunTarget = (tappableConfig.Behavior == TappableBehavior.Run ||
                                 tappableConfig.Behavior == TappableBehavior.PeekAndRun) &&
                                spot.RunTargets.Count > 0;
@@ -178,8 +182,27 @@ public class TapGalleryManager : MonoBehaviour
             ? GetTrailEffect()
             : null;
 
+        bool directionHeld = !isRun && direction != Direction.None;
+        if (directionHeld)
+            spot.OccupyDirection(direction);
+
+        bool directionFreed = false;
+        Action freeDirection = () =>
+        {
+            if (!directionFreed)
+            {
+                directionFreed = true;
+                spot.FreeDirection(direction);
+            }
+        };
+
+        bool isPeekToRun = tappableConfig.Behavior == TappableBehavior.PeekJumpAndRun ||
+                           tappableConfig.Behavior == TappableBehavior.PeekAndRun;
+
         tappable.StartBehavior(direction, spot, runTarget, () =>
         {
+            if (directionHeld) freeDirection();
+
             if (tappable.WasTapped)
             {
                 int points = tappable.Config.IsPenalty ? -tappable.Config.Score : tappable.Config.Score;
@@ -190,7 +213,7 @@ public class TapGalleryManager : MonoBehaviour
 
             pool.Release(tappable);
             activeTappableCount--;
-        }, trail);
+        }, trail, isPeekToRun ? freeDirection : null);
     }
 
     // ── Score ─────────────────────────────────────────────────────────────────
@@ -204,8 +227,8 @@ public class TapGalleryManager : MonoBehaviour
 
     void UpdateScoreLabel()
     {
-        if (scoreLabel != null)
-            scoreLabel.text = score.ToString();
+        if (scoreLabel)
+            scoreLabel.text = string.Format(scoreTextFormat, score);
     }
 
     // ── Session ───────────────────────────────────────────────────────────────
