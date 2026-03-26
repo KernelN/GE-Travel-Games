@@ -16,7 +16,7 @@ namespace GETravelGames.Common
         [SerializeField] string prizesCsvFileName = "Prizes.csv";
         [SerializeField] string settingsCsvFileName = "Settings.csv";
         [SerializeField] string exportFolderPath;
-        [SerializeField] string wonPrizesExportFileName = "WonPrizes.csv";
+        [SerializeField] string subtractionExportFileName = "PrizePoolSubtraction";
 
         PrizeCsvService csvService;
         PrizeAdminStateStore stateStore;
@@ -25,8 +25,8 @@ namespace GETravelGames.Common
 
         int activeKioskId;
         string activeExportFolderPath;
-        string activeWonPrizesExportFileName;
         string activePlayersExportFileName;
+        string activeSubtractionExportFileName;
         readonly List<PlayerRecord> playerRegistry = new();
 
         public static PrizeService Instance { get; private set; }
@@ -72,13 +72,13 @@ namespace GETravelGames.Common
                     ? Application.dataPath
                     : exportFolderPath;
 
-            activeWonPrizesExportFileName = KioskConfig.GetWonPrizesExportFileName();
-            if (string.IsNullOrWhiteSpace(activeWonPrizesExportFileName))
-                activeWonPrizesExportFileName = wonPrizesExportFileName;
-
             activePlayersExportFileName = KioskConfig.GetPlayersExportFileName();
             if (string.IsNullOrWhiteSpace(activePlayersExportFileName))
                 activePlayersExportFileName = "Jugadores.csv";
+
+            activeSubtractionExportFileName = KioskConfig.GetSubtractionExportFileName();
+            if (string.IsNullOrWhiteSpace(activeSubtractionExportFileName))
+                activeSubtractionExportFileName = subtractionExportFileName;
 
             // Import settings then prizes.
             var settingsPath = Path.Combine(importPath, settingsFile);
@@ -163,7 +163,7 @@ namespace GETravelGames.Common
         /// <summary>
         /// Records a completed play session: finds or creates the player by phone number,
         /// increments their play count, attaches prize info if one was won, then exports
-        /// both Jugadores.csv (full rewrite) and WonPrizes.csv (append).
+        /// Jugadores.csv (full rewrite) and PrizePoolSubtraction (cumulative per-category totals).
         /// Call this once at the end of every PrizeGiving flow.
         /// </summary>
         public void RecordPlay(string firstName, string lastName, string phone, string office,
@@ -192,7 +192,7 @@ namespace GETravelGames.Common
             }
 
             ExportPlayers();
-            ExportWonPrizes();
+            ExportPrizePoolSubtraction();
         }
 
         int ComputeEffectiveFalsePrizeChance(PrizeRuntimeSettings settings, int eligibleCount)
@@ -218,19 +218,20 @@ namespace GETravelGames.Common
         public void ExportAll()
         {
             ExportPlayers();
-            ExportWonPrizes();
+            ExportPrizePoolSubtraction();
         }
 
-        void ExportWonPrizes()
+        void ExportPrizePoolSubtraction()
         {
             try
             {
-                var path = Path.Combine(activeExportFolderPath, activeWonPrizesExportFileName);
-                adminService.ExportWonPrizes(path);
+                var fileName = $"{activeSubtractionExportFileName}_{activeKioskId}.csv";
+                var path = Path.Combine(activeExportFolderPath, fileName);
+                adminService.ExportPrizePoolSubtraction(path, activeKioskId);
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[PrizeService] Won prizes export failed: {e.Message}");
+                Debug.LogWarning($"[PrizeService] Prize pool subtraction export failed: {e.Message}");
             }
         }
 

@@ -14,7 +14,8 @@ namespace GETravelGames.Common
         [SerializeField] TMP_InputField exportFolderInput;
         [SerializeField] TMP_InputField prizesCsvInput;
         [SerializeField] TMP_InputField settingsCsvInput;
-        [SerializeField] TMP_InputField wonPrizesInput;
+        [SerializeField] TMP_InputField playersInput;
+        [SerializeField] TMP_InputField subtractionInput;
         [SerializeField] TMP_InputField kioskIdInput;
 
         [Header("Buttons")]
@@ -50,8 +51,10 @@ namespace GETravelGames.Common
                 prizesCsvInput.text = KioskConfig.GetPrizesCsvFileName();
             if (settingsCsvInput != null)
                 settingsCsvInput.text = KioskConfig.GetSettingsCsvFileName();
-            if (wonPrizesInput != null)
-                wonPrizesInput.text = KioskConfig.GetWonPrizesExportFileName();
+            if (playersInput != null)
+                playersInput.text = KioskConfig.GetPlayersExportFileName();
+            if (subtractionInput != null)
+                subtractionInput.text = KioskConfig.GetSubtractionExportFileName();
             if (kioskIdInput != null)
                 kioskIdInput.text = KioskConfig.GetKioskId().ToString();
 
@@ -64,7 +67,8 @@ namespace GETravelGames.Common
             KioskConfig.SetExportFolderPath(exportFolderInput?.text ?? "");
             KioskConfig.SetPrizesCsvFileName(prizesCsvInput?.text ?? "");
             KioskConfig.SetSettingsCsvFileName(settingsCsvInput?.text ?? "");
-            KioskConfig.SetWonPrizesExportFileName(wonPrizesInput?.text ?? "");
+            KioskConfig.SetPlayersExportFileName(playersInput?.text ?? "");
+            KioskConfig.SetSubtractionExportFileName(subtractionInput?.text ?? "");
 
             if (int.TryParse(kioskIdInput?.text, out var id))
                 KioskConfig.SetKioskId(id);
@@ -168,8 +172,10 @@ namespace GETravelGames.Common
                 "Archivo de premios", "Prizes.csv");
             settingsCsvInput = MakeLabeledField(panel.transform, "SettingsCsv",
                 "Archivo de configuraci\u00f3n", "Settings.csv");
-            wonPrizesInput = MakeLabeledField(panel.transform, "WonPrizes",
-                "Archivo de premios ganados", "WonPrizes.csv");
+            playersInput = MakeLabeledField(panel.transform, "Players",
+                "Archivo de jugadores", "Jugadores.csv");
+            subtractionInput = MakeLabeledField(panel.transform, "Subtraction",
+                "Archivo de sustracción de premios", "PrizePoolSubtraction");
             kioskIdInput = MakeLabeledField(panel.transform, "KioskId",
                 "ID del kiosco", "1");
             kioskIdInput.contentType = TMP_InputField.ContentType.IntegerNumber;

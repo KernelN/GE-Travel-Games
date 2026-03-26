@@ -8,16 +8,18 @@ namespace GETravelGames.Common
         const string KeyExportFolderPath = "KioskConfig_ExportFolderPath";
         const string KeyPrizesCsvFileName = "KioskConfig_PrizesCsvFileName";
         const string KeySettingsCsvFileName = "KioskConfig_SettingsCsvFileName";
-        const string KeyWonPrizesExportFileName  = "KioskConfig_WonPrizesExportFileName";
-        const string KeyPlayersExportFileName    = "KioskConfig_PlayersExportFileName";
+        const string KeyWonPrizesExportFileName      = "KioskConfig_WonPrizesExportFileName";
+        const string KeyPlayersExportFileName        = "KioskConfig_PlayersExportFileName";
+        const string KeySubtractionExportFileName    = "KioskConfig_SubtractionExportFileName";
         const string KeyKioskId = "KioskConfig_KioskId";
 
         // ── Defaults ───────────────────────────────────────────────────────────
 
-        const string DefaultPrizesCsvFileName = "Prizes.csv";
-        const string DefaultSettingsCsvFileName = "Settings.csv";
+        const string DefaultPrizesCsvFileName        = "Prizes.csv";
+        const string DefaultSettingsCsvFileName      = "Settings.csv";
         const string DefaultWonPrizesExportFileName  = "WonPrizes.csv";
         const string DefaultPlayersExportFileName    = "Jugadores.csv";
+        const string DefaultSubtractionExportFileName = "PrizePoolSubtraction";
         const int DefaultKioskId = 1;
 
         // ── Getters ────────────────────────────────────────────────────────────
@@ -46,6 +48,9 @@ namespace GETravelGames.Common
         public static string GetPlayersExportFileName() =>
             PlayerPrefs.GetString(KeyPlayersExportFileName, DefaultPlayersExportFileName);
 
+        public static string GetSubtractionExportFileName() =>
+            PlayerPrefs.GetString(KeySubtractionExportFileName, DefaultSubtractionExportFileName);
+
         public static int GetKioskId() =>
             PlayerPrefs.GetInt(KeyKioskId, DefaultKioskId);
 
@@ -72,6 +77,10 @@ namespace GETravelGames.Common
         public static void SetPlayersExportFileName(string value) =>
             PlayerPrefs.SetString(KeyPlayersExportFileName,
                 string.IsNullOrWhiteSpace(value) ? DefaultPlayersExportFileName : value);
+
+        public static void SetSubtractionExportFileName(string value) =>
+            PlayerPrefs.SetString(KeySubtractionExportFileName,
+                string.IsNullOrWhiteSpace(value) ? DefaultSubtractionExportFileName : value);
 
         public static void SetKioskId(int value) =>
             PlayerPrefs.SetInt(KeyKioskId, Mathf.Max(1, value));

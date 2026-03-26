@@ -539,7 +539,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689794c24a3902d43ae8b7c31f011098, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TapGalleryManager
-  sessionDuration: 60
+  sessionDuration: 45
   spawnInterval: 1.5
   maxTappablesOnScreen: 5
   spotWeights:
@@ -628,7 +628,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8f279856709ab14e8b991f0bda155ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimerManager
-  startSeconds: 60
+  startSeconds: 45
   timerText: {fileID: 0}
   timerFormat: 'Time: {0:0}'
   gameOverObject: {fileID: 938841947}
@@ -695,7 +695,7 @@ MonoBehaviour:
     spawnInterval: 1
     maxTappablesOnScreen: 6
     scoreMilestone: 200
-    timeMilestone: 45
+    timeMilestone: 38
   - activeSpots:
     - {fileID: 618347947}
     - {fileID: 347890956}
@@ -2946,11 +2946,11 @@ MonoBehaviour:
   tapRewardClip: {fileID: 8300000, guid: 6645344f3b7f721409ef16f247a2b948, type: 3}
   tapPenaltyClip: {fileID: 8300000, guid: 92f50ab560324d44ca69996e776dbc04, type: 3}
   sessionStartClip: {fileID: 8300000, guid: 4fb765226c49b414a92576fa97435b5e, type: 3}
-  countdownBeepClip: {fileID: 8300000, guid: 749797d5ef2edd7459decde5f973b1cf, type: 3}
+  countdownBeepClip: {fileID: 0}
   timeUpClip: {fileID: 8300000, guid: 0e8c873074063eb41bb7a7bbc51319cd, type: 3}
-  urgencyTimeThreshold: 10
+  urgencyTimeThreshold: 7
   urgencyPitch: 1.01
-  urgentPitchFadeDuration: 5
+  urgentPitchFadeDuration: 3
   outPitchFadeDuration: 2
 --- !u!1001 &1968198094
 PrefabInstance:
