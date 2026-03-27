@@ -78,7 +78,8 @@ namespace GETravelGames.Common
                 return;
             }
 
-            currentPull = PrizeService.Instance.TryPullPrize();
+            // Minimum 1 try: used here only as an eligibility gate (are prizes available?).
+            currentPull = PrizeService.Instance.TryPullPrize(1);
 
             if (currentPull.IsRealPrize)
                 ShowRegistrationForm();

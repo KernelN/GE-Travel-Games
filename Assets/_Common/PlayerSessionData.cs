@@ -11,11 +11,18 @@ namespace GETravelGames.Common
         public static string Phone     { get; set; } = "";
         public static string Office    { get; set; } = "";
 
+        /// <summary>
+        /// Number of stage milestones the player's final score cleared. Determines how
+        /// many prize-giving tries (and boxes) they receive.
+        /// </summary>
+        public static int StageIndex { get; set; } = 0;
+
         public static bool HasData => !string.IsNullOrWhiteSpace(Phone);
 
         public static void Clear()
         {
             FirstName = LastName = Phone = Office = "";
+            StageIndex = 0;
         }
     }
 }

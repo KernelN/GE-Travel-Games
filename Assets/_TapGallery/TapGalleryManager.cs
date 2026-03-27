@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using GETravelGames.Common;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -272,6 +273,9 @@ public class TapGalleryManager : MonoBehaviour
     {
         sessionEndPanel?.Show(score);
         yield return new WaitForSecondsRealtime(gameOverDuration);
+        PlayerSessionData.StageIndex = stageManager != null
+            ? stageManager.ComputeTriesFromScore(score)
+            : 0;
         SceneManager.LoadScene("PrizeGiving");
     }
 

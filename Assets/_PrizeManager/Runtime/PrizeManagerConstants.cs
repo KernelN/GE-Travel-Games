@@ -2,7 +2,7 @@ namespace GETravelGames.PrizeManager
 {
     public static class PrizeManagerConstants
     {
-        public const int PrizeCsvColumnCount = 9;
+        public const int PrizeCsvColumnCount = 10;
         public const int SettingsCsvColumnCount = 8;
         public const int WonPrizeExportColumnCount = 8;
         public const int SubtractionExportColumnCount = 4;

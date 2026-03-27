@@ -110,23 +110,98 @@ namespace GETravelGames.Common
             Initialize();
         }
 
-        public PrizePullResult TryPullPrize()
+        /// <summary>
+        /// Rolls for a prize up to <paramref name="tries"/> times, keeping the best
+        /// (highest-level) result. A single reservation is made for the final winner.
+        /// </summary>
+        /// <param name="tries">
+        /// Number of attempts earned by the player (from PlayerSessionData.StageIndex).
+        /// Pass 0 to force a false prize with no rolling.
+        /// </param>
+        public PrizePullResult TryPullPrize(int tries)
         {
             if (!initialized)
                 return PrizePullResult.NoPrize("Sistema no inicializado");
 
             var settings = stateStore.ActiveSettings;
 
-            // Daily cap check.
+            // Daily cap check always overrides tries.
             if (settings.MaxPrizesPerDay > 0)
             {
                 var totalWins = stateStore.WonPrizeHistory.Count(r => r.KioskId == activeKioskId);
                 if (totalWins >= settings.MaxPrizesPerDay)
-                    return PrizePullResult.FalsePrize();
+                {
+                    var cap = PrizePullResult.FalsePrize();
+                    cap.RollSequence = new List<PrizePullResult> { cap };
+                    return cap;
+                }
             }
 
-            // Schedule-eligible prizes for this kiosk.
-            var pool = stateStore.GetKioskPrizes(activeKioskId);
+            // No tries → forced false prize (player didn't clear any stage milestone).
+            if (tries <= 0)
+            {
+                var forced = PrizePullResult.FalsePrize();
+                forced.RollSequence = new List<PrizePullResult> { forced };
+                return forced;
+            }
+
+            var rollSequence = new List<PrizePullResult>(tries);
+            PrizePullResult bestResult = null;
+
+            for (var i = 0; i < tries; i++)
+            {
+                var roll = RollOnce(settings);
+                rollSequence.Add(roll);
+
+                if (roll.Result != PrizePullResult.Outcome.RealPrize)
+                {
+                    // Track first false/no-prize as default if we have nothing better.
+                    if (bestResult == null)
+                        bestResult = roll;
+
+                    // AllowReroll=false AND we are still stuck on a non-prize → stop rolling.
+                    if (!settings.AllowReroll && bestResult.Result != PrizePullResult.Outcome.RealPrize)
+                        break;
+                    continue;
+                }
+
+                // This roll is a real prize — keep it if it beats the current best.
+                if (bestResult == null
+                    || bestResult.Result != PrizePullResult.Outcome.RealPrize
+                    || roll.WinningLevel > bestResult.WinningLevel)
+                {
+                    bestResult = roll;
+                }
+            }
+
+            // Make a single reservation for the best prize found.
+            if (bestResult?.Result == PrizePullResult.Outcome.RealPrize)
+            {
+                var prizeId = bestResult.Reservation?.ReservedPrize?.PrizeInstanceId;
+                if (!string.IsNullOrEmpty(prizeId) &&
+                    stateStore.TryReserveSpecificPrize(prizeId, "", "", "", activeKioskId, out var reservation))
+                {
+                    bestResult = PrizePullResult.RealPrize(reservation);
+                }
+                else
+                {
+                    Debug.LogWarning("[PrizeService] No se pudo reservar el premio seleccionado.");
+                    bestResult = PrizePullResult.FalsePrize();
+                }
+            }
+
+            bestResult ??= PrizePullResult.FalsePrize();
+            bestResult.RollSequence = rollSequence;
+            return bestResult;
+        }
+
+        /// <summary>
+        /// Performs one independent prize roll (false-prize check + random eligible selection)
+        /// WITHOUT making a reservation. Used internally for the multi-try loop.
+        /// </summary>
+        PrizePullResult RollOnce(PrizeRuntimeSettings settings)
+        {
+            var pool    = stateStore.GetKioskPrizes(activeKioskId);
             var eligible = pool
                 .Where(p => PrizeAdminService.IsScheduleEligible(p.Schedule))
                 .ToList();
@@ -134,18 +209,13 @@ namespace GETravelGames.Common
             if (eligible.Count == 0)
                 return PrizePullResult.FalsePrize();
 
-            // False prize chance roll.
             var falsePrizeChance = ComputeEffectiveFalsePrizeChance(settings, eligible.Count);
             if (UnityEngine.Random.Range(0, 100) < falsePrizeChance)
                 return PrizePullResult.FalsePrize();
 
-            // Reserve the first eligible prize with placeholder winner data.
-            var target = eligible[0];
-            if (!stateStore.TryReserveSpecificPrize(
-                    target.PrizeInstanceId, "", "", "", activeKioskId, out var reservation))
-                return PrizePullResult.NoPrize("No se pudo reservar el premio");
-
-            return PrizePullResult.RealPrize(reservation);
+            // Random selection (not always eligible[0]) so rerolls can yield different prizes.
+            var target = eligible[UnityEngine.Random.Range(0, eligible.Count)];
+            return PrizePullResult.RealPrizeDry(target);
         }
 
         public bool ClaimPrize(string winnerName, string winnerPhone, string winnerOffice)

@@ -145,6 +145,9 @@ namespace GETravelGames.PrizeManager
 
             for (var index = 1; index < dataRows.Count; index++)
             {
+                // If this row looks like a boolean it is the AllowReroll row; otherwise it is a threshold row.
+                if (TryParseAllowRerollRow(dataRows[index].Columns, settings))
+                    continue;
                 TryParseThresholdRow(dataRows[index].Columns, dataRows[index].RowNumber, settings, preview.Issues);
             }
 
@@ -240,7 +243,7 @@ namespace GETravelGames.PrizeManager
             var builder = new StringBuilder();
             builder.AppendLine(
                 "PrizeCategoryId,PrizeAmount,PrizeName,PrizeDescription," +
-                "PrizePriority,PrizeHourStart,PrizeHourEnd,HasToComeOutDuringHour,PrizeDays");
+                "PrizePriority,PrizeLevel,PrizeHourStart,PrizeHourEnd,HasToComeOutDuringHour,PrizeDays");
 
             foreach (var template in templates.OrderBy(t => t.PrizeCategoryId))
             {
@@ -256,6 +259,8 @@ namespace GETravelGames.PrizeManager
                 builder.Append(EscapeCsv(template.PrizeDescription));
                 builder.Append(',');
                 builder.Append(template.PrizePriority.ToString(CultureInfo.InvariantCulture));
+                builder.Append(',');
+                builder.Append(template.PrizeLevel.ToString(CultureInfo.InvariantCulture));
                 builder.Append(',');
                 builder.Append(s?.PrizeStartMinutesOfDay.HasValue == true
                     ? $"{s.PrizeStartMinutesOfDay.Value / 60:D2}:{s.PrizeStartMinutesOfDay.Value % 60:D2}"
@@ -355,6 +360,7 @@ namespace GETravelGames.PrizeManager
                 PrizeName = template.PrizeName,
                 PrizeDescription = template.PrizeDescription,
                 PrizePriority = template.PrizePriority,
+                PrizeLevel = template.PrizeLevel,
                 Schedule = template.Schedule.Clone(),
             };
         }
@@ -403,36 +409,41 @@ namespace GETravelGames.PrizeManager
 
             isValid &= TryParseUnsignedShort(columns[4], rowNumber, 5, "PrizePriority", issues, out var prizePriority, false);
 
-            var hasHourStart = !string.IsNullOrWhiteSpace(columns[5]);
-            var hasHourEnd = !string.IsNullOrWhiteSpace(columns[6]);
+            // Column 5 = PrizeLevel (new, optional — defaults to 0 if blank).
+            ushort prizeLevel = 0;
+            if (!string.IsNullOrWhiteSpace(columns[5]))
+                TryParseUnsignedShort(columns[5], rowNumber, 6, "PrizeLevel", issues, out prizeLevel, false);
+
+            var hasHourStart = !string.IsNullOrWhiteSpace(columns[6]);
+            var hasHourEnd = !string.IsNullOrWhiteSpace(columns[7]);
             int? prizeStartMinutesOfDay = null;
             int? prizeEndMinutesOfDay = null;
 
             if (hasHourStart)
             {
-                isValid &= TryParseTimeOfDay(columns[5], rowNumber, 6, "PrizeHourStart", issues, out var startMin);
+                isValid &= TryParseTimeOfDay(columns[6], rowNumber, 7, "PrizeHourStart", issues, out var startMin);
                 prizeStartMinutesOfDay = startMin;
             }
 
             if (hasHourEnd)
             {
-                isValid &= TryParseTimeOfDay(columns[6], rowNumber, 7, "PrizeHourEnd", issues, out var endMin);
+                isValid &= TryParseTimeOfDay(columns[7], rowNumber, 8, "PrizeHourEnd", issues, out var endMin);
                 prizeEndMinutesOfDay = endMin;
             }
 
-            var hasForcedHourValue = !string.IsNullOrWhiteSpace(columns[7]);
+            var hasForcedHourValue = !string.IsNullOrWhiteSpace(columns[8]);
             var hasToComeOutDuringHour = false;
             if (hasForcedHourValue)
             {
-                isValid &= TryParseBoolean(columns[7], rowNumber, 8, "HasToComeOutDuringHour", issues, out hasToComeOutDuringHour);
+                isValid &= TryParseBoolean(columns[8], rowNumber, 9, "HasToComeOutDuringHour", issues, out hasToComeOutDuringHour);
             }
 
-            isValid &= TryParsePrizeDays(columns[8], rowNumber, 9, issues, out var prizeDays);
+            isValid &= TryParsePrizeDays(columns[9], rowNumber, 10, issues, out var prizeDays);
 
             if (hasHourStart != hasHourEnd)
             {
                 isValid = false;
-                issues.Add(CreateIssue(rowNumber, 6, "PrizeHourStart",
+                issues.Add(CreateIssue(rowNumber, 7, "PrizeHourStart",
                     "PrizeHourStart y PrizeHourEnd deben proporcionarse ambos al usar una ventana de tiempo."));
             }
 
@@ -440,14 +451,14 @@ namespace GETravelGames.PrizeManager
                 && prizeEndMinutesOfDay.Value <= prizeStartMinutesOfDay.Value)
             {
                 isValid = false;
-                issues.Add(CreateIssue(rowNumber, 7, "PrizeHourEnd",
+                issues.Add(CreateIssue(rowNumber, 8, "PrizeHourEnd",
                     "Las ventanas de tiempo nocturnas o de duración cero no están contempladas en v1."));
             }
 
             if (hasToComeOutDuringHour && (!prizeStartMinutesOfDay.HasValue || !prizeEndMinutesOfDay.HasValue))
             {
                 isValid = false;
-                issues.Add(CreateIssue(rowNumber, 8, "HasToComeOutDuringHour",
+                issues.Add(CreateIssue(rowNumber, 9, "HasToComeOutDuringHour",
                     "Los premios de hora forzada requieren PrizeHourStart y PrizeHourEnd."));
             }
 
@@ -465,6 +476,7 @@ namespace GETravelGames.PrizeManager
                     PrizeName = prizeName,
                     PrizeDescription = prizeDescription,
                     PrizePriority = prizePriority,
+                    PrizeLevel = prizeLevel,
                     Schedule = new PrizeSchedule
                     {
                         PrizeStartMinutesOfDay = prizeStartMinutesOfDay,
@@ -476,6 +488,22 @@ namespace GETravelGames.PrizeManager
             };
 
             return true;
+        }
+
+        /// <summary>
+        /// Returns true and sets AllowReroll if the row's first non-blank cell contains a
+        /// recognisable boolean value (true/false/1/0/yes/no). Backward-compatible: old
+        /// Settings.csv files without this row simply leave AllowReroll = false.
+        /// </summary>
+        private static bool TryParseAllowRerollRow(IReadOnlyList<string> columns, PrizeRuntimeSettings settings)
+        {
+            var val = columns[0].Trim().ToLowerInvariant();
+            switch (val)
+            {
+                case "true":  case "1": case "yes": settings.AllowReroll = true;  return true;
+                case "false": case "0": case "no":  settings.AllowReroll = false; return true;
+                default: return false;
+            }
         }
 
         private static void TryParseBaseSettingsRow(

@@ -56,6 +56,7 @@ namespace GETravelGames.PrizeManager
         public string PrizeName = string.Empty;
         public string PrizeDescription = string.Empty;
         public ushort PrizePriority;
+        public ushort PrizeLevel;
         public PrizeSchedule Schedule = new();
 
         public PrizeTemplate Clone()
@@ -66,6 +67,7 @@ namespace GETravelGames.PrizeManager
                 PrizeName = PrizeName,
                 PrizeDescription = PrizeDescription,
                 PrizePriority = PrizePriority,
+                PrizeLevel = PrizeLevel,
                 Schedule = Schedule.Clone(),
             };
         }
@@ -81,6 +83,7 @@ namespace GETravelGames.PrizeManager
                 && string.Equals(PrizeName, other.PrizeName, StringComparison.Ordinal)
                 && string.Equals(PrizeDescription, other.PrizeDescription, StringComparison.Ordinal)
                 && PrizePriority == other.PrizePriority
+                && PrizeLevel == other.PrizeLevel
                 && Schedule.SemanticallyEquals(other.Schedule);
         }
     }
@@ -93,6 +96,7 @@ namespace GETravelGames.PrizeManager
         public string PrizeName = string.Empty;
         public string PrizeDescription = string.Empty;
         public ushort PrizePriority;
+        public ushort PrizeLevel;
         public PrizeSchedule Schedule = new();
 
         public PrizeInstance Clone()
@@ -104,6 +108,7 @@ namespace GETravelGames.PrizeManager
                 PrizeName = PrizeName,
                 PrizeDescription = PrizeDescription,
                 PrizePriority = PrizePriority,
+                PrizeLevel = PrizeLevel,
                 Schedule = Schedule.Clone(),
             };
         }
@@ -116,6 +121,7 @@ namespace GETravelGames.PrizeManager
                 PrizeName = PrizeName,
                 PrizeDescription = PrizeDescription,
                 PrizePriority = PrizePriority,
+                PrizeLevel = PrizeLevel,
                 Schedule = Schedule.Clone(),
             };
         }
@@ -146,6 +152,7 @@ namespace GETravelGames.PrizeManager
         public int FalsePrizeChancePercent;
         public int ForcedHourChancePercent;
         public int KioskCount = 1;
+        public bool AllowReroll;
         public List<PrizeChanceThreshold> FalsePrizeThresholds = new();
         public List<PrizeChanceThreshold> ForcedHourThresholds = new();
 
@@ -159,6 +166,7 @@ namespace GETravelGames.PrizeManager
                 FalsePrizeChancePercent = FalsePrizeChancePercent,
                 ForcedHourChancePercent = ForcedHourChancePercent,
                 KioskCount = KioskCount,
+                AllowReroll = AllowReroll,
                 FalsePrizeThresholds = FalsePrizeThresholds.Select(threshold => threshold.Clone()).ToList(),
                 ForcedHourThresholds = ForcedHourThresholds.Select(threshold => threshold.Clone()).ToList(),
             };

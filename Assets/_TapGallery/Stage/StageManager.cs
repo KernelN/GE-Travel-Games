@@ -38,6 +38,20 @@ public class StageManager : MonoBehaviour
             ? stages[Mathf.Min(currentStageIndex, stages.Count - 1)].MinTappablesOnScreen
             : fallback;
 
+    /// <summary>
+    /// Simulates how many stage milestones the given score clears, using score thresholds
+    /// only (time milestones are excluded). Used at session end to determine prize tries.
+    /// </summary>
+    public int ComputeTriesFromScore(int score)
+    {
+        if (stages == null) return 0;
+        int count = 0;
+        foreach (var stage in stages)
+            if (stage.ScoreMilestone > 0 && score >= stage.ScoreMilestone)
+                count++;
+        return count;
+    }
+
     public void CheckAdvancement(int currentScore, float elapsedTime)
     {
         if (stages == null || currentStageIndex >= stages.Count - 1) return;
