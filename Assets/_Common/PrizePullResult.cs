@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using GETravelGames.PrizeManager;
 
 namespace GETravelGames.Common
@@ -68,30 +67,13 @@ namespace GETravelGames.Common
         }
 
         /// <summary>
-        /// Computes how many particle-burst explosions should play during the celebration
-        /// animation, based on the roll sequence.
-        ///
-        /// Rules:
-        ///   +1  if the sequence started with a false/no-prize AND a real prize was
-        ///       later reached  ("escape" burst)
-        ///   +1  the first time each distinct prize level appears in the sequence
+        /// Returns the number of particle bursts to play for a won prize: one burst per
+        /// rarity tier up to and including the prize's own level.
+        ///   level 0 (Common)   → 1 burst
+        ///   level 1 (Uncommon) → 2 bursts
+        ///   level 2 (Rare)     → 3 bursts
+        ///   level 3 (Epic)     → 4 bursts
         /// </summary>
-        public static int ComputeBurstCount(List<PrizePullResult> sequence)
-        {
-            if (sequence == null || sequence.Count == 0) return 0;
-
-            bool startedWithFalse = sequence[0].Result != Outcome.RealPrize;
-            bool everReal = sequence.Any(r => r.Result == Outcome.RealPrize);
-
-            int bursts = 0;
-            if (startedWithFalse && everReal) bursts++; // escape burst
-
-            var seenLevels = new HashSet<ushort>();
-            foreach (var roll in sequence)
-                if (roll.Result == Outcome.RealPrize && seenLevels.Add(roll.WinningLevel))
-                    bursts++;
-
-            return bursts;
-        }
+        public static int ComputeBurstCount(ushort winningLevel) => winningLevel + 1;
     }
 }

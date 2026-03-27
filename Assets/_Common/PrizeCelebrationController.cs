@@ -34,7 +34,7 @@ namespace GETravelGames.Common
         };
 
         [Header("Timing")]
-        [SerializeField] float delayBetweenBursts = 0.4f;
+        [SerializeField] float delayBetweenBursts = 0.75f;
 
         [Header("Text pop curve  (0 → 1.2 → 1)")]
         [SerializeField] AnimationCurve textPopCurve = DefaultPopCurve();
@@ -59,8 +59,8 @@ namespace GETravelGames.Common
             TMP_Text prizeLabel,
             TMP_Text titleLabel)
         {
-            int burstCount = PrizePullResult.ComputeBurstCount(result.RollSequence);
-            var colors = BuildBurstColors(result.RollSequence, burstCount);
+            int burstCount = PrizePullResult.ComputeBurstCount(result.WinningLevel);
+            var colors = BuildBurstColors(result.WinningLevel, burstCount);
 
             for (int i = 0; i < burstCount; i++)
             {
@@ -112,14 +112,14 @@ namespace GETravelGames.Common
 
             if (screenFlashOverlay != null)
             {
-                float flashDur = isFinal ? 0.5f : 0.25f;
+                float flashDur = isFinal ? 1.0f : 0.5f;
                 screenFlashOverlay.color = new Color(color.r, color.g, color.b, 0.45f);
                 screenFlashOverlay.CrossFadeAlpha(0f, flashDur, false);
                 yield return new WaitForSeconds(flashDur);
             }
             else
             {
-                yield return new WaitForSeconds(isFinal ? 0.5f : 0.25f);
+                yield return new WaitForSeconds(isFinal ? 1.0f : 0.5f);
             }
         }
 
@@ -144,32 +144,15 @@ namespace GETravelGames.Common
         }
 
         /// <summary>
-        /// Walks the roll sequence in the same order as <see cref="PrizePullResult.ComputeBurstCount"/>
-        /// and returns a colour per burst event.
-        ///   • "escape false" event  → levelColors[0]
-        ///   • first time level N appears → levelColors[Clamp(N, 0, max)]
+        /// Returns a list of colours for each burst — all the same colour for the
+        /// winning prize level, matching the new level-based burst count.
         /// </summary>
-        List<Color> BuildBurstColors(List<PrizePullResult> sequence, int burstCount)
+        List<Color> BuildBurstColors(ushort winningLevel, int burstCount)
         {
             var result = new List<Color>(burstCount);
-            if (sequence == null || sequence.Count == 0) return result;
-
-            bool startedWithFalse = sequence[0].Result != PrizePullResult.Outcome.RealPrize;
-            bool everReal = false;
-            foreach (var r in sequence)
-                if (r.Result == PrizePullResult.Outcome.RealPrize) { everReal = true; break; }
-
-            if (startedWithFalse && everReal)
-                result.Add(LevelColor(0)); // escape burst → same colour as level 0
-
-            var seenLevels = new HashSet<ushort>();
-            foreach (var roll in sequence)
-            {
-                if (roll.Result != PrizePullResult.Outcome.RealPrize) continue;
-                if (seenLevels.Add(roll.WinningLevel))
-                    result.Add(LevelColor(roll.WinningLevel));
-            }
-
+            var color = LevelColor(winningLevel);
+            for (int i = 0; i < burstCount; i++)
+                result.Add(color);
             return result;
         }
 
@@ -214,9 +197,9 @@ namespace GETravelGames.Common
             main.loop            = false;
             main.playOnAwake     = false;
             main.stopAction      = ParticleSystemStopAction.None;
-            main.duration        = 0.6f;
-            main.startLifetime   = new ParticleSystem.MinMaxCurve(0.6f, 1.4f);
-            main.startSpeed      = new ParticleSystem.MinMaxCurve(3f, 9f);
+            main.duration        = 1.0f;
+            main.startLifetime   = new ParticleSystem.MinMaxCurve(1.0f, 2.2f);
+            main.startSpeed      = new ParticleSystem.MinMaxCurve(4f, 12f);
             main.startSize       = new ParticleSystem.MinMaxCurve(0.04f, 0.22f);
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             main.gravityModifier = new ParticleSystem.MinMaxCurve(0.4f);
@@ -228,7 +211,7 @@ namespace GETravelGames.Common
             var emission = burstParticles.emission;
             emission.enabled      = true;
             emission.rateOverTime = 0f;
-            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)50) });
+            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)80) });
 
             var shape = burstParticles.shape;
             shape.enabled   = true;
