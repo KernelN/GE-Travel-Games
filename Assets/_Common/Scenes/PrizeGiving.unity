@@ -176,8 +176,8 @@ MonoBehaviour:
   successConfirmLabel: {fileID: 216423477}
   playAgainSuccess: {fileID: 203122020}
   boxPrefab: {fileID: 6441489148969454632, guid: 722ad34fa852a1e458afef5e67d69a4c, type: 3}
-  boxSpreadPixels: 180
-  returnDelay: 8
+  boxSpreadPixels: 120
+  returnDelay: 10
   promptText: "\xA1Prob\xE1 tu suerte y llevate un premio!"
   consolationText: "\xA1Segu\xED intentando!"
   successConfirmText: Retiralo en el stand
@@ -801,7 +801,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4286739299
   m_fontColor: {r: 0.39, g: 0.45, b: 0.51, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1408,8 +1408,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 168723376}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.05, y: 0.12}
-  m_AnchorMax: {x: 0.95, y: 0.77}
+  m_AnchorMin: {x: 0.05, y: 0.25}
+  m_AnchorMax: {x: 0.95, y: 0.8}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2278,7 +2278,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2080874363}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
@@ -2301,7 +2301,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.91, g: 0.93, b: 0.96, a: 1}
+  m_fontColor: {r: 0.91, g: 0.93, b: 0.96, a: 0}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

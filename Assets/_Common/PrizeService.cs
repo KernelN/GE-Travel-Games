@@ -213,15 +213,15 @@ namespace GETravelGames.Common
         /// </summary>
         PrizePullResult RollOnce(PrizeRuntimeSettings settings)
         {
-            var pool    = stateStore.GetKioskPrizes(activeKioskId);
-            var eligible = pool
+            IReadOnlyList<PrizeInstance> pool    = stateStore.GetKioskPrizes(activeKioskId);
+            List<PrizeInstance> eligible = pool
                 .Where(p => PrizeAdminService.IsScheduleEligible(p.Schedule))
                 .ToList();
 
             if (eligible.Count == 0)
                 return PrizePullResult.FalsePrize();
 
-            var falsePrizeChance = ComputeEffectiveFalsePrizeChance(settings, eligible.Count);
+            int falsePrizeChance = ComputeEffectiveFalsePrizeChance(settings, eligible.Count);
             if (UnityEngine.Random.Range(0, 100) < falsePrizeChance)
                 return PrizePullResult.FalsePrize();
 
