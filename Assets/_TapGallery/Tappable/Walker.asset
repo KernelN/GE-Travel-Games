@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Walker
   m_EditorClassIdentifier: Assembly-CSharp::TappableConfig
   behavior: 5
-  score: 15
+  score: 50
   isPenalty: 1
   movementSpeed: 2
   peekDistance: 0
@@ -47,3 +47,4 @@ MonoBehaviour:
   runArrivalDistanceThreshold: 0.15
   runBumpAmplitude: 0.02
   runBumpFrequency: 8
+  tapSfx: {fileID: 0}
