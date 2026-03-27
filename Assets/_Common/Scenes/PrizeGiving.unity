@@ -178,6 +178,10 @@ MonoBehaviour:
   boxPrefab: {fileID: 6441489148969454632, guid: 722ad34fa852a1e458afef5e67d69a4c, type: 3}
   boxSpreadPixels: 120
   returnDelay: 10
+  levelReturnDelays:
+  - 6
+  - 30
+  - -1
   promptText: "\xA1Prob\xE1 tu suerte y llevate un premio!"
   consolationText: "\xA1Segu\xED intentando!"
   successConfirmText: Retiralo en el stand
