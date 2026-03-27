@@ -679,7 +679,7 @@ MonoBehaviour:
     spawnInterval: 1.5
     maxTappablesOnScreen: 6
     minTappablesOnScreen: 1
-    scoreMilestone: 160
+    scoreMilestone: 120
     timeMilestone: 30
   - activeSpots:
     - {fileID: 618347947}
@@ -699,7 +699,7 @@ MonoBehaviour:
     spawnInterval: 1
     maxTappablesOnScreen: 6
     minTappablesOnScreen: 2
-    scoreMilestone: 320
+    scoreMilestone: 300
     timeMilestone: 38
   - activeSpots:
     - {fileID: 618347947}
@@ -724,6 +724,7 @@ MonoBehaviour:
     minTappablesOnScreen: 3
     scoreMilestone: 0
     timeMilestone: 0
+  rerollScoreMilestones: 3c000000b40000002c01000090010000f4010000
 --- !u!114 &618347947 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6015481650302567913, guid: 710fa67863d4b82498e171304869ca80, type: 3}
