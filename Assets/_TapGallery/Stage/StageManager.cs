@@ -5,6 +5,9 @@ using UnityEngine;
 public class StageManager : MonoBehaviour
 {
     [SerializeField] List<StageConfig> stages;
+    [Tooltip("Score thresholds that each earn the player one extra prize try at session end. " +
+             "Independent of stage-advancement milestones. Leave empty to use stage score milestones instead.")]
+    [SerializeField] List<int> rerollScoreMilestones;
 
     int currentStageIndex;
 
@@ -39,17 +42,26 @@ public class StageManager : MonoBehaviour
             : fallback;
 
     /// <summary>
-    /// Simulates how many stage milestones the given score clears, using score thresholds
-    /// only (time milestones are excluded). Used at session end to determine prize tries.
+    /// Returns how many prize tries the player earned for the given score.
+    /// Uses <see cref="rerollScoreMilestones"/> when configured; otherwise falls back
+    /// to counting cleared stage score milestones (legacy behaviour).
     /// </summary>
     public int ComputeTriesFromScore(int score)
     {
+        if (rerollScoreMilestones != null && rerollScoreMilestones.Count > 0)
+        {
+            int count = 0;
+            foreach (var threshold in rerollScoreMilestones)
+                if (threshold > 0 && score >= threshold) count++;
+            return count;
+        }
+
+        // Legacy fallback: count cleared stage score milestones.
         if (stages == null) return 0;
-        int count = 0;
+        int legacy = 0;
         foreach (var stage in stages)
-            if (stage.ScoreMilestone > 0 && score >= stage.ScoreMilestone)
-                count++;
-        return count;
+            if (stage.ScoreMilestone > 0 && score >= stage.ScoreMilestone) legacy++;
+        return legacy;
     }
 
     public void CheckAdvancement(int currentScore, float elapsedTime)
