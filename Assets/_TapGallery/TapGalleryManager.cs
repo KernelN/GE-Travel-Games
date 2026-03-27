@@ -26,6 +26,8 @@ public class TapGalleryManager : MonoBehaviour
     [SerializeField] float sessionDuration = 60f;
     [SerializeField] float spawnInterval = 1.5f;
     [SerializeField] int maxTappablesOnScreen = 5;
+    [SerializeField] int minTappablesOnScreen = 0;
+    [SerializeField] float gameOverDuration = 3f;
     [SerializeField] List<SpotWeightEntry> spotWeights;
     [SerializeField] List<TappablePoolEntry> tappablePools;
     [SerializeField] string scoreTextFormat = "Score: {0}";
@@ -112,14 +114,33 @@ public class TapGalleryManager : MonoBehaviour
 
     IEnumerator SpawnLoop()
     {
+        float timer = 0f;
         while (sessionActive)
         {
+            int minOnScreen = stageManager != null
+                ? stageManager.GetMinTappablesOnScreen(minTappablesOnScreen)
+                : minTappablesOnScreen;
+
+            if (minOnScreen > 0 && activeTappableCount < minOnScreen)
+            {
+                // Below minimum: spawn immediately and reset the timer
+                timer = 0f;
+                if (sessionActive) TrySpawn();
+                yield return null;
+                continue;
+            }
+
             float interval = stageManager != null
                 ? stageManager.GetSpawnInterval(spawnInterval)
                 : spawnInterval;
-            yield return new WaitForSeconds(interval);
-            if (sessionActive)
-                TrySpawn();
+
+            timer += Time.deltaTime;
+            if (timer >= interval)
+            {
+                timer = 0f;
+                if (sessionActive) TrySpawn();
+            }
+            yield return null;
         }
     }
 
@@ -244,6 +265,13 @@ public class TapGalleryManager : MonoBehaviour
     {
         sessionActive = false;
         Debug.Log($"[TapGallery] Session ended. Final score: {score}");
+        StartCoroutine(EndSessionRoutine());
+    }
+
+    IEnumerator EndSessionRoutine()
+    {
+        sessionEndPanel?.Show(score);
+        yield return new WaitForSecondsRealtime(gameOverDuration);
         SceneManager.LoadScene("PrizeGiving");
     }
 

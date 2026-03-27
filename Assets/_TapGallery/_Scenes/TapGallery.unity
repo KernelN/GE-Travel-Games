@@ -542,6 +542,8 @@ MonoBehaviour:
   sessionDuration: 45
   spawnInterval: 1.5
   maxTappablesOnScreen: 5
+  minTappablesOnScreen: 0
+  gameOverDuration: 3
   spotWeights:
   - Spot: {fileID: 618347947}
     Weight: 1
@@ -558,9 +560,9 @@ MonoBehaviour:
   - Spot: {fileID: 153403165}
     Weight: 0.75
   - Spot: {fileID: 1177301886}
-    Weight: 0.3
+    Weight: 0.25
   - Spot: {fileID: 1837404482}
-    Weight: 0.3
+    Weight: 0.25
   tappablePools:
   - Config: {fileID: 11400000, guid: 25982f990e924674ea1e10ecedf3a8c4, type: 2}
     Prefab: {fileID: 2843732954885653069, guid: 084d4bf14f8365b47b83f7e1b6da83b5, type: 3}
@@ -657,7 +659,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 67ffeb9e82a9fad4bac935a18bb44b1b, type: 2}
     spawnInterval: 1.5
     maxTappablesOnScreen: 4
-    scoreMilestone: 60
+    minTappablesOnScreen: 0
+    scoreMilestone: 80
     timeMilestone: 22
   - activeSpots:
     - {fileID: 618347947}
@@ -675,7 +678,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 6d3b47309c9e3304e8166bc9f299e688, type: 2}
     spawnInterval: 1.5
     maxTappablesOnScreen: 6
-    scoreMilestone: 100
+    minTappablesOnScreen: 1
+    scoreMilestone: 130
     timeMilestone: 30
   - activeSpots:
     - {fileID: 618347947}
@@ -694,7 +698,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: b6aa92c1d1ba13e43ba06ca0ef4f95d6, type: 2}
     spawnInterval: 1
     maxTappablesOnScreen: 6
-    scoreMilestone: 150
+    minTappablesOnScreen: 2
+    scoreMilestone: 200
     timeMilestone: 38
   - activeSpots:
     - {fileID: 618347947}
@@ -716,6 +721,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 1b9da247910c4b14caba0303b2b0e084, type: 2}
     spawnInterval: 0.75
     maxTappablesOnScreen: 8
+    minTappablesOnScreen: 3
     scoreMilestone: 0
     timeMilestone: 0
 --- !u!114 &618347947 stripped

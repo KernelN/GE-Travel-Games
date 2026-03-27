@@ -33,6 +33,11 @@ public class StageManager : MonoBehaviour
             ? stages[Mathf.Min(currentStageIndex, stages.Count - 1)].MaxTappablesOnScreen
             : fallback;
 
+    public int GetMinTappablesOnScreen(int fallback) =>
+        (stages != null && stages.Count > 0)
+            ? stages[Mathf.Min(currentStageIndex, stages.Count - 1)].MinTappablesOnScreen
+            : fallback;
+
     public void CheckAdvancement(int currentScore, float elapsedTime)
     {
         if (stages == null || currentStageIndex >= stages.Count - 1) return;
