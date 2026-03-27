@@ -15,7 +15,7 @@ MonoBehaviour:
   behavior: 1
   score: 10
   isPenalty: 0
-  movementSpeed: 4
+  movementSpeed: 3
   peekDistance: -0.25
   peekDuration: 0.4
   peekRotationAngle: 90
@@ -47,3 +47,4 @@ MonoBehaviour:
   runArrivalDistanceThreshold: 0.15
   runBumpAmplitude: 0.04
   runBumpFrequency: 8
+  tapSfx: {fileID: 0}
