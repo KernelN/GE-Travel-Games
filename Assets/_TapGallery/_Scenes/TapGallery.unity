@@ -543,7 +543,7 @@ MonoBehaviour:
   spawnInterval: 1.5
   maxTappablesOnScreen: 5
   minTappablesOnScreen: 0
-  gameOverDuration: 3
+  gameOverDuration: 2
   spotWeights:
   - Spot: {fileID: 618347947}
     Weight: 1
@@ -634,7 +634,7 @@ MonoBehaviour:
   timerText: {fileID: 0}
   timerFormat: 'Time: {0:0}'
   gameOverObject: {fileID: 938841947}
-  pauseOnEnd: 0
+  pauseOnEnd: 1
 --- !u!114 &494695809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -679,7 +679,7 @@ MonoBehaviour:
     spawnInterval: 1.5
     maxTappablesOnScreen: 6
     minTappablesOnScreen: 1
-    scoreMilestone: 130
+    scoreMilestone: 160
     timeMilestone: 30
   - activeSpots:
     - {fileID: 618347947}
@@ -699,7 +699,7 @@ MonoBehaviour:
     spawnInterval: 1
     maxTappablesOnScreen: 6
     minTappablesOnScreen: 2
-    scoreMilestone: 200
+    scoreMilestone: 320
     timeMilestone: 38
   - activeSpots:
     - {fileID: 618347947}
@@ -1199,7 +1199,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 93}
   m_SizeDelta: {x: 463.255, y: 169.798}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &938841949
@@ -1706,7 +1706,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -148}
+  m_AnchoredPosition: {x: 0, y: -55.000023}
   m_SizeDelta: {x: 618.86, y: 117.7511}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1052754025
