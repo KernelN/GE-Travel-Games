@@ -101,6 +101,18 @@ namespace GETravelGames.Common
                     Debug.LogWarning($"[PrizeService] Prize import failed: {result.Summary}");
             }
 
+            // Apply prize subtraction if a file from a previous session exists.
+            var subtractionFileName = $"{activeSubtractionExportFileName}_{activeKioskId}.csv";
+            var subtractionPath = Path.Combine(importPath, subtractionFileName);
+            if (File.Exists(subtractionPath))
+            {
+                var result = adminService.ApplySubtractionImport(subtractionPath);
+                if (result.Success)
+                    Debug.Log($"[PrizeService] {result.Summary}");
+                else
+                    Debug.LogWarning($"[PrizeService] Prize subtraction import failed: {result.Summary}");
+            }
+
             initialized = true;
         }
 

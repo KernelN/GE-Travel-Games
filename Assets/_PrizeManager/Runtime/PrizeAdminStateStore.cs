@@ -374,6 +374,27 @@ namespace GETravelGames.PrizeManager
             }
         }
 
+        /// <summary>
+        /// Removes up to <paramref name="amount"/> available instances of the given category
+        /// from the flat list and all kiosk pools. Returns the actual number removed.
+        /// </summary>
+        public int SubtractAvailablePrizesByCategory(ushort categoryId, int amount)
+        {
+            var toRemove = allAvailableInstances
+                .Where(i => i.PrizeCategoryId == categoryId)
+                .Take(amount)
+                .Select(i => i.PrizeInstanceId)
+                .ToHashSet();
+
+            if (toRemove.Count == 0) return 0;
+
+            allAvailableInstances.RemoveAll(i => toRemove.Contains(i.PrizeInstanceId));
+            foreach (var pool in kioskPrizePools.Values)
+                pool.RemoveAll(i => toRemove.Contains(i.PrizeInstanceId));
+
+            return toRemove.Count;
+        }
+
         private void RemoveFromFlatList(string instanceId)
         {
             var flatIndex = allAvailableInstances.FindIndex(i => i.PrizeInstanceId == instanceId);

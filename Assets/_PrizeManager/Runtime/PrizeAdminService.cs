@@ -238,6 +238,30 @@ namespace GETravelGames.PrizeManager
                 $"{filesFound} archivo(s) de sustracción) a {outputPath}.");
         }
 
+        // ── Subtraction import ────────────────────────────────────────────────
+
+        public PrizeAdminOperationResult ApplySubtractionImport(string filePath)
+        {
+            string content;
+            try { content = File.ReadAllText(filePath, Encoding.UTF8); }
+            catch (Exception e)
+            {
+                return BuildStateResult(false, $"Error al leer el archivo de sustracción: {e.Message}");
+            }
+
+            var records = csvService.ParseSubtractionCsv(content);
+            if (records.Count == 0)
+                return BuildStateResult(false, "El archivo de sustracción no contiene registros válidos.");
+
+            var totalRemoved = 0;
+            foreach (var record in records)
+                totalRemoved += stateStore.SubtractAvailablePrizesByCategory(
+                    record.PrizeCategoryId, record.AmountToSubtract);
+
+            return BuildStateResult(true,
+                $"Se sustrajeron {totalRemoved} premio(s) del pool según el archivo de sustracción.");
+        }
+
         // ── Debug claim operations ────────────────────────────────────────────
 
         /// <summary>
