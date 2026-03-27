@@ -225,9 +225,35 @@ namespace GETravelGames.Common
             if (UnityEngine.Random.Range(0, 100) < falsePrizeChance)
                 return PrizePullResult.FalsePrize();
 
-            // Random selection (not always eligible[0]) so rerolls can yield different prizes.
-            var target = eligible[UnityEngine.Random.Range(0, eligible.Count)];
+            // Weighted selection by PrizePriority (higher priority = higher chance).
+            var target = WeightedRandomPrize(eligible);
             return PrizePullResult.RealPrizeDry(target);
+        }
+
+        /// <summary>
+        /// Selects a prize from <paramref name="eligible"/> using each prize's
+        /// <see cref="PrizeInstance.PrizePriority"/> as a draw weight. Falls back to
+        /// uniform random selection when all priorities are zero.
+        /// </summary>
+        static PrizeInstance WeightedRandomPrize(List<PrizeInstance> eligible)
+        {
+            float total = 0f;
+            foreach (var p in eligible) total += p.PrizePriority;
+
+            // All priorities zero → uniform selection (backward-compatible with existing data).
+            if (total <= 0f)
+                return eligible[UnityEngine.Random.Range(0, eligible.Count)];
+
+            float roll = UnityEngine.Random.Range(0f, total);
+            float cumulative = 0f;
+            PrizeInstance last = null;
+            foreach (var p in eligible)
+            {
+                last = p;
+                cumulative += p.PrizePriority;
+                if (roll < cumulative) return p;
+            }
+            return last;
         }
 
         public bool ClaimPrize(string winnerName, string winnerPhone, string winnerOffice)
