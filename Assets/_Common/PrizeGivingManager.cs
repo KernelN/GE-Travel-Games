@@ -48,7 +48,12 @@ namespace GETravelGames.Common
         [SerializeField] float boxSpreadPixels = 180f;
 
         [Header("Timer")]
+        [Tooltip("Default auto-return delay (seconds) for consolation and any level not covered by levelReturnDelays.")]
         [SerializeField] float returnDelay = 5f;
+        [Tooltip("Per-level auto-return delay (seconds), indexed by PrizeLevel (0 = common, 1 = uncommon, 2 = rare, 3 = epic, \u2026). " +
+                 "Set -1 to require the player to press Play Again instead of auto-exiting. " +
+                 "Falls back to returnDelay when the prize level is out of range.")]
+        [SerializeField] float[] levelReturnDelays;
 
         [Header("Textos")]
         [SerializeField] string promptText        = "\u00a1Prob\u00e1 tu suerte y gan\u00e1 un premio!";
@@ -347,7 +352,7 @@ namespace GETravelGames.Common
             if (consolationLabel != null) consolationLabel.text = consolationText;
 
             playAgainConsolation?.gameObject.SetActive(true);
-            StartReturnTimer();
+            StartReturnTimer(returnDelay);
         }
 
         void ShowSuccess()
@@ -365,7 +370,9 @@ namespace GETravelGames.Common
                 successConfirmLabel.text = successConfirmText;
 
             playAgainSuccess?.gameObject.SetActive(true);
-            StartReturnTimer();
+            float delay = GetReturnDelayForLevel(currentPull.WinningLevel);
+            if (delay >= 0f)
+                StartReturnTimer(delay);
         }
 
         // ── Helpers ────────────────────────────────────────────────────────────
@@ -407,9 +414,14 @@ namespace GETravelGames.Common
 
         // ── Timer ──────────────────────────────────────────────────────────────
 
-        void StartReturnTimer()
+        float GetReturnDelayForLevel(ushort level) =>
+            levelReturnDelays != null && level < levelReturnDelays.Length
+                ? levelReturnDelays[level]
+                : returnDelay;
+
+        void StartReturnTimer(float delay)
         {
-            returnTimer = returnDelay;
+            returnTimer = delay;
             returnStartTime = Time.unscaledTime;
         }
 
