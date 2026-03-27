@@ -17,6 +17,7 @@ namespace GETravelGames.Common
         [SerializeField] TMP_InputField phoneInput;
         [SerializeField] TMP_InputField officeInput;
         [SerializeField] Button submitButton;
+        [SerializeField] Button backButton;
         [SerializeField] TMP_Text errorLabel;
         [SerializeField] VirtualKeyboard keyboard;
 
@@ -37,6 +38,7 @@ namespace GETravelGames.Common
             PlayerSessionData.Clear();
 
             submitButton?.onClick.AddListener(OnSubmit);
+            backButton?.onClick.AddListener(() => SceneManager.LoadScene("ReadyKiosk"));
 
             if (keyboard != null)
             {
@@ -140,6 +142,16 @@ namespace GETravelGames.Common
                 submitButtonText, UIBuilderHelper.ColBtn, UIBuilderHelper.ColTextPrimary,
                 32, FontStyles.Bold);
             UIBuilderHelper.AddLayout(submitButton.gameObject, 52);
+
+            // ── Back button (top-left, outside form layout) ────────────────
+            backButton = UIBuilderHelper.MakeButton(canvas.transform, "BackButton",
+                "Volver", UIBuilderHelper.ColBtnSmall, UIBuilderHelper.ColTextSecondary);
+            var backRt = backButton.GetComponent<RectTransform>();
+            backRt.anchorMin = new Vector2(0, 1);
+            backRt.anchorMax = new Vector2(0, 1);
+            backRt.pivot     = new Vector2(0, 1);
+            backRt.sizeDelta = new Vector2(100, 36);
+            backRt.anchoredPosition = new Vector2(10, -10);
 
             // ── Virtual keyboard ───────────────────────────────────────────
             var kbGo = new GameObject("KeyboardPanel", typeof(RectTransform));
