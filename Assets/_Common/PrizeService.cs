@@ -12,6 +12,12 @@ namespace GETravelGames.Common
     {
         [Header("Fallback (used if PlayerPrefs empty)")]
         [SerializeField] int kioskId = 1;
+
+        [Header("Tester mode")]
+        [Tooltip("When true, reads config from PrizeTesterKioskConfig (separate PlayerPrefs keys) " +
+                 "instead of the production KioskConfig. Enable this on the PrizeService in the " +
+                 "PrizeGivingTester scene so tester and production settings stay independent.")]
+        [SerializeField] bool useTesterConfig;
         [SerializeField] string importFolderPath;
         [SerializeField] string prizesCsvFileName = "Prizes.csv";
         [SerializeField] string settingsCsvFileName = "Settings.csv";
@@ -44,6 +50,11 @@ namespace GETravelGames.Common
             DontDestroyOnLoad(gameObject);
         }
 
+        void Start()
+        {
+            if (!initialized) Initialize();
+        }
+
         public void Initialize()
         {
             csvService = new PrizeCsvService();
@@ -51,32 +62,48 @@ namespace GETravelGames.Common
             adminService = new PrizeAdminService(csvService, stateStore);
 
             // Read from KioskConfig (PlayerPrefs) with serialized fields as fallback.
-            var importPath = KioskConfig.GetImportFolderPath();
+            // When useTesterConfig is true, read from PrizeTesterKioskConfig instead so
+            // tester and production settings stay in completely separate PlayerPrefs keys.
+            var importPath = useTesterConfig
+                ? PrizeTesterKioskConfig.GetImportFolderPath()
+                : KioskConfig.GetImportFolderPath();
             if (string.IsNullOrWhiteSpace(importPath))
                 importPath = string.IsNullOrWhiteSpace(importFolderPath)
                     ? Application.dataPath
                     : importFolderPath;
 
-            var prizesFile = KioskConfig.GetPrizesCsvFileName();
+            var prizesFile = useTesterConfig
+                ? PrizeTesterKioskConfig.GetPrizesCsvFileName()
+                : KioskConfig.GetPrizesCsvFileName();
             if (string.IsNullOrWhiteSpace(prizesFile)) prizesFile = prizesCsvFileName;
 
-            var settingsFile = KioskConfig.GetSettingsCsvFileName();
+            var settingsFile = useTesterConfig
+                ? PrizeTesterKioskConfig.GetSettingsCsvFileName()
+                : KioskConfig.GetSettingsCsvFileName();
             if (string.IsNullOrWhiteSpace(settingsFile)) settingsFile = settingsCsvFileName;
 
-            activeKioskId = KioskConfig.GetKioskId();
+            activeKioskId = useTesterConfig
+                ? PrizeTesterKioskConfig.GetKioskId()
+                : KioskConfig.GetKioskId();
             if (activeKioskId < 1) activeKioskId = kioskId;
 
-            activeExportFolderPath = KioskConfig.GetExportFolderPath();
+            activeExportFolderPath = useTesterConfig
+                ? PrizeTesterKioskConfig.GetExportFolderPath()
+                : KioskConfig.GetExportFolderPath();
             if (string.IsNullOrWhiteSpace(activeExportFolderPath))
                 activeExportFolderPath = string.IsNullOrWhiteSpace(exportFolderPath)
                     ? Application.dataPath
                     : exportFolderPath;
 
-            activePlayersExportFileName = KioskConfig.GetPlayersExportFileName();
+            activePlayersExportFileName = useTesterConfig
+                ? PrizeTesterKioskConfig.GetPlayersExportFileName()
+                : KioskConfig.GetPlayersExportFileName();
             if (string.IsNullOrWhiteSpace(activePlayersExportFileName))
                 activePlayersExportFileName = "Jugadores.csv";
 
-            activeSubtractionExportFileName = KioskConfig.GetSubtractionExportFileName();
+            activeSubtractionExportFileName = useTesterConfig
+                ? PrizeTesterKioskConfig.GetSubtractionExportFileName()
+                : KioskConfig.GetSubtractionExportFileName();
             if (string.IsNullOrWhiteSpace(activeSubtractionExportFileName))
                 activeSubtractionExportFileName = subtractionExportFileName;
 
@@ -301,6 +328,114 @@ namespace GETravelGames.Common
 
             ExportPlayers();
             ExportPrizePoolSubtraction();
+        }
+
+        // ── Tester helpers ─────────────────────────────────────────────────────
+
+        /// <summary>Returns all loaded prize categories, for use by tester tooling.</summary>
+        public IReadOnlyList<PrizeTemplate> GetCategories()
+        {
+            if (!initialized) return Array.Empty<PrizeTemplate>();
+            return stateStore.Templates;
+        }
+
+        /// <summary>Returns all prize instances assigned to the active kiosk, for use by tester tooling.</summary>
+        public IReadOnlyList<PrizeInstance> GetKioskInstances()
+        {
+            if (!initialized) return Array.Empty<PrizeInstance>();
+            return stateStore.GetKioskPrizes(activeKioskId);
+        }
+
+        /// <summary>
+        /// Rolls up to <paramref name="tries"/> times restricted to one prize category.
+        /// When <paramref name="saveResult"/> is false: dry run — no reservation, no CSV writes.
+        /// When <paramref name="saveResult"/> is true: reserves the prize, claims it, and calls
+        /// RecordPlay (writes both Jugadores.csv and PrizePoolSubtraction CSV).
+        /// </summary>
+        public PrizePullResult TryPullFromCategory(
+            ushort categoryId, int tries, bool saveResult,
+            string firstName = "Test", string lastName = "Player",
+            string phone = "000-0000", string office = "Test Office")
+        {
+            if (!initialized)
+                return PrizePullResult.NoPrize("Sistema no inicializado");
+
+            var settings = stateStore.ActiveSettings;
+            int effectiveTries = Mathf.Max(1, tries);
+            var rollSequence = new List<PrizePullResult>(effectiveTries);
+            PrizePullResult bestResult = null;
+
+            for (var i = 0; i < effectiveTries; i++)
+            {
+                var roll = RollOnceFromCategory(settings, categoryId);
+                rollSequence.Add(roll);
+
+                if (roll.Result != PrizePullResult.Outcome.RealPrize)
+                {
+                    if (bestResult == null) bestResult = roll;
+                    if (!settings.AllowReroll) break;
+                    continue;
+                }
+
+                if (bestResult == null
+                    || bestResult.Result != PrizePullResult.Outcome.RealPrize
+                    || roll.WinningLevel > bestResult.WinningLevel)
+                    bestResult = roll;
+            }
+
+            bestResult ??= PrizePullResult.FalsePrize();
+            bestResult.RollSequence = rollSequence;
+
+            if (!saveResult)
+                return bestResult;  // dry — no state mutation
+
+            // Save path: reserve → claim → record
+            if (bestResult.IsRealPrize)
+            {
+                var prizeId = bestResult.Reservation?.ReservedPrize?.PrizeInstanceId;
+                if (!string.IsNullOrEmpty(prizeId) &&
+                    stateStore.TryReserveSpecificPrize(
+                        prizeId, office, $"{firstName} {lastName}", phone,
+                        activeKioskId, out var reservation))
+                {
+                    bestResult = PrizePullResult.RealPrize(reservation);
+                    bestResult.RollSequence = rollSequence;
+                    // ClaimPrize confirms the reservation → adds to wonPrizeHistory,
+                    // clears activeReservation so bulk loops can reserve on the next iteration.
+                    ClaimPrize($"{firstName} {lastName}", phone, office);
+                }
+                else
+                {
+                    Debug.LogWarning("[PrizeService] TryPullFromCategory: reserva fallida.");
+                    bestResult = PrizePullResult.FalsePrize();
+                    bestResult.RollSequence = rollSequence;
+                }
+            }
+
+            RecordPlay(firstName, lastName, phone, office, bestResult);
+            return bestResult;
+        }
+
+        /// <summary>
+        /// Like <see cref="RollOnce"/> but restricts the eligible pool to a single category.
+        /// Used internally by <see cref="TryPullFromCategory"/>.
+        /// </summary>
+        PrizePullResult RollOnceFromCategory(PrizeRuntimeSettings settings, ushort categoryId)
+        {
+            IReadOnlyList<PrizeInstance> pool = stateStore.GetKioskPrizes(activeKioskId);
+            List<PrizeInstance> eligible = pool
+                .Where(p => p.PrizeCategoryId == categoryId
+                         && PrizeAdminService.IsScheduleEligible(p.Schedule))
+                .ToList();
+
+            if (eligible.Count == 0)
+                return PrizePullResult.FalsePrize();
+
+            int falsePrizeChance = ComputeEffectiveFalsePrizeChance(settings, eligible.Count);
+            if (UnityEngine.Random.Range(0, 100) < falsePrizeChance)
+                return PrizePullResult.FalsePrize();
+
+            return PrizePullResult.RealPrizeDry(WeightedRandomPrize(eligible));
         }
 
         int ComputeEffectiveFalsePrizeChance(PrizeRuntimeSettings settings, int eligibleCount)

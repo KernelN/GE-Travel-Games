@@ -7,7 +7,14 @@ using UnityEngine.UI;
 
 namespace GETravelGames.Common
 {
-    public sealed class ConfigManager : MonoBehaviour
+    /// <summary>
+    /// Config screen for prize tester tooling. Identical UI and logic to ConfigManager
+    /// but reads/writes PrizeTesterKioskConfig (separate "PrizeTester_*" PlayerPrefs keys)
+    /// so tester settings never overwrite production KioskConfig values.
+    ///
+    /// Back button returns to PrizeTesterMenu.
+    /// </summary>
+    public sealed class PrizeTesterConfigManager : MonoBehaviour
     {
         [Header("Input Fields")]
         [SerializeField] TMP_InputField importFolderInput;
@@ -23,16 +30,12 @@ namespace GETravelGames.Common
         [SerializeField] Button verifyButton;
         [SerializeField] Button backButton;
 
-        [Header("Navigation")]
-        [Tooltip("Scene to load when the back button is pressed.")]
-        [SerializeField] string backSceneName = "MainMenu";
-
         [Header("Status")]
         [SerializeField] TMP_Text statusLabel;
 
         [Header("Textos")]
-        [SerializeField] string savedText = "Configuraci\u00f3n guardada";
-        [SerializeField] string verifyOkFormat = "Carga verificada: {0} premios en {1} categor\u00edas";
+        [SerializeField] string savedText        = "Configuraci\u00f3n guardada";
+        [SerializeField] string verifyOkFormat   = "Carga verificada: {0} premios en {1} categor\u00edas";
         [SerializeField] string verifyFailFormat = "Error al verificar: {0}";
 
         void Start()
@@ -42,42 +45,42 @@ namespace GETravelGames.Common
 
             saveButton?.onClick.AddListener(OnSave);
             verifyButton?.onClick.AddListener(OnVerify);
-            backButton?.onClick.AddListener(() => SceneManager.LoadScene(backSceneName));
+            backButton?.onClick.AddListener(() => SceneManager.LoadScene("PrizeTesterMenu"));
         }
 
         void LoadFromPlayerPrefs()
         {
             if (importFolderInput != null)
-                importFolderInput.text = KioskConfig.GetImportFolderPath();
+                importFolderInput.text = PrizeTesterKioskConfig.GetImportFolderPath();
             if (exportFolderInput != null)
-                exportFolderInput.text = KioskConfig.GetExportFolderPath();
+                exportFolderInput.text = PrizeTesterKioskConfig.GetExportFolderPath();
             if (prizesCsvInput != null)
-                prizesCsvInput.text = KioskConfig.GetPrizesCsvFileName();
+                prizesCsvInput.text = PrizeTesterKioskConfig.GetPrizesCsvFileName();
             if (settingsCsvInput != null)
-                settingsCsvInput.text = KioskConfig.GetSettingsCsvFileName();
+                settingsCsvInput.text = PrizeTesterKioskConfig.GetSettingsCsvFileName();
             if (playersInput != null)
-                playersInput.text = KioskConfig.GetPlayersExportFileName();
+                playersInput.text = PrizeTesterKioskConfig.GetPlayersExportFileName();
             if (subtractionInput != null)
-                subtractionInput.text = KioskConfig.GetSubtractionExportFileName();
+                subtractionInput.text = PrizeTesterKioskConfig.GetSubtractionExportFileName();
             if (kioskIdInput != null)
-                kioskIdInput.text = KioskConfig.GetKioskId().ToString();
+                kioskIdInput.text = PrizeTesterKioskConfig.GetKioskId().ToString();
 
             SetStatus("");
         }
 
         void OnSave()
         {
-            KioskConfig.SetImportFolderPath(importFolderInput?.text ?? "");
-            KioskConfig.SetExportFolderPath(exportFolderInput?.text ?? "");
-            KioskConfig.SetPrizesCsvFileName(prizesCsvInput?.text ?? "");
-            KioskConfig.SetSettingsCsvFileName(settingsCsvInput?.text ?? "");
-            KioskConfig.SetPlayersExportFileName(playersInput?.text ?? "");
-            KioskConfig.SetSubtractionExportFileName(subtractionInput?.text ?? "");
+            PrizeTesterKioskConfig.SetImportFolderPath(importFolderInput?.text ?? "");
+            PrizeTesterKioskConfig.SetExportFolderPath(exportFolderInput?.text ?? "");
+            PrizeTesterKioskConfig.SetPrizesCsvFileName(prizesCsvInput?.text ?? "");
+            PrizeTesterKioskConfig.SetSettingsCsvFileName(settingsCsvInput?.text ?? "");
+            PrizeTesterKioskConfig.SetPlayersExportFileName(playersInput?.text ?? "");
+            PrizeTesterKioskConfig.SetSubtractionExportFileName(subtractionInput?.text ?? "");
 
             if (int.TryParse(kioskIdInput?.text, out var id))
-                KioskConfig.SetKioskId(id);
+                PrizeTesterKioskConfig.SetKioskId(id);
 
-            KioskConfig.Save();
+            PrizeTesterKioskConfig.Save();
             SetStatus(savedText);
         }
 
@@ -87,14 +90,13 @@ namespace GETravelGames.Common
             if (string.IsNullOrWhiteSpace(importFolder))
                 importFolder = Application.dataPath;
 
-            var prizesFile = prizesCsvInput?.text ?? "Prizes.csv";
+            var prizesFile   = prizesCsvInput?.text   ?? "Prizes.csv";
             var settingsFile = settingsCsvInput?.text ?? "Settings.csv";
 
-            var csvService = new PrizeCsvService();
-            var stateStore = new PrizeAdminStateStore();
+            var csvService   = new PrizeCsvService();
+            var stateStore   = new PrizeAdminStateStore();
             var adminService = new PrizeAdminService(csvService, stateStore);
 
-            // Try importing settings.
             var settingsPath = Path.Combine(importFolder, settingsFile);
             if (File.Exists(settingsPath))
             {
@@ -112,7 +114,6 @@ namespace GETravelGames.Common
                 return;
             }
 
-            // Try importing prizes.
             var prizesPath = Path.Combine(importFolder, prizesFile);
             if (File.Exists(prizesPath))
             {
@@ -150,11 +151,11 @@ namespace GETravelGames.Common
             if (existing != null)
                 UnityEditor.Undo.DestroyObjectImmediate(existing.gameObject);
 
-            UnityEditor.Undo.RecordObject(this, "Construir UI Config");
+            UnityEditor.Undo.RecordObject(this, "Construir UI PrizeTesterConfig");
 
             UIBuilderHelper.EnsureEventSystem();
 
-            var canvas = UIBuilderHelper.MakeCanvas(transform, "ConfigCanvas");
+            var canvas = UIBuilderHelper.MakeCanvas(transform, "PrizeTesterConfigCanvas");
             canvas.gameObject.AddComponent<Image>().color = UIBuilderHelper.ColBg;
 
             var panel = UIBuilderHelper.MakeView(canvas.transform, "Panel");
@@ -163,8 +164,8 @@ namespace GETravelGames.Common
 
             // Title
             var title = UIBuilderHelper.MakeText(panel.transform, "Title",
-                36, TMPro.FontStyles.Bold, UIBuilderHelper.ColTextPrimary);
-            title.text = "Configuraci\u00f3n";
+                36, FontStyles.Bold, UIBuilderHelper.ColTextPrimary);
+            title.text = "Configuraci\u00f3n \u2014 Prize Tools";
             UIBuilderHelper.AddLayout(title.gameObject, 50);
 
             // Fields
@@ -179,14 +180,14 @@ namespace GETravelGames.Common
             playersInput = MakeLabeledField(panel.transform, "Players",
                 "Archivo de jugadores", "Jugadores.csv");
             subtractionInput = MakeLabeledField(panel.transform, "Subtraction",
-                "Archivo de sustracción de premios", "PrizePoolSubtraction");
+                "Archivo de sustracci\u00f3n de premios", "PrizePoolSubtraction");
             kioskIdInput = MakeLabeledField(panel.transform, "KioskId",
                 "ID del kiosco", "1");
             kioskIdInput.contentType = TMP_InputField.ContentType.IntegerNumber;
 
             // Status
             statusLabel = UIBuilderHelper.MakeText(panel.transform, "StatusLabel",
-                18, TMPro.FontStyles.Normal, UIBuilderHelper.ColTextSecondary);
+                18, FontStyles.Normal, UIBuilderHelper.ColTextSecondary);
             statusLabel.text = "";
             UIBuilderHelper.AddLayout(statusLabel.gameObject, 28);
 
@@ -195,27 +196,27 @@ namespace GETravelGames.Common
             btnRow.transform.SetParent(panel.transform, false);
             var hlg = btnRow.AddComponent<HorizontalLayoutGroup>();
             hlg.spacing = 12;
-            hlg.childAlignment = TextAnchor.MiddleCenter;
-            hlg.childControlWidth = true;
-            hlg.childControlHeight = true;
-            hlg.childForceExpandWidth = true;
+            hlg.childAlignment       = TextAnchor.MiddleCenter;
+            hlg.childControlWidth    = true;
+            hlg.childControlHeight   = true;
+            hlg.childForceExpandWidth  = true;
             hlg.childForceExpandHeight = false;
             UIBuilderHelper.AddLayout(btnRow, 44);
 
             backButton = UIBuilderHelper.MakeButton(btnRow.transform, "BackButton",
                 "Volver", UIBuilderHelper.ColBtnSmall, UIBuilderHelper.ColTextSecondary,
-                18, TMPro.FontStyles.Normal);
+                18, FontStyles.Normal);
 
             saveButton = UIBuilderHelper.MakeButton(btnRow.transform, "SaveButton",
                 "Guardar", UIBuilderHelper.ColBtn, UIBuilderHelper.ColTextPrimary,
-                20, TMPro.FontStyles.Bold);
+                20, FontStyles.Bold);
 
             verifyButton = UIBuilderHelper.MakeButton(btnRow.transform, "VerifyButton",
                 "Verificar Carga", UIBuilderHelper.ColBtnSecondary, UIBuilderHelper.ColTextPrimary,
-                20, TMPro.FontStyles.Bold);
+                20, FontStyles.Bold);
 
             UnityEditor.EditorUtility.SetDirty(this);
-            Debug.Log("[ConfigManager] UI construida. Guard\u00e1 la escena.");
+            Debug.Log("[PrizeTesterConfigManager] UI construida. Guard\u00e1 la escena.");
         }
 
         TMP_InputField MakeLabeledField(Transform parent, string name,
@@ -225,14 +226,14 @@ namespace GETravelGames.Common
             row.transform.SetParent(parent, false);
             var vlg = row.AddComponent<VerticalLayoutGroup>();
             vlg.spacing = 2;
-            vlg.childControlWidth = true;
-            vlg.childControlHeight = false;
-            vlg.childForceExpandWidth = true;
+            vlg.childControlWidth      = true;
+            vlg.childControlHeight     = false;
+            vlg.childForceExpandWidth  = true;
             vlg.childForceExpandHeight = false;
             UIBuilderHelper.AddLayout(row, 58);
 
             var label = UIBuilderHelper.MakeText(row.transform, name + "Label",
-                14, TMPro.FontStyles.Normal, UIBuilderHelper.ColTextMuted,
+                14, FontStyles.Normal, UIBuilderHelper.ColTextMuted,
                 TextAlignmentOptions.MidlineLeft);
             label.text = labelText;
             UIBuilderHelper.AddLayout(label.gameObject, 18);

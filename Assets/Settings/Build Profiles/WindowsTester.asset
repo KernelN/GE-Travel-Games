@@ -18,8 +18,16 @@ MonoBehaviour:
   m_PlatformId: 4e3c793746204150860bf175a9a41a05
   m_PlatformBuildProfile:
     rid: 802999191462215746
-  m_OverrideGlobalSceneList: 0
-  m_Scenes: []
+  m_OverrideGlobalSceneList: 1
+  m_Scenes:
+  - m_enabled: 1
+    m_path: Assets/_PrizeManager/Scenes/PrizeDebugMenu.unity
+  - m_enabled: 1
+    m_path: Assets/_PrizeManager/Scenes/PrizeDebugConfig.unity
+  - m_enabled: 1
+    m_path: Assets/_PrizeManager/Scenes/PrizeAdminScene.unity
+  - m_enabled: 1
+    m_path: Assets/_PrizeManager/Scenes/PrizeTestScene.unity
   m_HasScriptingDefines: 0
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
@@ -30,7 +38,7 @@ MonoBehaviour:
     - rid: 802999191462215746
       type: {class: WindowsPlatformSettings, ns: UnityEditor.WindowsStandalone, asm: UnityEditor.WindowsStandalone.Extensions}
       data:
-        m_Development: 0
+        m_Development: 1
         m_ConnectProfiler: 0
         m_BuildWithDeepProfilingSupport: 0
         m_AllowDebugging: 0
