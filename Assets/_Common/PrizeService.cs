@@ -33,6 +33,7 @@ namespace GETravelGames.Common
         string activeExportFolderPath;
         string activePlayersExportFileName;
         string activeSubtractionExportFileName;
+        string activeLockFilePath;
         readonly List<PlayerRecord> playerRegistry = new();
 
         public static PrizeService Instance { get; private set; }
@@ -140,7 +141,41 @@ namespace GETravelGames.Common
                     Debug.LogWarning($"[PrizeService] Prize subtraction import failed: {result.Summary}");
             }
 
+            // Load existing player registry so new sessions continue from where the last left off.
+            playerRegistry.Clear();
+            var playersPath = Path.Combine(activeExportFolderPath, activePlayersExportFileName);
+            if (File.Exists(playersPath))
+            {
+                try
+                {
+                    var existing = File.ReadAllText(playersPath, Encoding.UTF8);
+                    var loaded   = csvService.ImportPlayersCsv(existing);
+                    playerRegistry.AddRange(loaded);
+                    Debug.Log($"[PrizeService] Loaded {loaded.Count} existing player(s) from registry.");
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning($"[PrizeService] Could not load existing players CSV: {e.Message}");
+                }
+            }
+
+            // Lock file: warn if another instance appears to be running (e.g. left-over lock from crash).
+            activeLockFilePath = Path.Combine(activeExportFolderPath,
+                $"kiosk_{activeKioskId}.lock");
+            if (File.Exists(activeLockFilePath))
+                Debug.LogWarning($"[PrizeService] Lock file found: '{activeLockFilePath}'. " +
+                                 "Another instance may be running — CSV writes could conflict.");
+            try { File.WriteAllText(activeLockFilePath, DateTime.Now.ToString("o")); }
+            catch (Exception e) { Debug.LogWarning($"[PrizeService] Could not write lock file: {e.Message}"); }
+
             initialized = true;
+        }
+
+        void OnApplicationQuit()
+        {
+            if (string.IsNullOrEmpty(activeLockFilePath)) return;
+            try { File.Delete(activeLockFilePath); }
+            catch { /* non-critical */ }
         }
 
         public void Reinitialize()

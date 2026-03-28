@@ -218,6 +218,48 @@ namespace GETravelGames.PrizeManager
         }
 
         /// <summary>
+        /// Parses a players CSV (as produced by <see cref="ExportPlayersCsv"/>) back into a
+        /// <see cref="PlayerRecord"/> list. Silently skips malformed rows.
+        /// </summary>
+        public List<PlayerRecord> ImportPlayersCsv(string csvContent)
+        {
+            var result = new List<PlayerRecord>();
+            if (string.IsNullOrWhiteSpace(csvContent)) return result;
+
+            var rows = ParseCsvRows(csvContent, out _);
+            // Row 0 is the header.
+            for (var i = 1; i < rows.Count; i++)
+            {
+                var cols = NormalizeColumnCount(rows[i], 7);
+                if (IsBlankRow(cols)) continue;
+
+                var record = new PlayerRecord
+                {
+                    FirstName   = cols[0],
+                    LastName    = cols[1],
+                    Phone       = cols[2],
+                    Office      = cols[3],
+                    TimesPlayed = int.TryParse(cols[4], NumberStyles.Integer,
+                                      CultureInfo.InvariantCulture, out var tp) ? tp : 0,
+                };
+
+                var cats = cols[5].Split(';', StringSplitOptions.RemoveEmptyEntries);
+                var ids  = cols[6].Split(';', StringSplitOptions.RemoveEmptyEntries);
+                var count = Math.Min(cats.Length, ids.Length);
+                for (var j = 0; j < count; j++)
+                {
+                    if (ushort.TryParse(cats[j], NumberStyles.Integer,
+                            CultureInfo.InvariantCulture, out var catId))
+                        record.WonPrizes.Add((catId, ids[j]));
+                }
+
+                result.Add(record);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Exports the current available prize pool as a standard prizes CSV so the
         /// admin can use it as the new master file after applying subtractions.
         /// Amounts reflect how many instances remain per category.
