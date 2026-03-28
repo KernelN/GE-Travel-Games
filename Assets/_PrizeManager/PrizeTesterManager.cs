@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,34 +10,48 @@ using UnityEngine.UI;
 namespace GETravelGames.Common
 {
     /// <summary>
-    /// Standalone tester for the prize-giving system.
+    /// Config + log hub for prize-system testing.
     ///
-    /// Place this component in the PrizeGivingTester scene alongside a PrizeService
-    /// GameObject. Run "Construir UI" from the context menu to build the canvas, then
-    /// enter Play Mode — PrizeService will auto-initialize from the CSV files.
+    /// Two views toggled by the header button:
     ///
-    /// Two panels:
-    ///   • Single pull  — pick a category, choose a stage index, optionally save.
-    ///                    Plays the full PrizeCelebrationController FX sequence.
-    ///   • Bulk sim     — run N pulls with fake player data, optionally save.
+    ///   Single Pull — select a category from live-count buttons, set stage + save flag,
+    ///                 click "Simular Pull". The full PrizeGivingManager scene (boxes,
+    ///                 reveal, celebration FX) runs on top; this canvas hides until done.
     ///
-    /// When "save" is off the pull is a dry run: no reservation is made and no CSV is
-    /// written. When "save" is on the pull goes through the full production path
-    /// (reserve → claim → RecordPlay → export both CSVs).
+    ///   Bulk Sim    — run N pulls with fake player data; optional save; result scroll log.
+    ///
+    /// Scene setup:
+    ///   1. Run "Construir UI" on this component.
+    ///   2. Add a PrizeGivingManager component to a separate GameObject in the same scene.
+    ///      Do NOT run its "Construir UI" — StartTesterPull builds its canvas at runtime.
+    ///   3. Wire the PrizeGivingManager reference in the Inspector.
+    ///   4. Make sure PrizeService is also in the scene.
     /// </summary>
     public sealed class PrizeTesterManager : MonoBehaviour
     {
         // ── Inspector ──────────────────────────────────────────────────────────
 
+        [Header("Prize giving delegate (single pull)")]
+        [SerializeField] PrizeGivingManager prizeGivingManager;
+
         [Header("UI Root (set by Construir UI)")]
         [SerializeField] Canvas canvas;
 
-        [Header("Single pull")]
-        [SerializeField] TMP_Dropdown   categoryDropdown;
+        [Header("Views")]
+        [SerializeField] GameObject singlePullView;
+        [SerializeField] GameObject bulkView;
+
+        [Header("Header")]
+        [SerializeField] Button   modeToggleButton;
+        [SerializeField] TMP_Text modeToggleLabel;
+
+        [Header("Category buttons")]
+        [SerializeField] RectTransform categoryButtonsContent;
+
+        [Header("Single pull controls")]
         [SerializeField] TMP_InputField singleStageInput;
         [SerializeField] Toggle         singleSaveToggle;
         [SerializeField] Button         singlePullButton;
-        [SerializeField] TMP_Text       singleResultLabel;
 
         [Header("Bulk simulation")]
         [SerializeField] TMP_InputField bulkCountInput;
@@ -48,29 +61,22 @@ namespace GETravelGames.Common
         [SerializeField] Button         bulkRunButton;
         [SerializeField] TMP_Text       bulkSummaryLabel;
 
-        [Header("Results")]
+        [Header("Results (bulk)")]
         [SerializeField] RectTransform  resultsContent;
         [SerializeField] TMP_Text       statusLabel;
 
-        [Header("Celebration (set by Construir UI)")]
-        [SerializeField] PrizeCelebrationController celebration;
-        [SerializeField] TMP_Text       celebrationTitleLabel;
-
         [Header("Navigation")]
         [SerializeField] Button backButton;
-
-        // ── Constants ─────────────────────────────────────────────────────────
-
-        const string ConsolationText = "No gan\u00f3";
 
         // ── Runtime state ──────────────────────────────────────────────────────
 
         bool serviceReady;
         List<PrizeTemplate> loadedCategories = new();
-        readonly List<TMP_Text> resultRows = new();
-        readonly List<bool> resultIsWin = new();
+        readonly List<Button>    categoryButtons = new();
+        readonly List<TMP_Text>  resultRows      = new();
+        int  selectedCategoryIndex = -1;
         bool bulkRunning;
-        bool singlePullRunning;
+        bool inBulkMode;
 
         // ── Lifecycle ──────────────────────────────────────────────────────────
 
@@ -79,6 +85,7 @@ namespace GETravelGames.Common
             singlePullButton?.onClick.AddListener(OnSinglePull);
             bulkRunButton?.onClick.AddListener(OnBulkRun);
             backButton?.onClick.AddListener(() => SceneManager.LoadScene("PrizeTesterMenu"));
+            modeToggleButton?.onClick.AddListener(ToggleMode);
 
             if (PrizeService.Instance == null || !PrizeService.Instance.IsInitialized)
             {
@@ -89,105 +96,149 @@ namespace GETravelGames.Common
             }
 
             serviceReady = true;
-            RefreshCategoryDropdown();
+            BuildCategoryButtons();
+            SetMode(false);
             SetStatus("Listo.");
         }
 
-        // ── Category dropdown ──────────────────────────────────────────────────
+        // ── Mode switching ─────────────────────────────────────────────────────
 
-        void RefreshCategoryDropdown()
+        void ToggleMode() => SetMode(!inBulkMode);
+
+        void SetMode(bool bulk)
         {
-            if (!serviceReady || categoryDropdown == null) return;
+            inBulkMode = bulk;
+            singlePullView?.SetActive(!bulk);
+            bulkView?.SetActive(bulk);
+            if (modeToggleLabel != null)
+                modeToggleLabel.text = bulk ? "PULL INDIVIDUAL" : "SIMULACION BULK";
+        }
+
+        // ── Category buttons ───────────────────────────────────────────────────
+
+        void BuildCategoryButtons()
+        {
+            if (categoryButtonsContent == null) return;
+
+            foreach (var btn in categoryButtons)
+                if (btn != null) Destroy(btn.gameObject);
+            categoryButtons.Clear();
+            selectedCategoryIndex = -1;
+
+            if (!serviceReady) return;
 
             loadedCategories = PrizeService.Instance.GetCategories().ToList();
-            var instances    = PrizeService.Instance.GetKioskInstances();
+            var countByCat   = CountByCat();
 
-            var countByCat = instances
-                .GroupBy(i => i.PrizeCategoryId)
-                .ToDictionary(g => g.Key, g => g.Count());
-
-            var options = new List<TMP_Dropdown.OptionData>();
-            foreach (var t in loadedCategories)
+            for (int i = 0; i < loadedCategories.Count; i++)
             {
-                countByCat.TryGetValue(t.PrizeCategoryId, out int remaining);
-                options.Add(new TMP_Dropdown.OptionData(
-                    $"[{t.PrizeCategoryId}] {t.PrizeName}  ({remaining} restantes)"));
+                var cat = loadedCategories[i];
+                countByCat.TryGetValue(cat.PrizeCategoryId, out int remaining);
+
+                var btn = UIBuilderHelper.MakeButton(categoryButtonsContent, $"CatBtn_{i}",
+                    $"{cat.PrizeName}  ({remaining} restantes)",
+                    UIBuilderHelper.ColBtnSecondary, UIBuilderHelper.ColTextPrimary, 15);
+                UIBuilderHelper.AddLayout(btn.gameObject, 40f);
+
+                int idx = i;
+                btn.onClick.AddListener(() => OnCategorySelected(idx));
+                categoryButtons.Add(btn);
             }
 
-            categoryDropdown.ClearOptions();
-            categoryDropdown.AddOptions(options);
+            if (loadedCategories.Count > 0)
+                OnCategorySelected(0);
+        }
+
+        void RefreshCategoryCountLabels()
+        {
+            if (!serviceReady) return;
+            var countByCat = CountByCat();
+
+            for (int i = 0; i < categoryButtons.Count && i < loadedCategories.Count; i++)
+            {
+                var cat = loadedCategories[i];
+                countByCat.TryGetValue(cat.PrizeCategoryId, out int remaining);
+                var lbl = categoryButtons[i].GetComponentInChildren<TMP_Text>();
+                if (lbl != null)
+                    lbl.text = $"{cat.PrizeName}  ({remaining} restantes)";
+            }
+        }
+
+        Dictionary<ushort, int> CountByCat()
+        {
+            var instances = PrizeService.Instance.GetKioskInstances();
+            return instances
+                .GroupBy(i => i.PrizeCategoryId)
+                .ToDictionary(g => g.Key, g => g.Count());
+        }
+
+        void OnCategorySelected(int index)
+        {
+            selectedCategoryIndex = index;
+            for (int i = 0; i < categoryButtons.Count; i++)
+            {
+                var img = categoryButtons[i].GetComponent<Image>();
+                if (img != null)
+                    img.color = (i == index)
+                        ? UIBuilderHelper.ColBtn
+                        : UIBuilderHelper.ColBtnSecondary;
+            }
         }
 
         // ── Single pull ────────────────────────────────────────────────────────
 
         void OnSinglePull()
         {
-            if (!serviceReady || loadedCategories.Count == 0 || singlePullRunning) return;
-            StartCoroutine(SinglePullCoroutine());
-        }
-
-        IEnumerator SinglePullCoroutine()
-        {
-            singlePullRunning = true;
-            if (singlePullButton != null) singlePullButton.interactable = false;
-
-            int catIndex = categoryDropdown != null ? categoryDropdown.value : 0;
-            if (catIndex >= loadedCategories.Count)
+            if (!serviceReady)
             {
-                singlePullRunning = false;
-                if (singlePullButton != null) singlePullButton.interactable = true;
-                yield break;
+                SetStatus("ERROR: PrizeService no inicializado.", isError: true);
+                return;
             }
-            var category = loadedCategories[catIndex];
+            if (selectedCategoryIndex < 0 || selectedCategoryIndex >= loadedCategories.Count)
+            {
+                SetStatus("Seleccion\u00e1 una categor\u00eda primero.", isError: true);
+                return;
+            }
+            if (prizeGivingManager == null)
+            {
+                SetStatus("ERROR: PrizeGivingManager no asignado.", isError: true);
+                return;
+            }
 
+            var cat   = loadedCategories[selectedCategoryIndex];
             int stage = 1;
             if (singleStageInput != null &&
                 int.TryParse(singleStageInput.text, out int parsedStage))
                 stage = Mathf.Max(0, parsedStage);
-
             bool save = singleSaveToggle != null && singleSaveToggle.isOn;
 
-            var result = PrizeService.Instance.TryPullFromCategory(
-                category.PrizeCategoryId, stage, save,
-                "Test", "Single", "000-SINGLE", "Test Office");
+            singlePullButton.interactable     = false;
+            modeToggleButton.interactable     = false;
+            canvas.gameObject.SetActive(false);
 
-            // Clear celebration title before playing.
-            if (celebrationTitleLabel != null) celebrationTitleLabel.text = "";
+            prizeGivingManager.StartTesterPull(cat.PrizeCategoryId, stage, save,
+                                               OnTesterPullComplete);
+        }
 
-            // Play celebration FX — identical flow to PrizeGivingManager.RevealSequence.
-            if (celebration != null)
+        void OnTesterPullComplete(PrizePullResult result)
+        {
+            canvas.gameObject.SetActive(true);
+            singlePullButton.interactable = true;
+            modeToggleButton.interactable = true;
+
+            if (result != null)
             {
-                // No box to click in the tester, so burst from the screen centre.
-                if (Camera.main != null)
-                {
-                    float depth = Mathf.Abs(Camera.main.transform.position.z);
-                    var worldCenter = Camera.main.ScreenToWorldPoint(
-                        new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, depth));
-                    worldCenter.z = 0f;
-                    celebration.SetBurstOrigin(worldCenter);
-                }
-
-                if (result.IsRealPrize)
-                    yield return celebration.PlayCelebration(result, singleResultLabel, celebrationTitleLabel);
-                else
-                    yield return celebration.PlayFalsePrizeCelebration(
-                        singleResultLabel, celebrationTitleLabel, ConsolationText);
+                var catName = selectedCategoryIndex >= 0
+                    ? loadedCategories[selectedCategoryIndex].PrizeName
+                    : "?";
+                bool saved = singleSaveToggle != null && singleSaveToggle.isOn;
+                SetStatus(FormatSingleResult(result, catName, saved));
+                if (saved) RefreshCategoryCountLabels();
             }
             else
             {
-                // Fallback if celebration controller wasn't set up.
-                if (singleResultLabel != null)
-                    singleResultLabel.text = FormatSingleResult(result, category.PrizeName, save);
+                SetStatus("Pull completado.");
             }
-
-            // Log result to the scroll view (always, regardless of celebration).
-            AddResultRow(FormatSingleResult(result, category.PrizeName, save), result.IsRealPrize);
-
-            if (save) RefreshCategoryDropdown();
-            SetStatus(save ? "Simulado y guardado." : "Simulado (dry run).");
-
-            singlePullRunning = false;
-            if (singlePullButton != null) singlePullButton.interactable = true;
         }
 
         static string FormatSingleResult(PrizePullResult r, string categoryName, bool saved)
@@ -224,10 +275,10 @@ namespace GETravelGames.Common
             bool randomStage = bulkRandomStageToggle != null && bulkRandomStageToggle.isOn;
             bool saveAll     = bulkSaveToggle        != null && bulkSaveToggle.isOn;
 
-            int catIndex = categoryDropdown != null ? categoryDropdown.value : 0;
+            int catIndex = selectedCategoryIndex >= 0 ? selectedCategoryIndex : 0;
             if (catIndex >= loadedCategories.Count)
             {
-                SetStatus("Sin categorias cargadas.", isError: true);
+                SetStatus("Sin categor\u00edas cargadas.", isError: true);
                 bulkRunning = false;
                 if (bulkRunButton != null) bulkRunButton.interactable = true;
                 yield break;
@@ -237,7 +288,7 @@ namespace GETravelGames.Common
             ClearResultRows();
             if (bulkSummaryLabel != null) bulkSummaryLabel.text = "-";
             SetStatus($"Corriendo {n} pulls...");
-            yield return null;  // let UI update before heavy work
+            yield return null;
 
             int wins = 0;
 
@@ -262,7 +313,6 @@ namespace GETravelGames.Common
                     : $"#{i + 1:D3}  No gano  stage={stage}{saveTag}";
                 AddResultRow(row, result.IsRealPrize);
 
-                // Yield every 50 pulls to keep Unity responsive.
                 if ((i + 1) % 50 == 0)
                 {
                     SetStatus($"Progreso: {i + 1}/{n}...");
@@ -271,7 +321,7 @@ namespace GETravelGames.Common
             }
 
             UpdateBulkSummary(n, wins, category.PrizeName);
-            if (saveAll) RefreshCategoryDropdown();
+            if (saveAll) RefreshCategoryCountLabels();
 
             SetStatus(saveAll
                 ? $"Bulk completado. {n} pulls guardados."
@@ -284,8 +334,8 @@ namespace GETravelGames.Common
         void UpdateBulkSummary(int total, int wins, string categoryName)
         {
             if (bulkSummaryLabel == null) return;
-            int losses   = total - wins;
-            float pct    = total > 0 ? 100f * wins / total : 0f;
+            int losses = total - wins;
+            float pct  = total > 0 ? 100f * wins / total : 0f;
             bulkSummaryLabel.text =
                 $"RESUMEN - {categoryName}\n" +
                 $"Total: {total}  |  Ganados: {wins} ({pct:F1}%)  |  No gano: {losses}";
@@ -298,7 +348,6 @@ namespace GETravelGames.Common
             foreach (var row in resultRows)
                 if (row != null) Destroy(row.gameObject);
             resultRows.Clear();
-            resultIsWin.Clear();
         }
 
         void AddResultRow(string text, bool isWin)
@@ -322,9 +371,7 @@ namespace GETravelGames.Common
             le.minHeight       = 22f;
 
             resultRows.Add(rowText);
-            resultIsWin.Add(isWin);
 
-            // Auto-scroll to bottom.
             Canvas.ForceUpdateCanvases();
             var scrollRect = resultsContent.GetComponentInParent<ScrollRect>();
             if (scrollRect != null)
@@ -354,27 +401,33 @@ namespace GETravelGames.Common
             UIBuilderHelper.EnsureEventSystem();
 
             canvas = UIBuilderHelper.MakeCanvas(transform, "TesterCanvas", 100);
+            canvas.gameObject.AddComponent<Image>().color = UIBuilderHelper.ColBg;
 
-            // Full-screen background.
-            var bg   = canvas.gameObject.AddComponent<Image>();
-            bg.color = UIBuilderHelper.ColBg;
-
-            // ── Back button (top-left corner, anchored overlay) ───────────────
+            // ── Back button ───────────────────────────────────────────────────
             backButton = UIBuilderHelper.MakeButton(canvas.transform, "BackButton",
                 "\u2190 Men\u00fa", UIBuilderHelper.ColBtnSmall,
                 UIBuilderHelper.ColTextSecondary, 16, FontStyles.Normal);
             UIBuilderHelper.SetAnchored(backButton.GetComponent<RectTransform>(),
-                new Vector2(0f, 0.92f), new Vector2(0.14f, 1f),
+                new Vector2(0f, 0.93f), new Vector2(0.14f, 1f),
                 Vector2.zero, Vector2.zero);
 
-            // ── Header ────────────────────────────────────────────────────────
+            // ── Header title ──────────────────────────────────────────────────
             var header = UIBuilderHelper.MakeText(canvas.transform, "Header",
                 26, FontStyles.Bold, UIBuilderHelper.ColTextPrimary);
             UIBuilderHelper.SetAnchored(header.GetComponent<RectTransform>(),
-                new Vector2(0f, 0.92f), new Vector2(1f, 1f),
+                new Vector2(0.14f, 0.93f), new Vector2(0.74f, 1f),
                 Vector2.zero, Vector2.zero);
             header.text      = "PRIZE GIVING TESTER";
             header.alignment = TextAlignmentOptions.Center;
+
+            // ── Mode toggle button ────────────────────────────────────────────
+            modeToggleButton = UIBuilderHelper.MakeButton(canvas.transform, "ModeToggleButton",
+                "SIMULACION BULK", UIBuilderHelper.ColBtnSecondary,
+                UIBuilderHelper.ColTextPrimary, 15, FontStyles.Normal);
+            UIBuilderHelper.SetAnchored(modeToggleButton.GetComponent<RectTransform>(),
+                new Vector2(0.75f, 0.93f), new Vector2(0.99f, 1f),
+                Vector2.zero, Vector2.zero);
+            modeToggleLabel = modeToggleButton.GetComponentInChildren<TMP_Text>();
 
             // ── Status bar ────────────────────────────────────────────────────
             statusLabel = UIBuilderHelper.MakeText(canvas.transform, "StatusLabel",
@@ -384,125 +437,172 @@ namespace GETravelGames.Common
                 Vector2.zero, Vector2.zero);
             statusLabel.text = "Esperando inicio...";
 
-            // ── Celebration title label (full-width overlay, shown during FX) ─
-            celebrationTitleLabel = UIBuilderHelper.MakeText(canvas.transform,
-                "CelebrationTitleLabel", 32, FontStyles.Bold, UIBuilderHelper.ColTextPrimary);
-            UIBuilderHelper.SetAnchored(celebrationTitleLabel.GetComponent<RectTransform>(),
-                new Vector2(0f, 0.55f), new Vector2(1f, 0.75f),
-                Vector2.zero, Vector2.zero);
-            celebrationTitleLabel.text      = "";
-            celebrationTitleLabel.alignment = TextAlignmentOptions.Center;
-
-            // ── Celebration controller (particles + screen flash) ─────────────
-            var celebGo = new GameObject("CelebrationController", typeof(RectTransform));
-            celebGo.transform.SetParent(canvas.transform, false);
-            UIBuilderHelper.StretchFill(celebGo.GetComponent<RectTransform>());
-            celebration = celebGo.AddComponent<PrizeCelebrationController>();
-            celebration.BuildChildren(canvas.transform, new Vector2(960, 540));
-
-            // ── Single pull panel (left half) ─────────────────────────────────
-            var leftPanel = UIBuilderHelper.MakeView(canvas.transform, "SinglePullPanel",
+            // ═══════════════════════════════════════════════════════════════════
+            // SINGLE PULL VIEW
+            // ═══════════════════════════════════════════════════════════════════
+            singlePullView = UIBuilderHelper.MakeView(canvas.transform, "SinglePullView",
                 UIBuilderHelper.ColPanel);
-            UIBuilderHelper.SetAnchored(leftPanel.GetComponent<RectTransform>(),
-                new Vector2(0.01f, 0.40f), new Vector2(0.49f, 0.91f),
+            UIBuilderHelper.SetAnchored(singlePullView.GetComponent<RectTransform>(),
+                new Vector2(0f, 0.05f), new Vector2(1f, 0.93f),
                 Vector2.zero, Vector2.zero);
-            UIBuilderHelper.AddVerticalLayout(leftPanel, TextAnchor.UpperLeft, spacing: 8f,
-                padding: new RectOffset(16, 16, 12, 12));
 
-            BuildText(leftPanel.transform, "SingleTitle",
-                "PULL INDIVIDUAL", 18, FontStyles.Bold, 28f);
+            // Category scroll view (top ~35% of singlePullView)
+            var catScrollGo = new GameObject("CategoryScrollView", typeof(RectTransform));
+            catScrollGo.transform.SetParent(singlePullView.transform, false);
+            UIBuilderHelper.SetAnchored(catScrollGo.GetComponent<RectTransform>(),
+                new Vector2(0.01f, 0.62f), new Vector2(0.99f, 0.99f),
+                Vector2.zero, Vector2.zero);
+            catScrollGo.AddComponent<Image>().color = UIBuilderHelper.ColInput;
+            var catScrollRect = catScrollGo.AddComponent<ScrollRect>();
+            catScrollRect.horizontal   = false;
+            catScrollRect.vertical     = true;
+            catScrollRect.movementType = ScrollRect.MovementType.Clamped;
 
-            BuildLabel(leftPanel.transform, "CatLabel", "Categoria:", 20f);
+            var catViewport = new GameObject("Viewport", typeof(RectTransform));
+            catViewport.transform.SetParent(catScrollGo.transform, false);
+            UIBuilderHelper.StretchFill(catViewport.GetComponent<RectTransform>());
+            catViewport.AddComponent<RectMask2D>();
+            catScrollRect.viewport = catViewport.GetComponent<RectTransform>();
 
-            // Category dropdown.
-            var dropGo  = new GameObject("CategoryDropdown", typeof(RectTransform));
-            dropGo.transform.SetParent(leftPanel.transform, false);
-            UIBuilderHelper.AddLayout(dropGo, 36f);
-            var dropImg = dropGo.AddComponent<Image>();
-            dropImg.color = UIBuilderHelper.ColInput;
-            categoryDropdown = dropGo.AddComponent<TMP_Dropdown>();
-            WireMinimalDropdown(categoryDropdown, dropGo);
+            var catContent = new GameObject("Content", typeof(RectTransform));
+            catContent.transform.SetParent(catViewport.transform, false);
+            var catContentRT    = catContent.GetComponent<RectTransform>();
+            catContentRT.anchorMin = new Vector2(0f, 1f);
+            catContentRT.anchorMax = new Vector2(1f, 1f);
+            catContentRT.pivot     = new Vector2(0f, 1f);
+            catContentRT.offsetMin = catContentRT.offsetMax = Vector2.zero;
+            var catCSF = catContent.AddComponent<ContentSizeFitter>();
+            catCSF.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            UIBuilderHelper.AddVerticalLayout(catContent, TextAnchor.UpperLeft, spacing: 4f,
+                padding: new RectOffset(6, 6, 6, 6));
+            catScrollRect.content = catContentRT;
+            categoryButtonsContent = catContentRT;
 
-            BuildLabel(leftPanel.transform, "StageLabel", "StageIndex:", 20f);
+            // Category label above scroll
+            var catLabel = UIBuilderHelper.MakeText(singlePullView.transform, "CatLabel",
+                13, FontStyles.Normal, UIBuilderHelper.ColTextMuted,
+                TextAlignmentOptions.MidlineLeft);
+            UIBuilderHelper.SetAnchored(catLabel.GetComponent<RectTransform>(),
+                new Vector2(0.01f, 0.58f), new Vector2(0.99f, 0.62f),
+                Vector2.zero, Vector2.zero);
+            catLabel.text = "Categor\u00eda:";
 
-            singleStageInput = UIBuilderHelper.MakeInputField(
-                leftPanel.transform, "SingleStageInput", "1");
+            // Controls strip (bottom 15% of singlePullView): Stage label + input + save toggle + pull button
+            var strip = new GameObject("ControlsStrip", typeof(RectTransform));
+            strip.transform.SetParent(singlePullView.transform, false);
+            UIBuilderHelper.SetAnchored(strip.GetComponent<RectTransform>(),
+                new Vector2(0.01f, 0.01f), new Vector2(0.99f, 0.15f),
+                Vector2.zero, Vector2.zero);
+            var stripHlg = strip.AddComponent<HorizontalLayoutGroup>();
+            stripHlg.childAlignment        = TextAnchor.MiddleLeft;
+            stripHlg.spacing               = 10f;
+            stripHlg.childControlWidth     = false;
+            stripHlg.childForceExpandWidth = false;
+            stripHlg.padding               = new RectOffset(8, 8, 4, 4);
+
+            var stageLabel = UIBuilderHelper.MakeText(strip.transform, "StageLabel",
+                14, FontStyles.Normal, UIBuilderHelper.ColTextSecondary,
+                TextAlignmentOptions.MidlineLeft);
+            stageLabel.text = "Stage:";
+            UIBuilderHelper.AddLayout(stageLabel.gameObject, 36f, 46f);
+
+            singleStageInput = UIBuilderHelper.MakeInputField(strip.transform, "StageInput", "1");
             singleStageInput.text        = "1";
             singleStageInput.contentType = TMP_InputField.ContentType.IntegerNumber;
-            UIBuilderHelper.AddLayout(singleStageInput.gameObject, 36f);
+            UIBuilderHelper.AddLayout(singleStageInput.gameObject, 36f, 60f);
 
-            // Save toggle row.
-            BuildToggleRow(leftPanel.transform, "SaveRow",
-                out singleSaveToggle, "Guardar pull (savePull)", 28f);
+            // Save toggle
+            var saveRow = new GameObject("SaveToggleRow", typeof(RectTransform));
+            saveRow.transform.SetParent(strip.transform, false);
+            UIBuilderHelper.AddLayout(saveRow, 36f, 130f);
+            var saveHlg = saveRow.AddComponent<HorizontalLayoutGroup>();
+            saveHlg.childAlignment        = TextAnchor.MiddleLeft;
+            saveHlg.spacing               = 6f;
+            saveHlg.childControlWidth     = false;
+            saveHlg.childForceExpandWidth = false;
 
-            singlePullButton = UIBuilderHelper.MakeButton(leftPanel.transform, "PullButton",
-                "SIMULAR PULL", UIBuilderHelper.ColBtn, UIBuilderHelper.ColTextPrimary, 20);
-            UIBuilderHelper.AddLayout(singlePullButton.gameObject, 44f);
+            var tGo = new GameObject("Toggle", typeof(RectTransform));
+            tGo.transform.SetParent(saveRow.transform, false);
+            var tRT = tGo.GetComponent<RectTransform>();
+            tRT.sizeDelta = new Vector2(24f, 24f);
+            var tBg = tGo.AddComponent<Image>();
+            tBg.color     = UIBuilderHelper.ColInput;
+            singleSaveToggle = tGo.AddComponent<Toggle>();
+            singleSaveToggle.targetGraphic = tBg;
+            var ck = new GameObject("Checkmark", typeof(RectTransform));
+            ck.transform.SetParent(tGo.transform, false);
+            UIBuilderHelper.StretchFill(ck.GetComponent<RectTransform>());
+            var ckImg = ck.AddComponent<Image>();
+            ckImg.color            = UIBuilderHelper.ColBtn;
+            singleSaveToggle.graphic = ckImg;
+            ck.SetActive(false);
 
-            singleResultLabel = UIBuilderHelper.MakeText(leftPanel.transform, "SingleResult",
-                15, FontStyles.Normal, UIBuilderHelper.ColTextPrimary,
-                TextAlignmentOptions.Left);
-            singleResultLabel.text           = "-";
-            singleResultLabel.enableWordWrapping = false;
-            UIBuilderHelper.AddLayout(singleResultLabel.gameObject, 40f);
+            var saveLbl = UIBuilderHelper.MakeText(saveRow.transform, "SaveLabel",
+                13, FontStyles.Normal, UIBuilderHelper.ColTextSecondary,
+                TextAlignmentOptions.MidlineLeft);
+            saveLbl.text = "Guardar pull";
 
-            // ── Bulk panel (right half) ───────────────────────────────────────
-            var rightPanel = UIBuilderHelper.MakeView(canvas.transform, "BulkPanel",
+            singlePullButton = UIBuilderHelper.MakeButton(strip.transform, "PullButton",
+                "SIMULAR PULL", UIBuilderHelper.ColBtn, UIBuilderHelper.ColTextPrimary, 17);
+            UIBuilderHelper.AddLayout(singlePullButton.gameObject, 40f, 160f);
+
+            // ═══════════════════════════════════════════════════════════════════
+            // BULK VIEW
+            // ═══════════════════════════════════════════════════════════════════
+            bulkView = UIBuilderHelper.MakeView(canvas.transform, "BulkView",
                 UIBuilderHelper.ColPanel);
-            UIBuilderHelper.SetAnchored(rightPanel.GetComponent<RectTransform>(),
-                new Vector2(0.51f, 0.40f), new Vector2(0.99f, 0.91f),
+            UIBuilderHelper.SetAnchored(bulkView.GetComponent<RectTransform>(),
+                new Vector2(0f, 0.05f), new Vector2(1f, 0.93f),
                 Vector2.zero, Vector2.zero);
-            UIBuilderHelper.AddVerticalLayout(rightPanel, TextAnchor.UpperLeft, spacing: 8f,
+            UIBuilderHelper.AddVerticalLayout(bulkView, TextAnchor.UpperLeft, spacing: 8f,
                 padding: new RectOffset(16, 16, 12, 12));
 
-            BuildText(rightPanel.transform, "BulkTitle",
-                "BULK SIMULATION", 18, FontStyles.Bold, 28f);
+            BuildText(bulkView.transform, "BulkTitle",
+                "SIMULACION BULK", 18, FontStyles.Bold, 28f);
 
-            BuildLabel(rightPanel.transform, "CountLabel", "N\u00b0 de pulls:", 20f);
-
-            bulkCountInput = UIBuilderHelper.MakeInputField(
-                rightPanel.transform, "BulkCountInput", "100");
+            BuildLabel(bulkView.transform, "CountLabel", "N\u00b0 de pulls:", 20f);
+            bulkCountInput = UIBuilderHelper.MakeInputField(bulkView.transform, "BulkCountInput", "100");
             bulkCountInput.text        = "100";
             bulkCountInput.contentType = TMP_InputField.ContentType.IntegerNumber;
             UIBuilderHelper.AddLayout(bulkCountInput.gameObject, 36f);
 
-            BuildLabel(rightPanel.transform, "BulkStageLabel", "StageIndex fijo:", 20f);
-
-            bulkStageInput = UIBuilderHelper.MakeInputField(
-                rightPanel.transform, "BulkStageInput", "1");
+            BuildLabel(bulkView.transform, "BulkStageLabel", "StageIndex fijo:", 20f);
+            bulkStageInput = UIBuilderHelper.MakeInputField(bulkView.transform, "BulkStageInput", "1");
             bulkStageInput.text        = "1";
             bulkStageInput.contentType = TMP_InputField.ContentType.IntegerNumber;
             UIBuilderHelper.AddLayout(bulkStageInput.gameObject, 36f);
 
-            BuildToggleRow(rightPanel.transform, "RandomStageRow",
+            BuildToggleRow(bulkView.transform, "RandomStageRow",
                 out bulkRandomStageToggle, "Aleatorizar stage por pull", 28f);
 
-            BuildToggleRow(rightPanel.transform, "SaveRow",
-                out bulkSaveToggle, "Guardar resultados (subtracci\u00f3n + jugadores)", 28f);
+            BuildToggleRow(bulkView.transform, "SaveRow",
+                out bulkSaveToggle, "Guardar resultados", 28f);
 
-            bulkRunButton = UIBuilderHelper.MakeButton(rightPanel.transform, "RunButton",
+            bulkRunButton = UIBuilderHelper.MakeButton(bulkView.transform, "RunButton",
                 "EJECUTAR BULK", UIBuilderHelper.ColBtn, UIBuilderHelper.ColTextPrimary, 20);
             UIBuilderHelper.AddLayout(bulkRunButton.gameObject, 44f);
 
-            bulkSummaryLabel = UIBuilderHelper.MakeText(rightPanel.transform, "Summary",
+            bulkSummaryLabel = UIBuilderHelper.MakeText(bulkView.transform, "Summary",
                 14, FontStyles.Normal, UIBuilderHelper.ColTextSecondary,
                 TextAlignmentOptions.Left);
-            bulkSummaryLabel.text            = "-";
+            bulkSummaryLabel.text             = "-";
             bulkSummaryLabel.enableWordWrapping = true;
             UIBuilderHelper.AddLayout(bulkSummaryLabel.gameObject, 44f);
 
-            // ── Results scroll view (bottom band, full width) ─────────────────
+            // Results scroll (bottom 42% of bulkView, positioned with SetAnchored)
             var scrollGo = new GameObject("ResultsScrollView", typeof(RectTransform));
-            scrollGo.transform.SetParent(canvas.transform, false);
+            scrollGo.transform.SetParent(bulkView.transform, false);
+            // Remove from VLG by using a LayoutElement with zero size and override:
+            var scrollLE        = scrollGo.AddComponent<LayoutElement>();
+            scrollLE.ignoreLayout = true;
             UIBuilderHelper.SetAnchored(scrollGo.GetComponent<RectTransform>(),
-                new Vector2(0.01f, 0.06f), new Vector2(0.99f, 0.39f),
+                new Vector2(0.01f, 0.01f), new Vector2(0.99f, 0.40f),
                 Vector2.zero, Vector2.zero);
-            var scrollBg = scrollGo.AddComponent<Image>();
-            scrollBg.color = UIBuilderHelper.ColInput;
+            scrollGo.AddComponent<Image>().color = UIBuilderHelper.ColInput;
             var scrollRect = scrollGo.AddComponent<ScrollRect>();
-            scrollRect.horizontal    = false;
-            scrollRect.vertical      = true;
-            scrollRect.movementType  = ScrollRect.MovementType.Clamped;
+            scrollRect.horizontal   = false;
+            scrollRect.vertical     = true;
+            scrollRect.movementType = ScrollRect.MovementType.Clamped;
 
             var viewport = new GameObject("Viewport", typeof(RectTransform));
             viewport.transform.SetParent(scrollGo.transform, false);
@@ -524,8 +624,11 @@ namespace GETravelGames.Common
             scrollRect.content = contentRT;
             resultsContent     = contentRT;
 
+            // Start in single-pull view (bulkView inactive)
+            bulkView.SetActive(false);
+
             UnityEditor.EditorUtility.SetDirty(this);
-            Debug.Log("[PrizeTesterManager] UI construida. Guarda la escena.");
+            Debug.Log("[PrizeTesterManager] UI construida. Guard\u00e1 la escena.");
         }
 
         // ── BuildUi helpers ────────────────────────────────────────────────────
@@ -548,10 +651,6 @@ namespace GETravelGames.Common
             UIBuilderHelper.AddLayout(t.gameObject, height);
         }
 
-        /// <summary>
-        /// Creates a horizontal row with a Toggle on the left and a label on the right.
-        /// Returns the row GameObject; the toggle is set via the <paramref name="toggle"/> out param.
-        /// </summary>
         static GameObject BuildToggleRow(Transform parent, string name,
             out Toggle toggle, string labelText, float height)
         {
@@ -559,110 +658,35 @@ namespace GETravelGames.Common
             row.transform.SetParent(parent, false);
             UIBuilderHelper.AddLayout(row, height);
             var h = row.GetComponent<HorizontalLayoutGroup>();
-            h.childAlignment       = TextAnchor.MiddleLeft;
-            h.spacing              = 8f;
-            h.childControlWidth    = false;
+            h.childAlignment        = TextAnchor.MiddleLeft;
+            h.spacing               = 8f;
+            h.childControlWidth     = false;
             h.childForceExpandWidth = false;
 
-            // Toggle background
-            var tGo  = new GameObject("Toggle", typeof(RectTransform));
+            var tGo = new GameObject("Toggle", typeof(RectTransform));
             tGo.transform.SetParent(row.transform, false);
             var tRT  = tGo.GetComponent<RectTransform>();
             tRT.sizeDelta = new Vector2(24f, 24f);
             var bg = tGo.AddComponent<Image>();
-            bg.color = UIBuilderHelper.ColInput;
-            toggle   = tGo.AddComponent<Toggle>();
-            toggle.isOn         = false;
+            bg.color  = UIBuilderHelper.ColInput;
+            toggle    = tGo.AddComponent<Toggle>();
+            toggle.isOn          = false;
             toggle.targetGraphic = bg;
 
-            // Checkmark
-            var ck   = new GameObject("Checkmark", typeof(RectTransform));
+            var ck    = new GameObject("Checkmark", typeof(RectTransform));
             ck.transform.SetParent(tGo.transform, false);
             UIBuilderHelper.StretchFill(ck.GetComponent<RectTransform>());
             var ckImg  = ck.AddComponent<Image>();
-            ckImg.color = UIBuilderHelper.ColBtn;
+            ckImg.color    = UIBuilderHelper.ColBtn;
             toggle.graphic = ckImg;
             ck.SetActive(false);
 
-            // Label
             var lbl = UIBuilderHelper.MakeText(row.transform, "Label",
                 14, FontStyles.Normal, UIBuilderHelper.ColTextSecondary,
                 TextAlignmentOptions.Left);
             lbl.text = labelText;
 
             return row;
-        }
-
-        /// <summary>
-        /// Wires the minimal TMP_Dropdown internals (caption text + item template)
-        /// needed for it to function at runtime.
-        /// </summary>
-        static void WireMinimalDropdown(TMP_Dropdown dropdown, GameObject root)
-        {
-            // Caption text
-            var capGo   = new GameObject("Label", typeof(RectTransform));
-            capGo.transform.SetParent(root.transform, false);
-            UIBuilderHelper.StretchFill(capGo.GetComponent<RectTransform>());
-            var capText = capGo.AddComponent<TextMeshProUGUI>();
-            capText.font      = TMP_Settings.defaultFontAsset;
-            capText.fontSize  = 16;
-            capText.color     = UIBuilderHelper.ColTextPrimary;
-            capText.alignment = TextAlignmentOptions.MidlineLeft;
-            dropdown.captionText = capText;
-
-            // Template (hidden, required by TMP_Dropdown)
-            var tmplGo = new GameObject("Template", typeof(RectTransform));
-            tmplGo.transform.SetParent(root.transform, false);
-            tmplGo.SetActive(false);
-            var tmplImg = tmplGo.AddComponent<Image>();
-            tmplImg.color = UIBuilderHelper.ColPanel;
-            var tmplRT  = tmplGo.GetComponent<RectTransform>();
-            tmplRT.anchorMin = new Vector2(0f, 0f);
-            tmplRT.anchorMax = new Vector2(1f, 0f);
-            tmplRT.pivot     = new Vector2(0.5f, 1f);
-            tmplRT.sizeDelta = new Vector2(0f, 150f);
-            dropdown.template = tmplRT;
-
-            // Viewport inside template
-            var vpGo = new GameObject("Viewport", typeof(RectTransform));
-            vpGo.transform.SetParent(tmplGo.transform, false);
-            UIBuilderHelper.StretchFill(vpGo.GetComponent<RectTransform>());
-            vpGo.AddComponent<RectMask2D>();
-
-            // Content inside viewport
-            var cntGo = new GameObject("Content", typeof(RectTransform));
-            cntGo.transform.SetParent(vpGo.transform, false);
-            var cntRT   = cntGo.GetComponent<RectTransform>();
-            cntRT.anchorMin = new Vector2(0f, 1f);
-            cntRT.anchorMax = new Vector2(1f, 1f);
-            cntRT.pivot     = new Vector2(0.5f, 1f);
-            cntRT.sizeDelta = new Vector2(0f, 28f);
-
-            // Item inside content
-            var itemGo = new GameObject("Item", typeof(RectTransform));
-            itemGo.transform.SetParent(cntGo.transform, false);
-            var itemRT    = itemGo.GetComponent<RectTransform>();
-            itemRT.sizeDelta  = new Vector2(0f, 28f);
-            itemRT.anchorMin  = new Vector2(0f, 0.5f);
-            itemRT.anchorMax  = new Vector2(1f, 0.5f);
-            var itemToggle = itemGo.AddComponent<Toggle>();
-
-            var itemLblGo = new GameObject("Item Label", typeof(RectTransform));
-            itemLblGo.transform.SetParent(itemGo.transform, false);
-            UIBuilderHelper.StretchFill(itemLblGo.GetComponent<RectTransform>());
-            var itemLbl      = itemLblGo.AddComponent<TextMeshProUGUI>();
-            itemLbl.font     = TMP_Settings.defaultFontAsset;
-            itemLbl.fontSize = 16;
-            itemLbl.color    = UIBuilderHelper.ColTextPrimary;
-            itemToggle.graphic  = itemLbl;
-            dropdown.itemText   = itemLbl;
-
-            // ScrollRect on template
-            var sr            = tmplGo.AddComponent<ScrollRect>();
-            sr.content        = cntRT;
-            sr.viewport       = vpGo.GetComponent<RectTransform>();
-            sr.horizontal     = false;
-            sr.movementType   = ScrollRect.MovementType.Clamped;
         }
 #endif
     }

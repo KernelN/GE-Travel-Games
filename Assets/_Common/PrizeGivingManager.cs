@@ -18,7 +18,7 @@ namespace GETravelGames.Common
     ///   5. If real prize: auto-claim → success screen with Play Again button.
     ///   6. If false prize: consolation message + auto-return timer.
     /// </summary>
-    public sealed class PrizeGivingManager : MonoBehaviour
+    public class PrizeGivingManager : MonoBehaviour
     {
         // ── Inspector ──────────────────────────────────────────────────────────
 
@@ -27,6 +27,13 @@ namespace GETravelGames.Common
         [SerializeField] TMP_Text titleLabel;
         [SerializeField] RectTransform boxContainer;
         [SerializeField] PrizeCelebrationController celebration;
+
+        [Header("Tester mode (driven via StartTesterPull \u2014 do not set manually)")]
+        [SerializeField] bool testerMode;
+        [SerializeField] bool testerSave;
+        [SerializeField] ushort testerCategoryId;
+
+        System.Action<PrizePullResult> onTesterComplete;
 
         [Header("Post-reveal views (shown after the box click)")]
         [SerializeField] GameObject consolationView;
@@ -111,6 +118,13 @@ namespace GETravelGames.Common
 
         void Start()
         {
+            if (testerMode)
+            {
+                // Canvas is activated on demand by StartTesterPull — hide until then.
+                if (canvas != null) canvas.gameObject.SetActive(false);
+                return;
+            }
+
             Time.timeScale = 1f;
 
             // Ensure the camera renders the dark background so world-space particles
@@ -174,7 +188,8 @@ namespace GETravelGames.Common
             if (Time.unscaledTime - returnStartTime >= returnTimer)
             {
                 returnTimer = -1f;
-                SceneManager.LoadScene("ReadyKiosk");
+                if (testerMode) FinishTesterPull();
+                else SceneManager.LoadScene("ReadyKiosk");
             }
         }
 
@@ -339,14 +354,19 @@ namespace GETravelGames.Common
 
         void ShowConsolation(PrizePullResult pull)
         {
-            PrizeService.Instance?.RecordPlay(
-                PlayerSessionData.FirstName,
-                PlayerSessionData.LastName,
-                PlayerSessionData.Phone,
-                PlayerSessionData.Office,
-                pull);
+            // In tester mode TryPullFromCategory already handled RecordPlay (or skipped it for
+            // dry runs).  PlayerSessionData is fake test data — no need to clear it here.
+            if (!testerMode)
+            {
+                PrizeService.Instance?.RecordPlay(
+                    PlayerSessionData.FirstName,
+                    PlayerSessionData.LastName,
+                    PlayerSessionData.Phone,
+                    PlayerSessionData.Office,
+                    pull);
 
-            PlayerSessionData.Clear();
+                PlayerSessionData.Clear();
+            }
 
             consolationView?.SetActive(true);
             if (consolationLabel != null) consolationLabel.text = consolationText;
@@ -396,6 +416,10 @@ namespace GETravelGames.Common
 
         void AutoClaim()
         {
+            // In tester mode TryPullFromCategory already handled claim + record (or skipped both
+            // for dry runs), so there is nothing to do here.
+            if (testerMode) return;
+
             if (PrizeService.Instance == null) return;
 
             var fullName = $"{PlayerSessionData.FirstName} {PlayerSessionData.LastName}".Trim();
@@ -425,7 +449,178 @@ namespace GETravelGames.Common
             returnStartTime = Time.unscaledTime;
         }
 
-        static void PlayAgain() => SceneManager.LoadScene("RegisterUser");
+        void PlayAgain()
+        {
+            if (testerMode) FinishTesterPull();
+            else SceneManager.LoadScene("RegisterUser");
+        }
+
+        // ── Tester-mode API ────────────────────────────────────────────────────
+
+        void ClearBoxes()
+        {
+            foreach (var b in boxes)
+                if (b != null) Destroy(b.gameObject);
+            boxes.Clear();
+            boxClickHandled = false;
+        }
+
+        void FinishTesterPull()
+        {
+            returnTimer = -1f;
+            ClearBoxes();
+            HideAllViews();
+            if (canvas != null) canvas.gameObject.SetActive(false);
+            testerMode = false;
+            var result = currentPull;
+            onTesterComplete?.Invoke(result);
+            onTesterComplete = null;
+        }
+
+        /// <summary>
+        /// Builds the prize-giving canvas hierarchy at runtime (no UnityEditor deps).
+        /// Called by <see cref="StartTesterPull"/> when no pre-built canvas exists.
+        /// Produces an identical structure to the "Construir UI" context-menu result.
+        /// </summary>
+        void BuildTesterCanvas()
+        {
+            canvas = UIBuilderHelper.MakeCanvas(transform, "PrizeGivingCanvas", 100);
+
+            // Title
+            titleLabel = UIBuilderHelper.MakeText(canvas.transform, "TitleLabel",
+                34, FontStyles.Bold, UIBuilderHelper.ColTextPrimary);
+            UIBuilderHelper.SetAnchored(titleLabel.GetComponent<RectTransform>(),
+                new Vector2(0f, 0.82f), new Vector2(1f, 1f),
+                Vector2.zero, Vector2.zero);
+            titleLabel.alignment = TextAlignmentOptions.Center;
+            titleLabel.text = promptText;
+
+            // Box container
+            var boxContainerGo = new GameObject("BoxContainer", typeof(RectTransform));
+            boxContainerGo.transform.SetParent(canvas.transform, false);
+            boxContainer = boxContainerGo.GetComponent<RectTransform>();
+            UIBuilderHelper.SetAnchored(boxContainer,
+                new Vector2(0.05f, 0.12f), new Vector2(0.95f, 0.88f),
+                Vector2.zero, Vector2.zero);
+
+            // Celebration controller
+            var celebGo = new GameObject("CelebrationController", typeof(RectTransform));
+            celebGo.transform.SetParent(canvas.transform, false);
+            var celebRect = celebGo.GetComponent<RectTransform>();
+            celebRect.anchorMin = Vector2.zero;
+            celebRect.anchorMax = Vector2.one;
+            celebRect.offsetMin = celebRect.offsetMax = Vector2.zero;
+            celebration = celebGo.AddComponent<PrizeCelebrationController>();
+            celebration.BuildChildren(canvas.transform, new Vector2(960, 540));
+
+            // Consolation view
+            consolationView = UIBuilderHelper.MakeView(canvas.transform, "ConsolationView");
+            UIBuilderHelper.AddVerticalLayout(consolationView, spacing: 20f);
+
+            consolationLabel = UIBuilderHelper.MakeText(consolationView.transform,
+                "ConsolationLabel", 40, FontStyles.Bold, UIBuilderHelper.ColTextPrimary);
+            UIBuilderHelper.AddLayout(consolationLabel.gameObject, 60);
+
+            playAgainConsolation = UIBuilderHelper.MakeButton(consolationView.transform,
+                "PlayAgainButton", playAgainText, UIBuilderHelper.ColBtn,
+                UIBuilderHelper.ColTextPrimary);
+            UIBuilderHelper.AddLayout(playAgainConsolation.gameObject, 52);
+
+            // Success view
+            successView = UIBuilderHelper.MakeView(canvas.transform, "SuccessView");
+            UIBuilderHelper.AddVerticalLayout(successView, spacing: 12f);
+
+            successDescriptionLabel = UIBuilderHelper.MakeText(successView.transform,
+                "SuccessDescription", 22, FontStyles.Normal, UIBuilderHelper.ColTextSecondary);
+            UIBuilderHelper.AddLayout(successDescriptionLabel.gameObject, 36);
+            successDescriptionLabel.gameObject.SetActive(false);
+
+            successConfirmLabel = UIBuilderHelper.MakeText(successView.transform, "SuccessConfirm",
+                20, FontStyles.Italic, UIBuilderHelper.ColTextMuted);
+            UIBuilderHelper.AddLayout(successConfirmLabel.gameObject, 32);
+
+            playAgainSuccess = UIBuilderHelper.MakeButton(successView.transform,
+                "PlayAgainButton", playAgainText, UIBuilderHelper.ColBtn,
+                UIBuilderHelper.ColTextPrimary);
+            UIBuilderHelper.AddLayout(playAgainSuccess.gameObject, 52);
+
+            HideAllViews();
+        }
+
+        /// <summary>
+        /// Drives PrizeGivingManager from the prize tester. Builds the canvas on first call
+        /// if it hasn't been pre-built in the Editor. Rolls the prize, spawns boxes, and runs
+        /// the full reveal + celebration sequence. Calls <paramref name="onComplete"/> with the
+        /// pull result when "SIGUIENTE PULL" is clicked or the auto-return timer fires.
+        /// </summary>
+        public void StartTesterPull(ushort catId, int stage, bool save,
+                                    System.Action<PrizePullResult> onComplete)
+        {
+            testerMode       = true;
+            testerSave       = save;
+            testerCategoryId = catId;
+            onTesterComplete = onComplete;
+
+            if (canvas == null) BuildTesterCanvas();
+            canvas.gameObject.SetActive(true);
+
+            Time.timeScale = 1f;
+            if (Camera.main != null)
+            {
+                Camera.main.clearFlags      = CameraClearFlags.SolidColor;
+                Camera.main.backgroundColor = new Color(0.11f, 0.14f, 0.19f);
+            }
+
+            // Wire PlayAgain — RemoveListener first so repeated calls don't stack.
+            playAgainConsolation?.onClick.RemoveListener(PlayAgain);
+            playAgainConsolation?.onClick.AddListener(PlayAgain);
+            playAgainSuccess?.onClick.RemoveListener(PlayAgain);
+            playAgainSuccess?.onClick.AddListener(PlayAgain);
+
+            // Relabel so it's obvious this is tester context.
+            const string nextPullLabel = "SIGUIENTE PULL";
+            var consBtn = playAgainConsolation?.GetComponentInChildren<TMP_Text>();
+            var succBtn = playAgainSuccess?.GetComponentInChildren<TMP_Text>();
+            if (consBtn != null) consBtn.text = nextPullLabel;
+            if (succBtn != null) succBtn.text = nextPullLabel;
+
+            // Celebration fallback (same as normal Start path).
+            if (celebration == null)
+            {
+                var celebGo = new GameObject("CelebrationController", typeof(RectTransform));
+                celebGo.transform.SetParent(canvas.transform, false);
+                var celebRect = celebGo.GetComponent<RectTransform>();
+                celebRect.anchorMin = Vector2.zero;
+                celebRect.anchorMax = Vector2.one;
+                celebRect.offsetMin = celebRect.offsetMax = Vector2.zero;
+                celebration = celebGo.AddComponent<PrizeCelebrationController>();
+                celebration.BuildChildren(celebGo.transform, new Vector2(960, 540));
+            }
+
+            HideAllViews();
+
+            if (PrizeService.Instance == null)
+            {
+                Debug.LogWarning("[PrizeGiving/Tester] PrizeService no encontrado.");
+                onComplete?.Invoke(null);
+                onTesterComplete = null;
+                testerMode = false;
+                canvas.gameObject.SetActive(false);
+                return;
+            }
+
+            // Roll via category-specific path — handles save flag internally.
+            currentPull = PrizeService.Instance.TryPullFromCategory(
+                catId, stage, save,
+                "Test", "Single", "000-SINGLE", "Test Office");
+
+            if (titleLabel != null) titleLabel.text = promptText;
+
+            int boxCount = Mathf.Min(2 * stage + 1, 13);
+            ClearBoxes();
+            SpawnBoxes(boxCount, locked: stage == 0);
+            if (stage == 0) StartCoroutine(HandleLockedBox());
+        }
 
         // ── Editor UI builder ──────────────────────────────────────────────────
 
