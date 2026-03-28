@@ -1,3 +1,4 @@
+using GETravelGames.Common;
 using UnityEngine;
 
 namespace GETravelGames.PrizeManager
@@ -6,6 +7,11 @@ namespace GETravelGames.PrizeManager
     public sealed class PrizeManagerBootstrap : MonoBehaviour
     {
         [SerializeField] private PrizeManagerBootstrapState state = new();
+
+        [Header("Tester mode")]
+        [Tooltip("Pre-fills paths from PrizeTesterKioskConfig so the verificator uses the same " +
+                 "CSV paths as the tester scene without manual configuration.")]
+        [SerializeField] private bool useTesterConfig;
 
         [Tooltip("Link via 'Link Admin Canvas' context menu. Must be a child Canvas.")]
         [SerializeField] private Canvas adminCanvas;
@@ -22,6 +28,17 @@ namespace GETravelGames.PrizeManager
 
         private void Awake()
         {
+            if (useTesterConfig)
+            {
+                state.importFolderPath                    = PrizeTesterKioskConfig.GetImportFolderPath();
+                state.exportFolderPath                    = PrizeTesterKioskConfig.GetExportFolderPath();
+                state.prizesCsvFileName                   = PrizeTesterKioskConfig.GetPrizesCsvFileName();
+                state.settingsCsvFileName                 = PrizeTesterKioskConfig.GetSettingsCsvFileName();
+                state.debugKioskId                        = PrizeTesterKioskConfig.GetKioskId();
+                state.prizePoolSubtractionExportFileName  =
+                    GETravelGames.Common.PrizeTesterKioskConfig.GetSubtractionExportFileName() + ".csv";
+            }
+
             state.EnsureDefaults(Application.dataPath);
 
             csvService   = new PrizeCsvService();

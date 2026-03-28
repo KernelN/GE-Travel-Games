@@ -12,6 +12,12 @@ namespace GETravelGames.Common
     {
         [Header("Fallback (used if PlayerPrefs empty)")]
         [SerializeField] int kioskId = 1;
+
+        [Header("Tester mode")]
+        [Tooltip("When true, reads config from PrizeTesterKioskConfig (separate PlayerPrefs keys) " +
+                 "instead of the production KioskConfig. Enable this on the PrizeService in the " +
+                 "PrizeGivingTester scene so tester and production settings stay independent.")]
+        [SerializeField] bool useTesterConfig;
         [SerializeField] string importFolderPath;
         [SerializeField] string prizesCsvFileName = "Prizes.csv";
         [SerializeField] string settingsCsvFileName = "Settings.csv";
@@ -56,32 +62,48 @@ namespace GETravelGames.Common
             adminService = new PrizeAdminService(csvService, stateStore);
 
             // Read from KioskConfig (PlayerPrefs) with serialized fields as fallback.
-            var importPath = KioskConfig.GetImportFolderPath();
+            // When useTesterConfig is true, read from PrizeTesterKioskConfig instead so
+            // tester and production settings stay in completely separate PlayerPrefs keys.
+            var importPath = useTesterConfig
+                ? PrizeTesterKioskConfig.GetImportFolderPath()
+                : KioskConfig.GetImportFolderPath();
             if (string.IsNullOrWhiteSpace(importPath))
                 importPath = string.IsNullOrWhiteSpace(importFolderPath)
                     ? Application.dataPath
                     : importFolderPath;
 
-            var prizesFile = KioskConfig.GetPrizesCsvFileName();
+            var prizesFile = useTesterConfig
+                ? PrizeTesterKioskConfig.GetPrizesCsvFileName()
+                : KioskConfig.GetPrizesCsvFileName();
             if (string.IsNullOrWhiteSpace(prizesFile)) prizesFile = prizesCsvFileName;
 
-            var settingsFile = KioskConfig.GetSettingsCsvFileName();
+            var settingsFile = useTesterConfig
+                ? PrizeTesterKioskConfig.GetSettingsCsvFileName()
+                : KioskConfig.GetSettingsCsvFileName();
             if (string.IsNullOrWhiteSpace(settingsFile)) settingsFile = settingsCsvFileName;
 
-            activeKioskId = KioskConfig.GetKioskId();
+            activeKioskId = useTesterConfig
+                ? PrizeTesterKioskConfig.GetKioskId()
+                : KioskConfig.GetKioskId();
             if (activeKioskId < 1) activeKioskId = kioskId;
 
-            activeExportFolderPath = KioskConfig.GetExportFolderPath();
+            activeExportFolderPath = useTesterConfig
+                ? PrizeTesterKioskConfig.GetExportFolderPath()
+                : KioskConfig.GetExportFolderPath();
             if (string.IsNullOrWhiteSpace(activeExportFolderPath))
                 activeExportFolderPath = string.IsNullOrWhiteSpace(exportFolderPath)
                     ? Application.dataPath
                     : exportFolderPath;
 
-            activePlayersExportFileName = KioskConfig.GetPlayersExportFileName();
+            activePlayersExportFileName = useTesterConfig
+                ? PrizeTesterKioskConfig.GetPlayersExportFileName()
+                : KioskConfig.GetPlayersExportFileName();
             if (string.IsNullOrWhiteSpace(activePlayersExportFileName))
                 activePlayersExportFileName = "Jugadores.csv";
 
-            activeSubtractionExportFileName = KioskConfig.GetSubtractionExportFileName();
+            activeSubtractionExportFileName = useTesterConfig
+                ? PrizeTesterKioskConfig.GetSubtractionExportFileName()
+                : KioskConfig.GetSubtractionExportFileName();
             if (string.IsNullOrWhiteSpace(activeSubtractionExportFileName))
                 activeSubtractionExportFileName = subtractionExportFileName;
 

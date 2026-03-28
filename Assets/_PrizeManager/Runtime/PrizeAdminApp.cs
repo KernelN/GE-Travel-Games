@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace GETravelGames.PrizeManager
@@ -32,6 +33,11 @@ namespace GETravelGames.PrizeManager
         // ─────────────────────────────────────────────────────────────────────
         //  Serialised UI references
         // ─────────────────────────────────────────────────────────────────────
+
+        [Header("Navigation")]
+        [Tooltip("When non-empty a '← Menú' button is shown that loads this scene.")]
+        [SerializeField] private string backSceneName;
+        [SerializeField] private Button backButton;
 
         [Header("Canvas Root")]
         [SerializeField] private GameObject canvasRoot;
@@ -384,6 +390,9 @@ namespace GETravelGames.PrizeManager
             BindButton(btnConfirmClaim,      OnDebugConfirmClaim);
             BindButton(kioskDecrBtn,         OnKioskDecrement);
             BindButton(kioskIncrBtn,         OnKioskIncrement);
+
+            if (backButton != null && !string.IsNullOrWhiteSpace(backSceneName))
+                backButton.onClick.AddListener(() => SceneManager.LoadScene(backSceneName));
         }
 
         // ═════════════════════════════════════════════════════════════════════
@@ -590,6 +599,19 @@ namespace GETravelGames.PrizeManager
             hl.spacing = 16f;
             hl.childControlWidth = hl.childControlHeight = true;
             hl.childForceExpandWidth = false; hl.childForceExpandHeight = true;
+
+            if (!string.IsNullOrWhiteSpace(backSceneName))
+            {
+                var btnRoot = MakeRect("BackButton", row);
+                btnRoot.gameObject.AddComponent<LayoutElement>().preferredWidth = 90f;
+                var btnImg = btnRoot.gameObject.AddComponent<Image>();
+                btnImg.color = new Color32(50, 65, 85, 255);
+                backButton = btnRoot.gameObject.AddComponent<Button>();
+                backButton.targetGraphic = btnImg;
+                var btnLbl = MakeText(btnRoot, "BackLabel", 14f, FontStyles.Normal, TextAlignmentOptions.Center);
+                btnLbl.text = "\u2190 Men\u00fa";
+                btnLbl.color = ColTextSecondary;
+            }
 
             var title = MakeText(row, "Title", 28f, FontStyles.Bold, TextAlignmentOptions.Left);
             title.text = "Administrador de Premios"; title.color = Color.white;

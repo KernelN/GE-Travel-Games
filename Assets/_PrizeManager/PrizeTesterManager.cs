@@ -5,6 +5,7 @@ using System.Linq;
 using GETravelGames.PrizeManager;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace GETravelGames.Common
@@ -18,6 +19,7 @@ namespace GETravelGames.Common
     ///
     /// Two panels:
     ///   • Single pull  — pick a category, choose a stage index, optionally save.
+    ///                    Plays the full PrizeCelebrationController FX sequence.
     ///   • Bulk sim     — run N pulls with fake player data, optionally save.
     ///
     /// When "save" is off the pull is a dry run: no reservation is made and no CSV is
@@ -50,6 +52,17 @@ namespace GETravelGames.Common
         [SerializeField] RectTransform  resultsContent;
         [SerializeField] TMP_Text       statusLabel;
 
+        [Header("Celebration (set by Construir UI)")]
+        [SerializeField] PrizeCelebrationController celebration;
+        [SerializeField] TMP_Text       celebrationTitleLabel;
+
+        [Header("Navigation")]
+        [SerializeField] Button backButton;
+
+        // ── Constants ─────────────────────────────────────────────────────────
+
+        const string ConsolationText = "No gan\u00f3";
+
         // ── Runtime state ──────────────────────────────────────────────────────
 
         bool serviceReady;
@@ -57,6 +70,7 @@ namespace GETravelGames.Common
         readonly List<TMP_Text> resultRows = new();
         readonly List<bool> resultIsWin = new();
         bool bulkRunning;
+        bool singlePullRunning;
 
         // ── Lifecycle ──────────────────────────────────────────────────────────
 
@@ -64,6 +78,7 @@ namespace GETravelGames.Common
         {
             singlePullButton?.onClick.AddListener(OnSinglePull);
             bulkRunButton?.onClick.AddListener(OnBulkRun);
+            backButton?.onClick.AddListener(() => SceneManager.LoadScene("PrizeTesterMenu"));
 
             if (PrizeService.Instance == null || !PrizeService.Instance.IsInitialized)
             {
@@ -107,10 +122,22 @@ namespace GETravelGames.Common
 
         void OnSinglePull()
         {
-            if (!serviceReady || loadedCategories.Count == 0) return;
+            if (!serviceReady || loadedCategories.Count == 0 || singlePullRunning) return;
+            StartCoroutine(SinglePullCoroutine());
+        }
+
+        IEnumerator SinglePullCoroutine()
+        {
+            singlePullRunning = true;
+            if (singlePullButton != null) singlePullButton.interactable = false;
 
             int catIndex = categoryDropdown != null ? categoryDropdown.value : 0;
-            if (catIndex >= loadedCategories.Count) return;
+            if (catIndex >= loadedCategories.Count)
+            {
+                singlePullRunning = false;
+                if (singlePullButton != null) singlePullButton.interactable = true;
+                yield break;
+            }
             var category = loadedCategories[catIndex];
 
             int stage = 1;
@@ -124,14 +151,43 @@ namespace GETravelGames.Common
                 category.PrizeCategoryId, stage, save,
                 "Test", "Single", "000-SINGLE", "Test Office");
 
-            string label = FormatSingleResult(result, category.PrizeName, save);
-            if (singleResultLabel != null) singleResultLabel.text = label;
+            // Clear celebration title before playing.
+            if (celebrationTitleLabel != null) celebrationTitleLabel.text = "";
 
-            AddResultRow(label, result.IsRealPrize);
+            // Play celebration FX — identical flow to PrizeGivingManager.RevealSequence.
+            if (celebration != null)
+            {
+                // No box to click in the tester, so burst from the screen centre.
+                if (Camera.main != null)
+                {
+                    float depth = Mathf.Abs(Camera.main.transform.position.z);
+                    var worldCenter = Camera.main.ScreenToWorldPoint(
+                        new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, depth));
+                    worldCenter.z = 0f;
+                    celebration.SetBurstOrigin(worldCenter);
+                }
+
+                if (result.IsRealPrize)
+                    yield return celebration.PlayCelebration(result, singleResultLabel, celebrationTitleLabel);
+                else
+                    yield return celebration.PlayFalsePrizeCelebration(
+                        singleResultLabel, celebrationTitleLabel, ConsolationText);
+            }
+            else
+            {
+                // Fallback if celebration controller wasn't set up.
+                if (singleResultLabel != null)
+                    singleResultLabel.text = FormatSingleResult(result, category.PrizeName, save);
+            }
+
+            // Log result to the scroll view (always, regardless of celebration).
+            AddResultRow(FormatSingleResult(result, category.PrizeName, save), result.IsRealPrize);
 
             if (save) RefreshCategoryDropdown();
-
             SetStatus(save ? "Simulado y guardado." : "Simulado (dry run).");
+
+            singlePullRunning = false;
+            if (singlePullButton != null) singlePullButton.interactable = true;
         }
 
         static string FormatSingleResult(PrizePullResult r, string categoryName, bool saved)
@@ -303,6 +359,14 @@ namespace GETravelGames.Common
             var bg   = canvas.gameObject.AddComponent<Image>();
             bg.color = UIBuilderHelper.ColBg;
 
+            // ── Back button (top-left corner, anchored overlay) ───────────────
+            backButton = UIBuilderHelper.MakeButton(canvas.transform, "BackButton",
+                "\u2190 Men\u00fa", UIBuilderHelper.ColBtnSmall,
+                UIBuilderHelper.ColTextSecondary, 16, FontStyles.Normal);
+            UIBuilderHelper.SetAnchored(backButton.GetComponent<RectTransform>(),
+                new Vector2(0f, 0.92f), new Vector2(0.14f, 1f),
+                Vector2.zero, Vector2.zero);
+
             // ── Header ────────────────────────────────────────────────────────
             var header = UIBuilderHelper.MakeText(canvas.transform, "Header",
                 26, FontStyles.Bold, UIBuilderHelper.ColTextPrimary);
@@ -319,6 +383,22 @@ namespace GETravelGames.Common
                 new Vector2(0f, 0f), new Vector2(1f, 0.05f),
                 Vector2.zero, Vector2.zero);
             statusLabel.text = "Esperando inicio...";
+
+            // ── Celebration title label (full-width overlay, shown during FX) ─
+            celebrationTitleLabel = UIBuilderHelper.MakeText(canvas.transform,
+                "CelebrationTitleLabel", 32, FontStyles.Bold, UIBuilderHelper.ColTextPrimary);
+            UIBuilderHelper.SetAnchored(celebrationTitleLabel.GetComponent<RectTransform>(),
+                new Vector2(0f, 0.55f), new Vector2(1f, 0.75f),
+                Vector2.zero, Vector2.zero);
+            celebrationTitleLabel.text      = "";
+            celebrationTitleLabel.alignment = TextAlignmentOptions.Center;
+
+            // ── Celebration controller (particles + screen flash) ─────────────
+            var celebGo = new GameObject("CelebrationController", typeof(RectTransform));
+            celebGo.transform.SetParent(canvas.transform, false);
+            UIBuilderHelper.StretchFill(celebGo.GetComponent<RectTransform>());
+            celebration = celebGo.AddComponent<PrizeCelebrationController>();
+            celebration.BuildChildren(canvas.transform, new Vector2(960, 540));
 
             // ── Single pull panel (left half) ─────────────────────────────────
             var leftPanel = UIBuilderHelper.MakeView(canvas.transform, "SinglePullPanel",
@@ -352,7 +432,7 @@ namespace GETravelGames.Common
             UIBuilderHelper.AddLayout(singleStageInput.gameObject, 36f);
 
             // Save toggle row.
-            var saveRow = BuildToggleRow(leftPanel.transform, "SaveRow",
+            BuildToggleRow(leftPanel.transform, "SaveRow",
                 out singleSaveToggle, "Guardar pull (savePull)", 28f);
 
             singlePullButton = UIBuilderHelper.MakeButton(leftPanel.transform, "PullButton",
@@ -362,7 +442,8 @@ namespace GETravelGames.Common
             singleResultLabel = UIBuilderHelper.MakeText(leftPanel.transform, "SingleResult",
                 15, FontStyles.Normal, UIBuilderHelper.ColTextPrimary,
                 TextAlignmentOptions.Left);
-            singleResultLabel.text = "-";
+            singleResultLabel.text           = "-";
+            singleResultLabel.enableWordWrapping = false;
             UIBuilderHelper.AddLayout(singleResultLabel.gameObject, 40f);
 
             // ── Bulk panel (right half) ───────────────────────────────────────
@@ -406,7 +487,7 @@ namespace GETravelGames.Common
             bulkSummaryLabel = UIBuilderHelper.MakeText(rightPanel.transform, "Summary",
                 14, FontStyles.Normal, UIBuilderHelper.ColTextSecondary,
                 TextAlignmentOptions.Left);
-            bulkSummaryLabel.text = "-";
+            bulkSummaryLabel.text            = "-";
             bulkSummaryLabel.enableWordWrapping = true;
             UIBuilderHelper.AddLayout(bulkSummaryLabel.gameObject, 44f);
 
