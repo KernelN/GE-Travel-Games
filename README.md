@@ -1,10 +1,10 @@
-# SnakeAirlines_Codex
+# GE Travel Games
 
-Unity 6 project containing one implemented game, one placeholder subsystem, and a first-pass Prize Manager foundation.
+Unity 6 project containing two games and shared database system.
 
 ## Project Structure
 - `Assets/_SnakeAirlines`: current implemented SnakeAirlines prototype.
-- `Assets/_TapGallery`: second game, tap/shooting gallery, specified but not yet implemented.
+- `Assets/_TapGallery`: second game, tap/shooting gallery, implemented.
 - `Assets/_PrizeManager`: shared prize-system foundation, internal admin tooling, and future UGS integration area.
 
 Agent-oriented documentation lives in `AGENTS.md` and the guides under `docs/`.
